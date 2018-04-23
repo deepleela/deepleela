@@ -2,10 +2,10 @@ import * as React from 'react';
 import { CSSProperties } from 'react';
 import Stone from './Stone';
 
-const GridLineColor = '#d2d4d8';
+const GridLineColor = '#efefef';
 const BoardColor = '#e5ba67';
-const WhiteStoneColor = '#EEEEF0';
-const BlackStoneColor = '#101015';
+const WhiteStoneColor = '#e5e5e5'; // 
+const BlackStoneColor = '#3c3c44';
 
 interface IntersectionProps {
     width: number;
@@ -75,14 +75,14 @@ export class Intersection extends React.Component<IntersectionProps, Intersectio
                 <div style={{ pointerEvents: 'none', background: gridColor, width: this.props.lineThickness || 1, position: 'absolute', left: '50%', top: this.props.topEdge ? '50%' : 0, bottom: this.props.bottomEdge ? '50%' : 0, transform: 'translateX(-50%)' }} />
 
                 {/* Touch Surface */}
-                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: this.state.hover && this.props.state === State.Empty ? 'rgba(255, 255, 255, 0.5)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
+                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
 
-                {/* {
+                {
                     this.props.state === State.Black ?
                         <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || BlackStoneColor) : BlackStoneColor }} /> :
                         this.props.state === State.White ?
                             <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || WhiteStoneColor) : WhiteStoneColor }} /> : undefined
-                } */}
+                }
             </div>
         );
     }

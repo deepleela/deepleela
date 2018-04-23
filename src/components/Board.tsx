@@ -15,10 +15,14 @@ interface BoardStates {
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
 
+    static fromHumanCoord(x: number, y: number, size = 19) {
+        return { x: size - y, y: x - 1 };
+    }
 
     constructor(props: BoardProps, ctx: any) {
         super(props, ctx);
 
+        // y, x
         let states: State[][] = [];
         for (let i = 0; i < props.size; i++) {
             states[i] = [];
@@ -27,6 +31,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
             }
         }
 
+        let coord = Board.fromHumanCoord(3, 3);
+        states[coord.x][coord.y] = State.Black;
+        states[0][0] = State.White;
+        states[0][18] = State.White;
         this.state = { states };
     }
 
@@ -51,8 +59,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                     onClick={(r, c) => this.onClick(r, c)}
                                     style={{ color: this.props.style ? this.props.style.gridColor : undefined }}
                                     key={j}
-                                    row={i}
-                                    col={j}
+                                    row={19 - i}
+                                    col={19 - j}
                                     lineThickness={2}
                                     disabled={this.props.disabled}
                                     // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}
