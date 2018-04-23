@@ -53,6 +53,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                     key={j}
                                     row={i}
                                     col={j}
+                                    lineThickness={2}
                                     disabled={this.props.disabled}
                                     // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}
                                     width={size}

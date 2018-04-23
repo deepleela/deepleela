@@ -2,13 +2,14 @@ import * as React from 'react';
 import { CSSProperties } from 'react';
 import Stone from './Stone';
 
-const GridLineColor = '#63380E';
+const GridLineColor = '#d2d4d8';
 const BoardColor = '#e5ba67';
 const WhiteStoneColor = '#EEEEF0';
 const BlackStoneColor = '#101015';
 
 interface IntersectionProps {
     width: number;
+    lineThickness?: number;
     onClick: (row: number, col: number) => void;
     onMouseEnter?: (row: number, col: number) => void;
     onMouseLeave?: (row: number, col: number) => void;
@@ -68,10 +69,10 @@ export class Intersection extends React.Component<IntersectionProps, Intersectio
                 {this.props.star ? <div style={{ pointerEvents: 'none', background: gridColor, borderRadius: 9000, height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
 
                 {/* Vertical Grid Line */}
-                <div style={{ pointerEvents: 'none', background: gridColor, height: 1, position: 'absolute', top: '50%', right: this.props.rightEdge ? '50%' : 0, left: this.props.leftEdge ? '50%' : 0, transform: 'translateY(-50%)' }} />
+                <div style={{ pointerEvents: 'none', background: gridColor, height: this.props.lineThickness || 1, position: 'absolute', top: '50%', right: this.props.rightEdge ? '50%' : 0, left: this.props.leftEdge ? '50%' : 0, transform: 'translateY(-50%)' }} />
 
                 {/* Horizontal Grid Line */}
-                <div style={{ pointerEvents: 'none', background: gridColor, width: 1, position: 'absolute', left: '50%', top: this.props.topEdge ? '50%' : 0, bottom: this.props.bottomEdge ? '50%' : 0, transform: 'translateX(-50%)' }} />
+                <div style={{ pointerEvents: 'none', background: gridColor, width: this.props.lineThickness || 1, position: 'absolute', left: '50%', top: this.props.topEdge ? '50%' : 0, bottom: this.props.bottomEdge ? '50%' : 0, transform: 'translateX(-50%)' }} />
 
                 {/* Touch Surface */}
                 <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: this.state.hover && this.props.state === State.Empty ? 'rgba(255, 255, 255, 0.5)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
