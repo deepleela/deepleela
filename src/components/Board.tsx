@@ -41,6 +41,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     private onClick(row: number, col: number) {
+        console.log(row, col);
         if (this.props.onStonePlaced) this.props.onStonePlaced(row, col);
     }
 
