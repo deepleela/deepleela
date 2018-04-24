@@ -9,14 +9,21 @@ class App extends React.Component {
   componentDidMount() {
     // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
     // jQuery('#magnifyGlass').mousedown(e => e.)
+    window.onresize = (e) => this.forceUpdate();
   }
 
   public render() {
-    let isLandscape = window.screen.width > window.screen.height;
+    let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 5) : 100;
 
     return (
-      <div className="App" style={{ paddingTop: 30 }}>
+      <div className="App" style={{}}>
+        <div style={{ position: 'relative' }}>
+          <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
+            <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
+            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px' }}>DeepLeela</span>
+          </div>
+        </div>
         <div className='magnify' id='board' style={{ width: `${width}%`, height: '100%', margin: 'auto', }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>

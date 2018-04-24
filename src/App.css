@@ -1,5 +1,4 @@
 .App {
-  text-align: center;
   background-color: #ffffff;
 }
 
@@ -26,4 +25,9 @@
 
 .hidden {
   visibility: hidden;
+}
+
+#logo {
+  pointer-events: none;
+  user-select: none;
 }
