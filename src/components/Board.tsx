@@ -4,6 +4,8 @@ import { CSSProperties } from 'react';
 
 interface BoardProps {
     size: number;
+    className?: string;
+    id?: string;
     disabled?: boolean;
     onStonePlaced?: (row: number, col: number) => void,
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
@@ -47,7 +49,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const dimension = this.props.size;
 
         return (
-            <div style={this.props.style}>
+            <div className={this.props.className} id={this.props.id} style={this.props.style} draggable={false}>
 
                 <div style={{ background: this.props.style ? (this.props.style.background || '') : '', padding: 4, paddingBottom: `${0.6 + size}%`, }}>
 

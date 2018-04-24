@@ -4,7 +4,7 @@ import Stone from './Stone';
 
 const GridLineColor = '#efefef';
 const BoardColor = '#e5ba67';
-const WhiteStoneColor = '#e5e5e5'; // 
+const WhiteStoneColor = '#e5e5e5';
 const BlackStoneColor = '#3c3c44';
 
 interface IntersectionProps {
