@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Intersection, State } from './Intersection';
+import Intersection, { State } from './Intersection';
 import { CSSProperties } from 'react';
 
 interface BoardProps {
@@ -60,7 +60,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                             {row.map((state, j) => (
                                 <Intersection
                                     onClick={(r, c) => this.onClick(r, c)}
-                                    style={{ color: this.props.style ? this.props.style.gridColor : undefined }}
+                                    style={{ color: this.props.style ? this.props.style.gridColor : undefined, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
                                     key={j}
                                     row={19 - i}
                                     col={19 - j}

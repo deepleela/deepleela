@@ -3,7 +3,7 @@
 }
 
 .magnify {
-	z-index: 20;
+	z-index: 1;
 	position: relative;
 	overflow: hidden;
 }
@@ -25,6 +25,14 @@
 
 .hidden {
   visibility: hidden;
+}
+
+.inline {
+	display: inline;
+}
+
+.inline-block {
+	display: inline-block;
 }
 
 #logo {

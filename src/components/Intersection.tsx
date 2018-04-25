@@ -2,10 +2,6 @@ import * as React from 'react';
 import { CSSProperties } from 'react';
 import Stone from './Stone';
 
-const GridLineColor = '#efefef';
-const BoardColor = '#e5ba67';
-const WhiteStoneColor = '#e5e5e5';
-const BlackStoneColor = '#3c3c44';
 
 interface IntersectionProps {
     width: number;
@@ -36,7 +32,7 @@ export enum State {
     White,
 }
 
-export class Intersection extends React.Component<IntersectionProps, IntersectionStates> {
+export default class Intersection extends React.Component<IntersectionProps, IntersectionStates> {
 
     constructor(props: IntersectionProps, ctx: any) {
         super(props, ctx);
@@ -59,7 +55,7 @@ export class Intersection extends React.Component<IntersectionProps, Intersectio
     }
 
     render() {
-        const gridColor = this.props.style ? (this.props.style.color || GridLineColor) : GridLineColor;
+        const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
 
         return (
 
@@ -79,9 +75,9 @@ export class Intersection extends React.Component<IntersectionProps, Intersectio
 
                 {
                     this.props.state === State.Black ?
-                        <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || BlackStoneColor) : BlackStoneColor }} /> :
+                        <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black' }} /> :
                         this.props.state === State.White ?
-                            <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || WhiteStoneColor) : WhiteStoneColor }} /> : undefined
+                            <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white' }} /> : undefined
                 }
             </div>
         );
