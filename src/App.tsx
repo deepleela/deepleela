@@ -3,6 +3,8 @@ import * as React from 'react';
 import * as constants from './common/Constants';
 import Board from './components/Board';
 import Stone from './components/Stone';
+import i18n from './i18n';
+import NewGameDialog from './dialogs/NewGameDialog';
 
 class App extends React.Component {
 
@@ -18,7 +20,7 @@ class App extends React.Component {
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7) : 100;
 
     return (
-      <div className="App" style={{}}>
+      <div className="App" style={{}} >
 
         {/* Head Aera */}
         <div style={{ position: 'relative' }}>
@@ -35,13 +37,21 @@ class App extends React.Component {
             <div uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
               <div className="uk-nav uk-dropdown-nav" >
                 <ul className="uk-nav uk-dropdown-nav">
-                  <li className="uk-active"><a href="#">Active</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li className="uk-nav-header">Header</li>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
+
+                  <li><a >{i18n.menu.newgame}</a></li>
+                  <li><a href="#">{i18n.menu.loadsgf}</a></li>
+                  <li><a href="#">{i18n.menu.exportsgf}</a></li>
+
                   <li className="uk-nav-divider"></li>
-                  <li><a href="#">Item</a></li>
+
+                  <li><a href="#">{i18n.menu.pass}</a></li>
+                  <li><a href="#">{i18n.menu.resign}</a></li>
+                  <li><a href="#">{i18n.menu.score}</a></li>
+
+                  <li className="uk-nav-divider"></li>
+
+                  <li><a href="#">{i18n.menu.about}</a></li>
+
                 </ul></div>
             </div>
           </div>
@@ -58,15 +68,15 @@ class App extends React.Component {
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', zIndex: 2, marginTop: -24 }}>
           <div style={{ display: 'flex', width: `${width}%`, margin: 'auto', fontSize: 14, justifyContent: 'space-between', pointerEvents: 'none', }}>
-            <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignContent: 'middle' }}>
-              <div className='inline-block' style={{ position: 'relative', width: 14, height: 14, marginTop: 1, marginRight: 4 }}>
+            <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+              <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
                 <Stone style={{ color: constants.BlackStoneColor, }} />
               </div>
-              Human
+              <span>Human</span>
             </div>
 
-            <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignContent: 'middle' }}>
-              <div className='inline-block' style={{ position: 'relative', width: 14, height: 14, marginTop: 1, marginRight: 4 }}>
+            <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+              <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
                 <Stone style={{ color: constants.WhiteStoneColor, }} />
               </div>
               Leela
@@ -77,6 +87,8 @@ class App extends React.Component {
             &copy; 2018 DeepLeela | <a href="https://github.com" style={{ color: 'deepskyblue' }}>Github</a>
           </div>
         </div>
+
+        {/* Dialogs Aera */}
       </div>
     );
   }
