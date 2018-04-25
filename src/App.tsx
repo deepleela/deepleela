@@ -10,7 +10,6 @@ class App extends React.Component {
 
   componentDidMount() {
     // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
-    // jQuery('#magnifyGlass').mousedown(e => e.)
     window.onresize = (e) => this.forceUpdate();
   }
 
@@ -21,6 +20,7 @@ class App extends React.Component {
     return (
       <div className="App" style={{}}>
 
+        {/* Head Aera */}
         <div style={{ position: 'relative' }}>
           <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
             <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
@@ -28,14 +28,16 @@ class App extends React.Component {
           </div>
         </div>
 
+        {/* Board Aera */}
         <div className='magnify' id='board' style={{ width: `${width}%`, height: '100%', margin: 'auto', }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <Board size={19} style={{ background: 'white', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }} />
+            <Board size={19} style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }} />
           </div>
         </div>
 
-        <div style={{ position: 'fixed', bottom: 0, width: '100%', zIndex: 2, }}>
+        {/* Footer Aera */}
+        <div style={{ bottom: 0, width: '100%', zIndex: 2, marginTop: -24 }}>
           <div style={{ display: 'flex', width: `${width}%`, margin: 'auto', fontSize: 14, justifyContent: 'space-between', pointerEvents: 'none', }}>
             <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignContent: 'middle' }}>
               <div className='inline-block' style={{ position: 'relative', width: 14, height: 14, marginTop: 1, marginRight: 4 }}>

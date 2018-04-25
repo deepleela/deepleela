@@ -37,6 +37,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         states[coord.x][coord.y] = State.Black;
         states[0][0] = State.White;
         states[0][18] = State.White;
+        coord = Board.fromHumanCoord(16, 5);
+        states[coord.x][coord.y] = State.Black;
         this.state = { states };
     }
 
