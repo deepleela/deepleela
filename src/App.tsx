@@ -26,6 +26,25 @@ class App extends React.Component {
             <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
             <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px' }}>DeepLeela</span>
           </div>
+
+          {/* Menu */}
+          <div className='uk-inline' style={{ position: 'absolute', top: 0, left: 0, marginTop: 6, marginLeft: -6 }}>
+            <button className="uk-button uk-button-default no-border">
+              <span id='menu-button' uk-icon="icon: menu" style={{ color: 'lightgrey', display: 'block' }}></span>
+            </button>
+            <div uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
+              <div className="uk-nav uk-dropdown-nav" >
+                <ul className="uk-nav uk-dropdown-nav">
+                  <li className="uk-active"><a href="#">Active</a></li>
+                  <li><a href="#">Item</a></li>
+                  <li className="uk-nav-header">Header</li>
+                  <li><a href="#">Item</a></li>
+                  <li><a href="#">Item</a></li>
+                  <li className="uk-nav-divider"></li>
+                  <li><a href="#">Item</a></li>
+                </ul></div>
+            </div>
+          </div>
         </div>
 
         {/* Board Aera */}
