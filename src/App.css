@@ -39,6 +39,10 @@
 	border: none !important;
 }
 
+.full-width {
+	width: 100%;
+}
+
 #logo {
   pointer-events: none;
   user-select: none;
@@ -51,4 +55,8 @@
 #menu-button :hover {
 	color: dimgrey;
 	transition: all 0.5s;	
+}
+
+.ReactModal__Overlay {
+	z-index: 2;
 }

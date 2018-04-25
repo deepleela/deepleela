@@ -5,6 +5,8 @@ import Board from './components/Board';
 import Stone from './components/Stone';
 import i18n from './i18n';
 import NewGameDialog from './dialogs/NewGameDialog';
+import Modal from 'react-modal';
+
 
 class App extends React.Component {
 
@@ -12,6 +14,8 @@ class App extends React.Component {
 
   componentDidMount() {
     // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
+
+    Modal.setAppElement('#main');
     window.onresize = (e) => this.forceUpdate();
   }
 
@@ -20,7 +24,7 @@ class App extends React.Component {
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7) : 100;
 
     return (
-      <div className="App" style={{}} >
+      <div id="main" className="App" style={{}} >
 
         {/* Head Aera */}
         <div style={{ position: 'relative' }}>
@@ -89,6 +93,7 @@ class App extends React.Component {
         </div>
 
         {/* Dialogs Aera */}
+        <NewGameDialog />
       </div>
     );
   }

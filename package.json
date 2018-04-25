@@ -7,6 +7,7 @@
     "jquery": "^3.3.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-modal": "^3.4.4",
     "react-scripts-ts": "2.15.1"
   },
   "scripts": {
