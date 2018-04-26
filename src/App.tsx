@@ -7,10 +7,18 @@ import i18n from './i18n';
 import NewGameDialog from './dialogs/NewGameDialog';
 import Modal from 'react-modal';
 
+interface AppStates {
+  newGameDialogOpen?: boolean,
+}
 
-class App extends React.Component {
+class App extends React.Component<any, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  constructor(props: any, ctx) {
+    super(props, ctx);
+    this.state = {};
+  }
 
   componentDidMount() {
     // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
@@ -38,11 +46,11 @@ class App extends React.Component {
             <button className="uk-button uk-button-default no-border">
               <span id='menu-button' uk-icon="icon: menu" style={{ color: 'lightgrey', display: 'block' }}></span>
             </button>
-            <div uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
+            <div id="menu" uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
               <div className="uk-nav uk-dropdown-nav" >
                 <ul className="uk-nav uk-dropdown-nav">
 
-                  <li><a >{i18n.menu.newgame}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame}</a></li>
                   <li><a href="#">{i18n.menu.loadsgf}</a></li>
                   <li><a href="#">{i18n.menu.exportsgf}</a></li>
 
@@ -93,7 +101,7 @@ class App extends React.Component {
         </div>
 
         {/* Dialogs Aera */}
-        <NewGameDialog />
+        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} />
       </div>
     );
   }
