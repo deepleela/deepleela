@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import Stone from '../components/Stone';
 import * as constants from '../common/Constants';
 import i18n from '../i18n';
+import * as jQuery from 'jquery';
 
 const customStyles = {
     content: {
@@ -22,7 +23,7 @@ interface NewGameDialogProps {
     isOpen?: boolean,
 }
 
-interface NewGameDialogStates {
+export interface NewGameDialogStates {
     selectedColor: constants.StoneColor;
     komi: number,
     handicap: number,
@@ -33,9 +34,23 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
 
     constructor(props: NewGameDialogProps, ctx: any) {
         super(props, ctx);
-        this.state = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120 };
+
+        let preferences = localStorage.getItem('newgame');
+        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120 };
+        try {
+            this.state = preferences ? JSON.parse(preferences) : defaultPreference;
+        } catch (error) {
+            this.state = defaultPreference;
+        }
     }
-    
+
+    componentDidMount() {
+    }
+
+    savePreferences() {
+        localStorage.setItem('newgame', JSON.stringify(this.state));
+    }
+
     render() {
         return (
             <Modal isOpen={this.props.isOpen} style={customStyles} shouldCloseOnOverlayClick={true}>
@@ -83,10 +98,10 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <button className="uk-button uk-button-default" type="button" style={{ width: '48%', }} onClick={e => this.props.onCancel ? this.props.onCancel() : undefined}>
-                            {i18n.dialogs.newgame.cancel}
+                            {i18n.button.cancel}
                         </button>
-                        <button className="uk-button uk-button-primary" type="button" style={{ width: '48%', }} onClick={e => this.props.onOk ? this.props.onOk(this.state) : undefined}>
-                            {i18n.dialogs.newgame.ok}
+                        <button className="uk-button uk-button-primary" type="button" style={{ width: '48%', }} onClick={e => { this.props.onOk ? this.props.onOk(this.state) : undefined; this.savePreferences() }}>
+                            {i18n.button.ok}
                         </button>
                     </div>
                 </form>

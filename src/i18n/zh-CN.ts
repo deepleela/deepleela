@@ -20,10 +20,18 @@ export const lang = {
             komi: '贴目',
             handicap: '让子',
             time: '游戏时间 (分钟)',
-            ok: '确定',
-            cancel: '取消',
             black: '黑子',
             white: '白子',
         },
+
+        sgf: {
+            load: '导入 SGF',
+            export: '导出 SGF',
+        }
     },
+
+    button: {
+        ok: '确定',
+        cancel: '取消',
+    }
 }

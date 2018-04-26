@@ -20,10 +20,18 @@ export const lang = {
             komi: 'Komi',
             handicap: 'Handicap',
             time: 'Time (minutes)',
-            ok: 'OK',
-            cancel: 'Cancel',
             black: 'BLACK',
             white: 'WHITE',
         },
+
+        sgf: {
+            load: 'Load SGF',
+            export: 'Export SGF',
+        }
     },
+
+    button: {
+        ok: 'OK',
+        cancel: 'Cancel',
+    }
 }

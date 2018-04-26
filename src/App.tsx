@@ -4,11 +4,15 @@ import * as constants from './common/Constants';
 import Board from './components/Board';
 import Stone from './components/Stone';
 import i18n from './i18n';
-import NewGameDialog from './dialogs/NewGameDialog';
+import NewGameDialog, { NewGameDialogStates } from './dialogs/NewGameDialog';
+import SGFDialog from './dialogs/SGFDialog';
 import Modal from 'react-modal';
+import * as jQuery from 'jquery';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
+  loadSgfDialogOpen?: boolean,
+  exportSgfDialogOpen?: boolean,
 }
 
 class App extends React.Component<any, AppStates> {
@@ -27,9 +31,29 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => this.forceUpdate();
   }
 
+  onNewGame(config: NewGameDialogStates) {
+    this.setState({ newGameDialogOpen: false });
+  }
+
+
+  fadeIn() {
+    jQuery('body').addClass('uk-animation-fade');
+  }
+
+  fadeOut() {
+    jQuery('body').removeClass('uk-animation-fade');
+  }
+
+
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7) : 100;
+
+    if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen].some(v => v !== false && v !== undefined)) {
+      this.fadeIn();
+    } else {
+      this.fadeOut();
+    }
 
     return (
       <div id="main" className="App" style={{}} >
@@ -51,8 +75,8 @@ class App extends React.Component<any, AppStates> {
                 <ul className="uk-nav uk-dropdown-nav">
 
                   <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame}</a></li>
-                  <li><a href="#">{i18n.menu.loadsgf}</a></li>
-                  <li><a href="#">{i18n.menu.exportsgf}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}>{i18n.menu.loadsgf}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true })}>{i18n.menu.exportsgf}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
@@ -101,7 +125,9 @@ class App extends React.Component<any, AppStates> {
         </div>
 
         {/* Dialogs Aera */}
-        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} />
+        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewGame(c)} />
+        <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} />
+        <SGFDialog isOpen={this.state.exportSgfDialogOpen} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
       </div>
     );
   }
