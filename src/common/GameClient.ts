@@ -1,3 +1,9 @@
+import { Command } from "@sabaki/gtp";
+
+export interface Protocol {
+    type: 'gtp' | 'sys',
+    data: any;
+}
 
 export default class GameClient {
 
@@ -32,6 +38,14 @@ export default class GameClient {
     }
 
     private onmessage(ev: MessageEvent) {
+
+    }
+
+    sendGtpCommand(cmd: Command) {
+        
+    }
+
+    sendSysMessage(msg: any) {
 
     }
 }
