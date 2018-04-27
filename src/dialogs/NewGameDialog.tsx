@@ -4,20 +4,7 @@ import Stone from '../components/Stone';
 import * as constants from '../common/Constants';
 import i18n from '../i18n';
 import * as jQuery from 'jquery';
-
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        borderRadius: 0,
-        minWidth: '270px',
-        transform: 'translate(-50%, -50%)',
-        boxShadow: '-2px -1px 22px -5px rgba(99,99,99,0.7)',
-    }
-};
+import { littleBox } from './Styles';
 
 interface NewGameDialogProps {
     onCancel?: () => void,
@@ -55,7 +42,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
 
     render() {
         return (
-            <Modal isOpen={this.props.isOpen} style={customStyles} shouldCloseOnOverlayClick={true}>
+            <Modal isOpen={this.props.isOpen} style={littleBox} shouldCloseOnOverlayClick={true}>
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{i18n.dialogs.newgame.title}</legend>
 

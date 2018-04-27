@@ -1,21 +1,7 @@
 import * as React from 'react';
 import Modal from 'react-modal';
 import i18n from '../i18n';
-
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        minWidth: '270px',
-        width: '50%',
-        borderRadius: 0,
-        transform: 'translate(-50%, -50%)',
-        boxShadow: '-2px -1px 22px -5px rgba(99,99,99,0.7)',
-    }
-};
+import { littleBox, largeBox } from './Styles';
 
 interface SGFDialogProps {
     sgf?: string;
@@ -29,7 +15,7 @@ export default class SGFDialog extends React.Component<SGFDialogProps, any>{
 
     render() {
         return (
-            <Modal isOpen={this.props.isOpen} style={customStyles} shouldCloseOnOverlayClick={true}>
+            <Modal isOpen={this.props.isOpen} style={largeBox} shouldCloseOnOverlayClick={true}>
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{this.props.readOnly ? i18n.dialogs.sgf.export : i18n.dialogs.sgf.load}</legend>
                     <div className="uk-margin">

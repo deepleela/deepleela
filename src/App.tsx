@@ -6,6 +6,7 @@ import Stone from './components/Stone';
 import i18n from './i18n';
 import NewGameDialog, { NewGameDialogStates } from './dialogs/NewGameDialog';
 import SGFDialog from './dialogs/SGFDialog';
+import LoadingDialog from './dialogs/LoadingDialog';
 import Modal from 'react-modal';
 import * as jQuery from 'jquery';
 
@@ -13,6 +14,7 @@ interface AppStates {
   newGameDialogOpen?: boolean,
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
+  loadingDialogOpen?: boolean;
 }
 
 class App extends React.Component<any, AppStates> {
@@ -35,7 +37,6 @@ class App extends React.Component<any, AppStates> {
     this.setState({ newGameDialogOpen: false });
   }
 
-
   fadeIn() {
     jQuery('body').addClass('uk-animation-fade');
   }
@@ -49,7 +50,7 @@ class App extends React.Component<any, AppStates> {
     let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7) : 100;
 
-    if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen].some(v => v !== false && v !== undefined)) {
+    if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen, this.state.loadingDialogOpen].some(v => v !== false && v !== undefined)) {
       this.fadeIn();
     } else {
       this.fadeOut();
@@ -120,7 +121,7 @@ class App extends React.Component<any, AppStates> {
           </div>
 
           <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', margin: ' 8px 0' }}>
-            &copy; 2018 DeepLeela | <a href="https://github.com" style={{ color: 'deepskyblue' }}>Github</a>
+            &copy; 2018 DeepLeela | <a href="https://github.com/deepleela/deepleela" style={{ color: 'deepskyblue' }}>Github</a>
           </div>
         </div>
 
@@ -128,6 +129,7 @@ class App extends React.Component<any, AppStates> {
         <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewGame(c)} />
         <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} />
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
+        <LoadingDialog isOpen={this.state.loadingDialogOpen} />
       </div>
     );
   }
