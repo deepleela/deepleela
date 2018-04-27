@@ -1,9 +1,5 @@
 import { Command } from "@sabaki/gtp";
-
-export interface Protocol {
-    type: 'gtp' | 'sys',
-    data: any;
-}
+import { Protocol, ProtocolDef } from 'deepleela-common';
 
 export default class GameClient {
 
@@ -42,7 +38,7 @@ export default class GameClient {
     }
 
     sendGtpCommand(cmd: Command) {
-        
+
     }
 
     sendSysMessage(msg: any) {

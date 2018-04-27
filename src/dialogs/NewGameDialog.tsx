@@ -12,8 +12,10 @@ const customStyles = {
         right: 'auto',
         bottom: 'auto',
         marginRight: '-50%',
+        borderRadius: 0,
         minWidth: '270px',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        boxShadow: '-2px -1px 22px -5px rgba(99,99,99,0.7)',
     }
 };
 
