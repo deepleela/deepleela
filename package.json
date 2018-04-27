@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@sabaki/gtp": "^1.1.0",
     "animejs": "^2.2.0",
     "jquery": "^3.3.1",
     "react": "^16.3.2",
