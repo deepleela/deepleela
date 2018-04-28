@@ -66,7 +66,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                     style={{ color: this.props.style ? this.props.style.gridColor : undefined, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
                                     key={j}
                                     row={19 - i}
-                                    col={19 - j}
+                                    col={j + 1}
                                     lineThickness={2}
                                     disabled={this.props.disabled}
                                     // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}

@@ -1,6 +1,7 @@
 import { Command } from "@sabaki/gtp";
 import { Protocol, ProtocolDef } from 'deepleela-common';
 import { EventEmitter } from "events";
+import CommandBuilder from "./CommandBuilder";
 
 export default class GameClient extends EventEmitter {
 
@@ -42,7 +43,7 @@ export default class GameClient extends EventEmitter {
             let msg: ProtocolDef = JSON.parse(ev.data as string);
             let callback = this.pendingCallbacks.get(msg.data.id);
             if (!callback) return;
-            
+
             callback(msg.data.args);
             this.pendingCallbacks.delete(msg.data.id);
         } catch (error) {
@@ -70,7 +71,8 @@ export default class GameClient extends EventEmitter {
     }
 
     sendGtpCommand(cmd: Command) {
-
+        let msg = { type: 'gtp', data: Command.toString(cmd) };
+        this.ws.send(JSON.stringify(msg));
     }
 
     sendSysMessage(cmd: Command) {
@@ -79,8 +81,15 @@ export default class GameClient extends EventEmitter {
     }
 
     requestAI(callback: (args: any[]) => void) {
-        let cmd = { id: this.msgId++, name: Protocol.sys.requestAI }
+        let cmd = { id: this.msgId++, name: Protocol.sys.requestAI };
         this.sendSysMessage(cmd);
         this.pendingCallbacks.set(cmd.id, callback);
+    }
+
+    initBoard(configs: { komi: number, handicap: number, time: number, }) {
+        this.sendGtpCommand(CommandBuilder.clear_board(this.msgId++));
+        if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
+        if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
+        if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
     }
 }

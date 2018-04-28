@@ -36,7 +36,7 @@ export default class CommandBuilder {
         return { id, name: 'clear_board' };
     }
 
-    static komi(id?: number, komi = 6.5): Command {
+    static komi(komi = 6.5, id?: number): Command {
         return { id, name: 'komi', args: [komi] };
     }
 

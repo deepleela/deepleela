@@ -1,10 +1,10 @@
+// Source from http://cjlarose.com/2014/01/09/react-board-game-tutorial.html
+
 import { State } from "../components/Intersection";
 
 type Coordinate = { row: number, col: number };
 
-// Source from http://cjlarose.com/2014/01/09/react-board-game-tutorial.html
-
-export class Go {
+export default class Go {
 
     private koStones?: { coor: Coordinate, stoneColor: State, deadStones: Coordinate[], deadColor: State };
 
@@ -34,7 +34,7 @@ export class Go {
         return states;
     }
 
-    private switchPlayer() {
+    private turn() {
         this.current = this.opponentOf(this.current);
     }
 
@@ -134,7 +134,7 @@ export class Go {
         }
 
         this.history.push({ stone: this.current, coor: { row, col } });
-        this.switchPlayer();
+        this.turn();
         return true;
     }
 
@@ -143,13 +143,12 @@ export class Go {
     }
 
     pass() {
-        this.switchPlayer();
+        this.turn();
     }
 
     clear(resize?: number) {
         this.history = [];
         this.board = this.create(resize || (this.board.length || 19));
     }
-
 
 }

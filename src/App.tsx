@@ -38,10 +38,17 @@ class App extends React.Component<any, AppStates> {
 
   onNewGame(config: NewGameDialogStates) {
     this.setState({ newGameDialogOpen: false, loadingDialogOpen: true });
+    
     this.client.requestAI(args => {
       let [success, pending] = args as [boolean, number];
       this.setState({ loadingDialogOpen: false });
-      if (!success || pending > 0) UIkit.notify(i18n.notifications.serversbusy(pending));
+
+      if (!success || pending > 0) {
+        UIkit.notify(i18n.notifications.serversbusy(pending));
+        return;
+      }
+
+      this.client.initBoard(config);
     });
   }
 
@@ -107,8 +114,8 @@ class App extends React.Component<any, AppStates> {
           <div className='element_to_magnify'>
             <Board
               style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
-              size={19} 
-              />
+              size={19}
+            />
           </div>
         </div>
 

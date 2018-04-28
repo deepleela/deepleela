@@ -13,13 +13,15 @@ declare module '@sabaki/gtp' {
         id?: number;
         name: string;
         args?: any;
-        static fromString(input: string);
-        static toString(cmd: Command);
+        static fromString(input: string): Command;
+        static toString(cmd: Command): string;
     }
 
     export class Response {
         id?: any;
         content?: any;
         error?: any;
+        static fromString(input: string): Response;
+        static toString(resp: Response): string;
     }
 }
