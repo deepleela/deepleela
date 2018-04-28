@@ -27,9 +27,9 @@ interface IntersectionStates {
 }
 
 export enum State {
-    Empty,
-    Black,
-    White,
+    White = -1,
+    Empty = 0,
+    Black = 1,
 }
 
 export default class Intersection extends React.Component<IntersectionProps, IntersectionStates> {

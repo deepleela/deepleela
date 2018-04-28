@@ -105,7 +105,10 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' id='board' style={{ width: `${width}%`, height: '100%', margin: 'auto', }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <Board size={19} style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }} />
+            <Board
+              style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
+              size={19} 
+              />
           </div>
         </div>
 
