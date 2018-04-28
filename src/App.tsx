@@ -11,6 +11,8 @@ import Modal from 'react-modal';
 import * as jQuery from 'jquery';
 import GameClient from './common/GameClient';
 import { Protocol } from 'deepleela-common';
+import Go from './common/Go';
+import SmartGoBoard from './SmartGoBoard';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -22,7 +24,8 @@ interface AppStates {
 class App extends React.Component<any, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  private readonly client = GameClient.default;
+
+  private smartBoard: SmartGoBoard;
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -36,20 +39,20 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => this.forceUpdate();
   }
 
-  onNewGame(config: NewGameDialogStates) {
+  async onNewAIGame(config: NewGameDialogStates) {
     this.setState({ newGameDialogOpen: false, loadingDialogOpen: true });
-    
-    this.client.requestAI(args => {
-      let [success, pending] = args as [boolean, number];
-      this.setState({ loadingDialogOpen: false });
+    let [success, pending] = await this.smartBoard.newAIGame(config);
+    this.setState({ loadingDialogOpen: false });
+    if (!success || pending > 0) {
+      UIkit.notify(i18n.notifications.serversBusy(pending));
+      UIkit.notify(i18n.notifications.aiNotAvailable);
+    }
+  }
 
-      if (!success || pending > 0) {
-        UIkit.notify(i18n.notifications.serversbusy(pending));
-        return;
-      }
-
-      this.client.initBoard(config);
-    });
+  async onNewSelfGame() {
+    this.setState({ loadingDialogOpen: true });
+    if (!await this.smartBoard.newSelfGame()) UIkit.notify(i18n.notifications.aiNotAvailable);
+    this.setState({ loadingDialogOpen: false });
   }
 
   fadeIn() {
@@ -89,7 +92,8 @@ class App extends React.Component<any, AppStates> {
               <div className="uk-nav uk-dropdown-nav" >
                 <ul className="uk-nav uk-dropdown-nav">
 
-                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame_vs_leela}</a></li>
+                  <li><a href="#" onClick={e => this.smartBoard.newSelfGame()} >{i18n.menu.newgame_vs_self}</a></li>
                   <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}>{i18n.menu.loadsgf}</a></li>
                   <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true })}>{i18n.menu.exportsgf}</a></li>
 
@@ -112,10 +116,7 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' id='board' style={{ width: `${width}%`, height: '100%', margin: 'auto', }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <Board
-              style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
-              size={19}
-            />
+            <SmartGoBoard ref={e => this.smartBoard = e!} />
           </div>
         </div>
 
@@ -143,7 +144,7 @@ class App extends React.Component<any, AppStates> {
         </div>
 
         {/* Dialogs Aera */}
-        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewGame(c)} />
+        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.smartBoard.newAIGame(c)} />
         <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} />
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />

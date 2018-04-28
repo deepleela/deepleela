@@ -2,7 +2,8 @@
 export const lang = {
     menu: {
 
-        newgame: 'New Game',
+        newgame_vs_leela: 'New Game (vs. Leela)',
+        newgame_vs_self: 'New Game (vs. Self)',
         loadsgf: 'Load SGF',
         exportsgf: 'Export SGF',
 
@@ -31,7 +32,8 @@ export const lang = {
     },
 
     notifications: {
-        serversbusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
+        serversBusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
+        aiNotAvailable: `You won't get AI's suggestions at this moment.`,
     },
 
     button: {

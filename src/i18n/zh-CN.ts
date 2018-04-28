@@ -2,7 +2,8 @@
 export const lang = {
     menu: {
 
-        newgame: '新对局',
+        newgame_vs_leela: '新对局 (Leela对弈)',
+        newgame_vs_self: '新对局 (自我对弈)',
         loadsgf: '载入SGF',
         exportsgf: '导出SGF',
 
@@ -31,7 +32,8 @@ export const lang = {
     },
 
     notifications: {
-        serversbusy: (number) => `服务器繁忙，请稍后再试. 等待服务用户: ${number}`,
+        serversBusy: (number) => `服务器繁忙，请稍后再试. 等待服务用户: ${number}`,
+        aiNotAvailable: `本局暂时不会得到AI的建议`,
     },
 
     button: {

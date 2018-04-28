@@ -9,10 +9,10 @@ interface BoardProps {
     disabled?: boolean;
     onStonePlaced?: (row: number, col: number) => void,
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
+    states: State[][];
 }
 
 interface BoardStates {
-    states: State[][];
 }
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
@@ -24,22 +24,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     constructor(props: BoardProps, ctx: any) {
         super(props, ctx);
 
-        // y, x
-        let states: State[][] = [];
-        for (let i = 0; i < props.size; i++) {
-            states[i] = [];
-            for (let j = 0; j < props.size; j++) {
-                states[i].push(State.Empty);
-            }
-        }
-
-        let coord = Board.fromHumanCoord(3, 3);
-        states[coord.x][coord.y] = State.Black;
-        states[0][0] = State.White;
-        states[0][18] = State.White;
-        coord = Board.fromHumanCoord(16, 5);
-        states[coord.x][coord.y] = State.Black;
-        this.state = { states };
+        // this.state = { states };
     }
 
     private onClick(row: number, col: number) {
@@ -56,7 +41,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                 <div style={{ background: this.props.style ? (this.props.style.background || '') : '', padding: 4, paddingBottom: `${0.6 + size}%`, }}>
 
-                    {this.state.states.map((row, i) => (
+                    {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
                             <div style={{ position: 'absolute', left: 0, top: 10, fontSize: 8, fontWeight: 100, color: '#ccc', }}>{19 - i}</div>
 
