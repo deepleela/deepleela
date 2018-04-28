@@ -30,6 +30,10 @@ export const lang = {
         }
     },
 
+    notifications: {
+        serversbusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
+    },
+
     button: {
         ok: 'OK',
         cancel: 'Cancel',

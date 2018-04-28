@@ -9,6 +9,8 @@ export default class GameClient extends EventEmitter {
 
     private ws: WebSocket;
     private reconnected = false;
+    private msgId = 0;
+    private pendingCallbacks = new Map<number, Function>();
 
     constructor() {
         super();
@@ -33,11 +35,19 @@ export default class GameClient extends EventEmitter {
     }
 
     private onerror = (ev: Event) => {
-        setTimeout(() => this.reconnect(), 2000);
     }
 
     private onmessage = (ev: MessageEvent) => {
-
+        try {
+            let msg: ProtocolDef = JSON.parse(ev.data as string);
+            let callback = this.pendingCallbacks.get(msg.data.id);
+            if (!callback) return;
+            
+            callback(msg.data.args);
+            this.pendingCallbacks.delete(msg.data.id);
+        } catch (error) {
+            console.info(error.message);
+        }
     }
 
     private reconnect() {
@@ -63,7 +73,14 @@ export default class GameClient extends EventEmitter {
 
     }
 
-    sendSysMessage(msg: any) {
+    sendSysMessage(cmd: Command) {
+        let msg: ProtocolDef = { type: 'sys', data: cmd }
+        this.ws.send(JSON.stringify(msg));
+    }
 
+    requestAI(callback: (args: any[]) => void) {
+        let cmd = { id: this.msgId++, name: Protocol.sys.requestAI }
+        this.sendSysMessage(cmd);
+        this.pendingCallbacks.set(cmd.id, callback);
     }
 }

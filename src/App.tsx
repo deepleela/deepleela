@@ -9,6 +9,8 @@ import SGFDialog from './dialogs/SGFDialog';
 import LoadingDialog from './dialogs/LoadingDialog';
 import Modal from 'react-modal';
 import * as jQuery from 'jquery';
+import GameClient from './common/GameClient';
+import { Protocol } from 'deepleela-common';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -20,6 +22,7 @@ interface AppStates {
 class App extends React.Component<any, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  private readonly client = GameClient.default;
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -34,7 +37,12 @@ class App extends React.Component<any, AppStates> {
   }
 
   onNewGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true });
+    this.client.requestAI(args => {
+      let [success, pending] = args as [boolean, number];
+      this.setState({ loadingDialogOpen: false });
+      if (!success || pending > 0) UIkit.notify(i18n.notifications.serversbusy(pending));
+    });
   }
 
   fadeIn() {
@@ -44,7 +52,6 @@ class App extends React.Component<any, AppStates> {
   fadeOut() {
     jQuery('body').removeClass('uk-animation-fade');
   }
-
 
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;

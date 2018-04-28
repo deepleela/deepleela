@@ -5,7 +5,7 @@
   "dependencies": {
     "@sabaki/gtp": "^1.1.0",
     "animejs": "^2.2.0",
-    "deepleela-common": "github:deepleela/deepleela-common",
+    "deepleela-common": "deepleela/deepleela-common",
     "jquery": "^3.3.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
@@ -21,9 +21,10 @@
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/jquery": "^3.3.1",
-    "@types/node": "^9.6.6",
-    "@types/react": "^16.3.12",
+    "@types/node": "^9.6.7",
+    "@types/react": "^16.3.13",
     "@types/react-dom": "^16.0.5",
+    "@types/uikit": "^2.27.6",
     "typescript": "^2.8.3"
   }
 }

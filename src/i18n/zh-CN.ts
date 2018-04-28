@@ -30,6 +30,10 @@ export const lang = {
         }
     },
 
+    notifications: {
+        serversbusy: (number) => `服务器繁忙，请稍后再试. 等待服务用户: ${number}`,
+    },
+
     button: {
         ok: '确定',
         cancel: '取消',

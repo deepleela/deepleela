@@ -58,6 +58,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.state.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
+                            <div style={{ position: 'absolute', left: 0, top: 10, fontSize: 8, fontWeight: 100, color: '#ccc', }}>{19 - i}</div>
 
                             {row.map((state, j) => (
                                 <Intersection
