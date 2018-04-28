@@ -93,7 +93,7 @@ class App extends React.Component<any, AppStates> {
                 <ul className="uk-nav uk-dropdown-nav">
 
                   <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame_vs_leela}</a></li>
-                  <li><a href="#" onClick={e => this.smartBoard.newSelfGame()} >{i18n.menu.newgame_vs_self}</a></li>
+                  <li><a href="#" onClick={e => this.onNewSelfGame()} >{i18n.menu.newgame_vs_self}</a></li>
                   <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}>{i18n.menu.loadsgf}</a></li>
                   <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true })}>{i18n.menu.exportsgf}</a></li>
 
@@ -144,7 +144,7 @@ class App extends React.Component<any, AppStates> {
         </div>
 
         {/* Dialogs Aera */}
-        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.smartBoard.newAIGame(c)} />
+        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} />
         <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} />
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />

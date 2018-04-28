@@ -1,7 +1,7 @@
-import { Command } from "@sabaki/gtp";
+import { Command, Response } from "@sabaki/gtp";
 import { Protocol, ProtocolDef } from 'deepleela-common';
 import { EventEmitter } from "events";
-import CommandBuilder from "./CommandBuilder";
+import CommandBuilder, { StoneColor } from "./CommandBuilder";
 
 export default class GameClient extends EventEmitter {
 
@@ -41,11 +41,24 @@ export default class GameClient extends EventEmitter {
     private onmessage = (ev: MessageEvent) => {
         try {
             let msg: ProtocolDef = JSON.parse(ev.data as string);
-            let callback = this.pendingCallbacks.get(msg.data.id);
-            if (!callback) return;
+            let callback: Function | undefined = undefined;
+            
+            switch (msg.type) {
+                case 'gtp':
+                    let resp = Response.fromString(msg.data);
+                    callback = this.pendingCallbacks.get(resp.id || -1);
+                    if (!callback) return;
+                    callback(msg.data);
+                    this.pendingCallbacks.delete(resp.id!);
+                    break;
+                case 'sys':
+                    callback = this.pendingCallbacks.get(msg.data.id);
+                    if (!callback) return;
+                    callback(msg.data.args);
+                    this.pendingCallbacks.delete(msg.data.id);
+                    break;
+            }
 
-            callback(msg.data.args);
-            this.pendingCallbacks.delete(msg.data.id);
         } catch (error) {
             console.info(error.message);
         }
@@ -80,7 +93,7 @@ export default class GameClient extends EventEmitter {
         this.ws.send(JSON.stringify(msg));
     }
 
-    requestAI(callback: (args: any[]) => void) {
+    requestAI(callback: (args: [boolean, number]) => void) {
         let cmd = { id: this.msgId++, name: Protocol.sys.requestAI };
         this.sendSysMessage(cmd);
         this.pendingCallbacks.set(cmd.id, callback);
@@ -91,5 +104,16 @@ export default class GameClient extends EventEmitter {
         if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
         if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
         if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
+    }
+
+    genmove(color: StoneColor): Promise<string> {
+        return new Promise(resolve => {
+            let cmd = CommandBuilder.genmove(color, this.msgId++);
+            this.sendGtpCommand(cmd);
+            this.pendingCallbacks.set(cmd.id!, (respstr: string) => {
+                let resp = Response.fromString(respstr);
+                resolve(resp.content as string);
+            });
+        });
     }
 }

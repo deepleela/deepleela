@@ -7,7 +7,7 @@ interface BoardProps {
     className?: string;
     id?: string;
     disabled?: boolean;
-    onStonePlaced?: (row: number, col: number) => void,
+    onStonePlaced?: (row: number, col: number) => void, // Call when users click a position on board, cartesian coordinate
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
     states: State[][];
 }
@@ -17,8 +17,13 @@ interface BoardStates {
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
 
-    static fromHumanCoord(x: number, y: number, size = 19) {
-        return { x: size - y, y: x - 1 };
+    static fromCartesianCoord(x: number, y: number, size = 19) {
+        return { x: size - x, y: y - 1 };
+    }
+
+    static cartesianCoordToString(x: number, y: number) {
+        let alphabets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+        return `${alphabets[y - 1]}${x}`;
     }
 
     constructor(props: BoardProps, ctx: any) {
@@ -28,8 +33,9 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     private onClick(row: number, col: number) {
-        console.log(row, col);
-        if (this.props.onStonePlaced) this.props.onStonePlaced(row, col);
+        if (!this.props.onStonePlaced) return;
+        this.props.onStonePlaced(row, col);
+        
     }
 
     render() {
