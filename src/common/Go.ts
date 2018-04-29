@@ -160,6 +160,7 @@ export default class Go {
     clear(resize?: number) {
         this.history = [];
         this.board = this.create(resize || (this.board.length || 19));
+        this.current = State.Black;
     }
 
 }

@@ -12,13 +12,16 @@ import * as jQuery from 'jquery';
 import GameClient from './common/GameClient';
 import { Protocol } from 'deepleela-common';
 import Go from './common/Go';
-import SmartGoBoard from './SmartGoBoard';
+import SmartGoBoard from './widgets/SmartGoBoard';
+import PlayersStatus from './widgets/PlayersStatus';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
+
+  goEngine?: string;
 }
 
 class App extends React.Component<any, AppStates> {
@@ -50,7 +53,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, goEngine: config.engine });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -75,7 +78,10 @@ class App extends React.Component<any, AppStates> {
 
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;
-    let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7) : 100;
+    let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
+    let gameMode = this.smartBoard ? this.smartBoard.gameMode : 'self';
+    let whitePlayer = gameMode === 'self' ? 'Human' : this.smartBoard.userStone === 'W' ? 'Human' : this.state.goEngine;
+    let blackPlayer = gameMode === 'self' ? 'Human' : this.smartBoard.userStone === 'B' ? 'Human' : this.state.goEngine;
 
     if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen, this.state.loadingDialogOpen].some(v => v !== false && v !== undefined)) {
       this.fadeIn();
@@ -132,22 +138,7 @@ class App extends React.Component<any, AppStates> {
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', zIndex: 2, marginTop: -24 }}>
-          <div style={{ display: 'flex', width: `${width}%`, margin: 'auto', fontSize: 14, justifyContent: 'space-between', pointerEvents: 'none', }}>
-            <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
-              <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
-                <Stone style={{ color: constants.BlackStoneColor, }} />
-              </div>
-              <span>Human</span>
-            </div>
-
-            <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
-              <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
-                <Stone style={{ color: constants.WhiteStoneColor, }} />
-              </div>
-              Leela
-            </div>
-          </div>
-
+          <PlayersStatus width={`${width}%`} whitePlayer={whitePlayer} blackPlayer={blackPlayer} />
           <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', margin: ' 8px 0' }}>
             &copy; 2018 DeepLeela | <a href="https://github.com/deepleela/deepleela" style={{ color: 'deepskyblue' }}>Github</a>
           </div>

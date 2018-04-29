@@ -1,15 +1,15 @@
 import * as React from 'react';
-import * as constants from './common/Constants';
-import Board from './components/Board';
-import Stone from './components/Stone';
-import i18n from './i18n';
+import * as constants from '../common/Constants';
+import Board from '../components/Board';
+import Stone from '../components/Stone';
+import i18n from '../i18n';
 import * as jQuery from 'jquery';
-import GameClient from './common/GameClient';
+import GameClient from '../common/GameClient';
 import { Protocol } from 'deepleela-common';
-import Go from './common/Go';
-import { NewGameDialogStates } from './dialogs/NewGameDialog';
-import { State } from './components/Intersection';
-import { StoneColor } from './common/Constants';
+import Go from '../common/Go';
+import { NewGameDialogStates } from '../dialogs/NewGameDialog';
+import { State } from '../components/Intersection';
+import { StoneColor } from '../common/Constants';
 
 interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
 
@@ -41,6 +41,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             await this.genmove('B');
         }
 
+        this.forceUpdate();
         return results;
     }
 
@@ -51,6 +52,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 6.5, time: 120 });
 
+        this.forceUpdate();
         return results[0];
     }
 
