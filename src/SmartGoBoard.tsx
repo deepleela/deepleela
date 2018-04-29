@@ -31,7 +31,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
 
-        let results = await this.client.requestAI();
+        let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
 
         this.client.initBoard(config);
@@ -47,7 +47,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
 
-        let results = await this.client.requestAI();
+        let results = await this.client.requestAI('leela');
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 6.5, time: 120 });
 

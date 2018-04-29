@@ -17,6 +17,7 @@ export interface NewGameDialogStates {
     komi: number,
     handicap: number,
     time: number,
+    engine: string;
 }
 
 export default class NewGameDialog extends React.Component<NewGameDialogProps, NewGameDialogStates> {
@@ -25,7 +26,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
         super(props, ctx);
 
         let preferences = localStorage.getItem('newgame');
-        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120 };
+        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120, engine: 'leela' };
         try {
             this.state = preferences ? JSON.parse(preferences) : defaultPreference;
         } catch (error) {
@@ -55,6 +56,20 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                             </select>
                             <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
                                 <Stone style={{ color: this.state.selectedColor == "B" ? constants.BlackStoneColor : constants.WhiteStoneColor, width: 18, height: 18, top: 0, right: 0, bottom: 0, left: 0, position: 'relative', margin: '0 4px' }} />
+                                <span className="selected-text"></span>
+                                <span uk-icon="icon: chevron-down"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="uk-margin">
+                        <label className="uk-form-label">{i18n.dialogs.newgame.engine}:</label>
+                        <div className="full-width" uk-form-custom="target: > * > span.selected-text">
+                            <select style={{ width: '100%' }} onChange={e => this.setState({ engine: e.target.value })} defaultValue={this.state.engine}>
+                                <option value="leela">{'leela'}</option>
+                                <option value="leelazero">{'leela-zero'}</option>
+                            </select>
+                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
                                 <span className="selected-text"></span>
                                 <span uk-icon="icon: chevron-down"></span>
                             </button>

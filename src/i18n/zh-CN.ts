@@ -18,6 +18,7 @@ export const lang = {
         newgame: {
             title: '新对局',
             yourColor: '执子颜色',
+            engine: '游戏引擎',
             komi: '贴目',
             handicap: '让子',
             time: '游戏时间 (分钟)',

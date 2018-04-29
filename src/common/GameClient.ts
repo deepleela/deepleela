@@ -93,11 +93,11 @@ export default class GameClient extends EventEmitter {
         return true;
     }
 
-    requestAI(args?: any): Promise<[boolean, number]> {
+    requestAI(engine: string): Promise<[boolean, number]> {
         return new Promise(resolve => {
-            let cmd = { id: this.msgId++, name: Protocol.sys.requestAI };
+            let cmd: Command = { id: this.msgId++, name: Protocol.sys.requestAI, args: engine };
             if (!this.sendSysMessage(cmd)) resolve([false, -1]);
-            this.pendingCallbacks.set(cmd.id, (args: [boolean, number]) => resolve(args));
+            this.pendingCallbacks.set(cmd.id!, (args: [boolean, number]) => resolve(args));
         });
     }
 

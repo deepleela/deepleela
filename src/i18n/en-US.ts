@@ -18,6 +18,7 @@ export const lang = {
         newgame: {
             title: 'New Game',
             yourColor: 'Your Color',
+            engine: 'Go Engine',
             komi: 'Komi',
             handicap: 'Handicap',
             time: 'Time (minutes)',
