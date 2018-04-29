@@ -86,16 +86,19 @@ export default class GameClient extends EventEmitter {
     }
 
     sendSysMessage(cmd: Command) {
-        if (!this.connected) return;
+        if (!this.connected) return false;
 
         let msg: ProtocolDef = { type: 'sys', data: cmd }
         this.ws.send(JSON.stringify(msg));
+        return true;
     }
 
-    requestAI(callback: (args: [boolean, number]) => void) {
-        let cmd = { id: this.msgId++, name: Protocol.sys.requestAI };
-        this.sendSysMessage(cmd);
-        this.pendingCallbacks.set(cmd.id, callback);
+    requestAI(args?: any): Promise<[boolean, number]> {
+        return new Promise(resolve => {
+            let cmd = { id: this.msgId++, name: Protocol.sys.requestAI };
+            if (!this.sendSysMessage(cmd)) resolve([false, -1]);
+            this.pendingCallbacks.set(cmd.id, (args: [boolean, number]) => resolve(args));
+        });
     }
 
     initBoard(configs: { komi: number, handicap: number, time: number, }) {

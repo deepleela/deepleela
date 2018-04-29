@@ -27,36 +27,30 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     state: SmartGoBoardStates = {};
     userStone: StoneColor = 'B';
 
-    newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
+    async newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
 
-        return new Promise(resolve => {
-            this.client.requestAI(async results => {
-                resolve(results);
-                if (!results[0]) return;
+        let results = await this.client.requestAI();
 
-                this.client.initBoard(config);
-                this.game.clear();
+        this.client.initBoard(config);
+        this.game.clear();
 
-                if (config.selectedColor === 'B') return;
-                console.log(await this.client.genmove('B'));
-            });
-        });
+        if (config.selectedColor === 'W') {
+            await this.client.genmove('B');
+        }
+
+        return results;
     }
 
-    newSelfGame(): Promise<boolean> {
+    async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
 
-        return new Promise(resolve => {
-            this.client.requestAI(results => {
-                let [success, pending] = results;
-                resolve(success);
+        let results = await this.client.requestAI();
+        this.game.clear();
+        this.client.initBoard({ handicap: 0, komi: 6.5, time: 120 });
 
-                this.game.clear();
-                this.client.initBoard({ handicap: 0, komi: 6.5, time: 120 });
-            });
-        });
+        return results[0];
     }
 
     onStonePlaced(row: number, col: number) {
