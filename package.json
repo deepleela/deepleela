@@ -7,6 +7,7 @@
     "animejs": "^2.2.0",
     "deepleela-common": "deepleela/deepleela-common",
     "jquery": "^3.3.1",
+    "moment": "^2.22.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-modal": "^3.4.4",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/jquery": "^3.3.1",
+    "@types/moment": "^2.13.0",
     "@types/node": "^9.6.7",
     "@types/react": "^16.3.13",
     "@types/react-dom": "^16.0.5",

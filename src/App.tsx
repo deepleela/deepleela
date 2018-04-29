@@ -19,8 +19,6 @@ interface AppStates {
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
-
-  goEngine?: string;
 }
 
 class App extends React.Component<any, AppStates> {
@@ -52,7 +50,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, goEngine: config.engine });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -78,7 +76,7 @@ class App extends React.Component<any, AppStates> {
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
-   
+
     if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen, this.state.loadingDialogOpen].some(v => v !== false && v !== undefined)) {
       this.fadeIn();
     } else {

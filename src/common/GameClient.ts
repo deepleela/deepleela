@@ -32,7 +32,7 @@ export default class GameClient extends EventEmitter {
     }
 
     private onclose = (ev: CloseEvent) => {
-        setTimeout(() => this.reconnect(), 1000);
+        setTimeout(() => this.reconnect(), 3000);
     }
 
     private onerror = (ev: Event) => {
