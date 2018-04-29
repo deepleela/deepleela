@@ -48,7 +48,7 @@ export default class GameClient extends EventEmitter {
                     let resp = Response.fromString(msg.data);
                     callback = this.pendingCallbacks.get(resp.id || -1);
                     if (!callback) return;
-                    callback(msg.data);
+                    callback(resp);
                     this.pendingCallbacks.delete(resp.id!);
                     break;
                 case 'sys':
@@ -112,9 +112,18 @@ export default class GameClient extends EventEmitter {
         return new Promise(resolve => {
             let cmd = CommandBuilder.genmove(color, this.msgId++);
             this.sendGtpCommand(cmd);
-            this.pendingCallbacks.set(cmd.id!, (respstr: string) => {
-                let resp = Response.fromString(respstr);
+            this.pendingCallbacks.set(cmd.id!, (resp: Response) => {
                 resolve(resp.content as string);
+            });
+        });
+    }
+
+    play(color: StoneColor, move: string): Promise<boolean> {
+        return new Promise(resolve => {
+            let cmd = CommandBuilder.play(color, move, this.msgId++);
+            this.sendGtpCommand(cmd);
+            this.pendingCallbacks.set(cmd.id!, (resp: Response) => {
+                resolve(resp === null);
             });
         });
     }

@@ -1,6 +1,7 @@
 // Source from http://cjlarose.com/2014/01/09/react-board-game-tutorial.html
 
 import { State } from "../components/Intersection";
+import { StoneColor } from './Constants';
 
 type Coordinate = { row: number, col: number };
 
@@ -12,7 +13,7 @@ export default class Go {
     board: State[][];
     size: number;
     current = State.Black;
-    get currentColor() { return this.current === State.Black ? 'B' : 'W' };
+    get currentColor(): StoneColor { return this.current === State.Black ? 'B' : 'W' };
 
     constructor(size: number) {
         this.board = this.create(size);

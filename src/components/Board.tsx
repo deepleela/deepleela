@@ -11,7 +11,7 @@ interface BoardProps {
     /**
      * Calls when users click a position on board, cartesian coordinate
      */
-    onStonePlaced?: (row: number, col: number) => void;
+    onIntersectionClicked?: (row: number, col: number) => void;
 
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
     states: State[][];
@@ -39,16 +39,9 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         return { x, y };
     }
 
-    constructor(props: BoardProps, ctx: any) {
-        super(props, ctx);
-
-        // this.state = { states };
-    }
-
     private onClick(row: number, col: number) {
-        if (!this.props.onStonePlaced) return;
-        this.props.onStonePlaced(row, col);
-
+        if (!this.props.onIntersectionClicked) return;
+        this.props.onIntersectionClicked(row, col);
     }
 
     render() {

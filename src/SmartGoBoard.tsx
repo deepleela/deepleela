@@ -16,7 +16,7 @@ interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
 }
 
 interface SmartGoBoardStates {
-    boardDisable?: boolean;
+    disabled?: boolean;
 }
 
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
@@ -32,12 +32,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
 
         let results = await this.client.requestAI();
+        if (!results[0]) return results;
 
         this.client.initBoard(config);
         this.game.clear();
 
         if (config.selectedColor === 'W') {
-            await this.client.genmove('B');
+            await this.genmove('B');
         }
 
         return results;
@@ -53,9 +54,28 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results[0];
     }
 
-    onStonePlaced(row: number, col: number) {
-        this.game.play(row, col);
+    async onStonePlaced(x: number, y: number) {
+        let lastColor = this.game.currentColor;
+
+        if (!this.game.play(x, y)) {
+            return;
+        }
+
         this.forceUpdate();
+
+        if (this.gameMode === 'self') return;
+
+        let move = Board.cartesianCoordToString(x, y);
+        await this.client.play(lastColor, move);
+        await this.genmove(this.game.currentColor);
+
+        this.forceUpdate();
+    }
+
+    private async genmove(color: StoneColor) {
+        let move = await this.client.genmove('B');
+        let coord = Board.stringToCartesianCoord(move);
+        this.game.play(coord.x, coord.y);
     }
 
     render() {
@@ -67,8 +87,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
                     states={this.game.board}
-                    disabled={this.state.boardDisable || shouldBeDisabled}
-                    onStonePlaced={(row, col) => this.onStonePlaced(row, col)}
+                    disabled={this.state.disabled || shouldBeDisabled}
+                    onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                 />
             </div>
         );
