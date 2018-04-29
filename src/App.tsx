@@ -13,7 +13,6 @@ import GameClient from './common/GameClient';
 import { Protocol } from 'deepleela-common';
 import Go from './common/Go';
 import SmartGoBoard from './widgets/SmartGoBoard';
-import PlayersStatus from './widgets/PlayersStatus';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -79,10 +78,7 @@ class App extends React.Component<any, AppStates> {
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
-    let gameMode = this.smartBoard ? this.smartBoard.gameMode : 'self';
-    let whitePlayer = gameMode === 'self' ? 'Human' : this.smartBoard.userStone === 'W' ? 'Human' : this.state.goEngine;
-    let blackPlayer = gameMode === 'self' ? 'Human' : this.smartBoard.userStone === 'B' ? 'Human' : this.state.goEngine;
-
+   
     if ([this.state.exportSgfDialogOpen, this.state.loadSgfDialogOpen, this.state.newGameDialogOpen, this.state.loadingDialogOpen].some(v => v !== false && v !== undefined)) {
       this.fadeIn();
     } else {
@@ -137,8 +133,7 @@ class App extends React.Component<any, AppStates> {
         </div>
 
         {/* Footer Aera */}
-        <div style={{ bottom: 0, width: '100%', zIndex: 2, marginTop: -24 }}>
-          <PlayersStatus width={`${width}%`} whitePlayer={whitePlayer} blackPlayer={blackPlayer} />
+        <div style={{ bottom: 0, width: '100%', }}>
           <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', margin: ' 8px 0' }}>
             &copy; 2018 DeepLeela | <a href="https://github.com/deepleela/deepleela" style={{ color: 'deepskyblue' }}>Github</a>
           </div>

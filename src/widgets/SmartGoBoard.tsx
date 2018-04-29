@@ -12,7 +12,8 @@ import { State } from '../components/Intersection';
 import { StoneColor } from '../common/Constants';
 
 interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
-
+    blackPlayer?: string;
+    whitePlayer?: string;
 }
 
 interface SmartGoBoardStates {
@@ -26,10 +27,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     gameMode: 'ai' | 'self' = 'self';
     state: SmartGoBoardStates = {};
     userStone: StoneColor = 'B';
+    engine: string;
 
     async newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
+        this.engine = config.engine;
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
@@ -47,6 +50,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
+        this.engine = 'leela';
 
         let results = await this.client.requestAI('leela');
         this.game.clear();
@@ -83,6 +87,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     render() {
         let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
 
+        let whitePlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
+        let blackPlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
+
         return (
             <div>
                 <Board
@@ -92,6 +99,24 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     disabled={this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                 />
+
+                <div style={{ marginTop: -24 }}>
+                    <div style={{ display: 'flex', width: this.props.width, margin: 'auto', fontSize: 14, justifyContent: 'space-between', pointerEvents: 'none', }}>
+                        <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+                            <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
+                                <Stone style={{ color: constants.BlackStoneColor, }} />
+                            </div>
+                            <span>{blackPlayer || '---'}</span>
+                        </div>
+
+                        <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+                            <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
+                                <Stone style={{ color: constants.WhiteStoneColor, }} />
+                            </div>
+                            <span>{whitePlayer || '---'}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
