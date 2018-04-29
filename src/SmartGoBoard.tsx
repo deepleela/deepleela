@@ -27,8 +27,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     state: SmartGoBoardStates = {};
     userStone: StoneColor = 'B';
 
-    get connected() { return this.client.connected };
-
     newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
@@ -62,8 +60,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     onStonePlaced(row: number, col: number) {
-        let { x, y } = Board.fromCartesianCoord(row, col);
-        this.game.play(x, y);
+        this.game.play(row, col);
         this.forceUpdate();
     }
 

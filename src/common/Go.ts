@@ -82,7 +82,16 @@ export default class Go {
         return { liberties, stones };
     }
 
+    /**
+     * Play a stone on board
+     * @param row cartesian coord x
+     * @param col cartesian coord y
+     */
     play(row: number, col: number) {
+        let { x, y } = { x: this.size - row, y: col - 1 };
+        row = x;
+        col = y;
+
         if (!this.isEmpty(row, col)) return false;
 
         this.board[row][col] = this.current;

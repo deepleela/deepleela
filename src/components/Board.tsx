@@ -7,7 +7,12 @@ interface BoardProps {
     className?: string;
     id?: string;
     disabled?: boolean;
-    onStonePlaced?: (row: number, col: number) => void, // Call when users click a position on board, cartesian coordinate
+
+    /**
+     * Calls when users click a position on board, cartesian coordinate
+     */
+    onStonePlaced?: (row: number, col: number) => void;
+
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
     states: State[][];
 }
@@ -17,13 +22,21 @@ interface BoardStates {
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
 
-    static fromCartesianCoord(x: number, y: number, size = 19) {
+    static readonly alphabets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+
+    static cartesianCoordToArrayPosition(x: number, y: number, size = 19) {
         return { x: size - x, y: y - 1 };
     }
 
     static cartesianCoordToString(x: number, y: number) {
-        let alphabets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
-        return `${alphabets[y - 1]}${x}`;
+        return `${Board.alphabets[y - 1]}${x}`;
+    }
+
+    static stringToCartesianCoord(coord: string) {
+        let alphabet = coord[0];
+        let y = Board.alphabets.indexOf(alphabet) + 1;
+        let x = Number.parseInt(coord.substr(1));
+        return { x, y };
     }
 
     constructor(props: BoardProps, ctx: any) {
@@ -35,7 +48,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     private onClick(row: number, col: number) {
         if (!this.props.onStonePlaced) return;
         this.props.onStonePlaced(row, col);
-        
+
     }
 
     render() {
