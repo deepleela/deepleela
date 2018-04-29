@@ -12,6 +12,7 @@ export default class Go {
     board: State[][];
     size: number;
     current = State.Black;
+    get currentColor() { return this.current === State.Black ? 'B' : 'W' };
 
     constructor(size: number) {
         this.board = this.create(size);

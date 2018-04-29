@@ -37,6 +37,16 @@ class App extends React.Component<any, AppStates> {
 
     Modal.setAppElement('#main');
     window.onresize = (e) => this.forceUpdate();
+
+    // As default, create a self-playing game
+
+    this.setState({ loadingDialogOpen: true });
+
+    GameClient.default.once('connected', async () => {
+      let success = await this.smartBoard.newSelfGame();
+      if (!success) UIkit.notification(i18n.notifications.aiNotAvailable);
+      this.setState({ loadingDialogOpen: false })
+    });
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
@@ -44,14 +54,14 @@ class App extends React.Component<any, AppStates> {
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
-      UIkit.notify(i18n.notifications.serversBusy(pending));
-      UIkit.notify(i18n.notifications.aiNotAvailable);
+      UIkit.notification(i18n.notifications.serversBusy(pending));
+      UIkit.notification(i18n.notifications.aiNotAvailable);
     }
   }
 
   async onNewSelfGame() {
     this.setState({ loadingDialogOpen: true });
-    if (!await this.smartBoard.newSelfGame()) UIkit.notify(i18n.notifications.aiNotAvailable);
+    if (!await this.smartBoard.newSelfGame()) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false });
   }
 

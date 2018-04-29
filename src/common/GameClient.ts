@@ -1,7 +1,8 @@
 import { Command, Response } from "@sabaki/gtp";
 import { Protocol, ProtocolDef } from 'deepleela-common';
 import { EventEmitter } from "events";
-import CommandBuilder, { StoneColor } from "./CommandBuilder";
+import CommandBuilder from "./CommandBuilder";
+import { StoneColor } from './Constants';
 
 export default class GameClient extends EventEmitter {
 
@@ -9,7 +10,6 @@ export default class GameClient extends EventEmitter {
     static readonly default = new GameClient();
 
     private ws: WebSocket;
-    private reconnected = false;
     private msgId = 0;
     private pendingCallbacks = new Map<number, Function>();
 
@@ -28,7 +28,7 @@ export default class GameClient extends EventEmitter {
     }
 
     private onopen = (ev: Event) => {
-        if (this.reconnected) super.emit('reconnected');
+        super.emit('connected');
     }
 
     private onclose = (ev: CloseEvent) => {
@@ -42,7 +42,7 @@ export default class GameClient extends EventEmitter {
         try {
             let msg: ProtocolDef = JSON.parse(ev.data as string);
             let callback: Function | undefined = undefined;
-            
+
             switch (msg.type) {
                 case 'gtp':
                     let resp = Response.fromString(msg.data);
@@ -74,21 +74,20 @@ export default class GameClient extends EventEmitter {
         }
 
         this.ws = this.createWs();
-        this.reconnected = true;
     }
 
     get connected() { return this.ws.readyState === WebSocket.OPEN }
 
-    onReconnected(callback: () => void) {
-        super.addListener('reconnected', callback);
-    }
-
     sendGtpCommand(cmd: Command) {
+        if (!this.connected) return;
+
         let msg = { type: 'gtp', data: Command.toString(cmd) };
         this.ws.send(JSON.stringify(msg));
     }
 
     sendSysMessage(cmd: Command) {
+        if (!this.connected) return;
+
         let msg: ProtocolDef = { type: 'sys', data: cmd }
         this.ws.send(JSON.stringify(msg));
     }

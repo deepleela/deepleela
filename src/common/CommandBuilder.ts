@@ -1,6 +1,5 @@
 import { Command } from "@sabaki/gtp";
-
-export type StoneColor = 'B' | 'W';
+import { StoneColor } from './Constants';
 
 export default class CommandBuilder {
 

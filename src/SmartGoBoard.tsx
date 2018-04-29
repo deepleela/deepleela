@@ -9,15 +9,29 @@ import { Protocol } from 'deepleela-common';
 import Go from './common/Go';
 import { NewGameDialogStates } from './dialogs/NewGameDialog';
 import { State } from './components/Intersection';
+import { StoneColor } from './common/Constants';
 
-export default class SmartGoBoard extends React.Component {
+interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
+
+}
+
+interface SmartGoBoardStates {
+    boardDisable?: boolean;
+}
+
+export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
 
     private readonly client = GameClient.default;
     private game = new Go(19);
     gameMode: 'ai' | 'self' = 'self';
+    state: SmartGoBoardStates = {};
+    userStone: StoneColor = 'B';
+
+    get connected() { return this.client.connected };
 
     newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
+        this.userStone = config.selectedColor;
 
         return new Promise(resolve => {
             this.client.requestAI(async results => {
@@ -27,7 +41,6 @@ export default class SmartGoBoard extends React.Component {
                 this.client.initBoard(config);
                 this.game.clear();
 
-                console.log(config.selectedColor);
                 if (config.selectedColor === 'B') return;
                 console.log(await this.client.genmove('B'));
             });
@@ -49,19 +62,21 @@ export default class SmartGoBoard extends React.Component {
     }
 
     onStonePlaced(row: number, col: number) {
-
         let { x, y } = Board.fromCartesianCoord(row, col);
-        this.game.board[x][y] = Date.now() % 2 === 0 ? State.Black : State.White;
+        this.game.play(x, y);
         this.forceUpdate();
     }
 
     render() {
+        let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
+
         return (
             <div>
                 <Board
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
                     states={this.game.board}
+                    disabled={this.state.boardDisable || shouldBeDisabled}
                     onStonePlaced={(row, col) => this.onStonePlaced(row, col)}
                 />
             </div>
