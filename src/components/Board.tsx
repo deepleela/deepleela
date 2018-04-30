@@ -7,6 +7,7 @@ interface BoardProps {
     className?: string;
     id?: string;
     disabled?: boolean;
+    coordinate?: boolean;
 
     /**
      * Calls when users click a position on board, cartesian coordinate
@@ -48,6 +49,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const size = 100.0 / this.props.size;
         const dimension = this.props.size;
 
+        const boardParent = document.getElementById('board');
+        let gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
+        let top = gridWidth / 2 - 6.25;
+
         return (
             <div className={this.props.className} id={this.props.id} style={this.props.style} draggable={false}>
 
@@ -55,25 +60,34 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            <div style={{ position: 'absolute', left: 0, top: 10, fontSize: 8, fontWeight: 100, color: '#ccc', }}>{19 - i}</div>
+                            <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', display: this.props.coordinate ? 'block' : 'none', }}>{19 - i}</div>
 
                             {row.map((state, j) => (
-                                <Intersection
-                                    onClick={(r, c) => this.onClick(r, c)}
-                                    style={{ color: this.props.style ? this.props.style.gridColor : undefined, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
-                                    key={j}
-                                    row={19 - i}
-                                    col={j + 1}
-                                    lineThickness={2}
-                                    disabled={this.props.disabled}
-                                    // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}
-                                    width={size}
-                                    state={state}
-                                    topEdge={i === 0}
-                                    bottomEdge={i === dimension - 1}
-                                    leftEdge={j === 0}
-                                    rightEdge={j === dimension - 1}
-                                    star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0} />
+                                <div>
+                                    {i === (this.props.size - 1) ?
+                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: '#ccc', top: top + 12 }}>
+                                            {'ABCDEFGHJKLMNOPQRST'[j]}
+                                        </div>
+                                        : undefined
+                                    }
+
+                                    <Intersection
+                                        onClick={(r, c) => this.onClick(r, c)}
+                                        style={{ color: this.props.style ? this.props.style.gridColor : undefined, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
+                                        key={j}
+                                        row={19 - i}
+                                        col={j + 1}
+                                        lineThickness={2}
+                                        disabled={this.props.disabled}
+                                        // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}
+                                        width={size}
+                                        state={state}
+                                        topEdge={i === 0}
+                                        bottomEdge={i === dimension - 1}
+                                        leftEdge={j === 0}
+                                        rightEdge={j === dimension - 1}
+                                        star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0} />
+                                </div>
                             ))}
 
                         </div>

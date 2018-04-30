@@ -12,7 +12,7 @@ import { State } from '../components/Intersection';
 import { StoneColor } from '../common/Constants';
 import * as moment from 'moment';
 
-interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
+interface SmartGoBoardProps extends React.HTMLProps<HTMLDivElement> {
 
 }
 
@@ -103,20 +103,23 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let whitePlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
         let blackPlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
 
+        let playerMargin = window.innerWidth >= 576 ? 32 : 26;
+
         return (
-            <div>
+            <div {...this.props}>
                 <Board
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
+                    coordinate={window.innerWidth >= 800}
                 />
 
-                <div style={{ marginTop: -20 }}>
-                    <div style={{ display: 'flex', width: this.props.width, margin: 'auto', fontSize: 14, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
-                        <div style={{ marginLeft: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
-                            <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
+                <div style={{ marginTop: -12, }}>
+                    <div style={{ display: 'flex', width: '100%', margin: 'auto', fontSize: 10, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
+                        <div style={{ marginLeft: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+                            <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
                                 <Stone style={{ color: constants.BlackStoneColor, }} />
                             </div>
                             <span>{blackPlayer || '---'}</span>
@@ -124,8 +127,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
                         <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11 }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
 
-                        <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
-                            <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
+                        <div style={{ marginRight: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
+                            <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
                                 <Stone style={{ color: constants.WhiteStoneColor, }} />
                             </div>
                             <span>{whitePlayer || '---'}</span>

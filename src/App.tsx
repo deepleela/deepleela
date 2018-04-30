@@ -19,6 +19,8 @@ interface AppStates {
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
+
+  paddingTop: number;
 }
 
 class App extends React.Component<any, AppStates> {
@@ -29,14 +31,22 @@ class App extends React.Component<any, AppStates> {
 
   constructor(props: any, ctx) {
     super(props, ctx);
-    this.state = {};
+    this.state = { paddingTop: 0 };
   }
 
   componentDidMount() {
     // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
 
     Modal.setAppElement('#main');
-    window.onresize = (e) => this.forceUpdate();
+
+    const calcPaddingTop = () => {
+      let top = (window.innerHeight - 96 - document.getElementById('board')!.getBoundingClientRect().height) / 2;
+      this.setState({ paddingTop: top });
+    };
+
+    calcPaddingTop();
+    window.onresize = (e) => calcPaddingTop();
+    window.onorientationchange = (e) => calcPaddingTop();
 
     // As default, create a self-playing game
 
@@ -123,10 +133,10 @@ class App extends React.Component<any, AppStates> {
         </div>
 
         {/* Board Aera */}
-        <div className='magnify' id='board' style={{ width: `${width}%`, height: '100%', margin: 'auto', }}>
+        <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard ref={e => this.smartBoard = e!} />
+            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} />
           </div>
         </div>
 
