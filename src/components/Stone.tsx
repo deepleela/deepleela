@@ -15,6 +15,7 @@ export default class Stone extends React.Component<StoneProps, any> {
                 borderRadius: '50%',
                 position: 'absolute',
                 top: margin, right: margin, bottom: margin, left: margin,
+                pointerEvents: 'none',
             }, this.props.style)} />
         );
     }

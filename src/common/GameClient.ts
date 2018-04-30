@@ -127,4 +127,8 @@ export default class GameClient extends EventEmitter {
             });
         });
     }
+
+    heatmap() {
+        
+    }
 }

@@ -95,8 +95,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.play(coord.x, coord.y);
     }
 
-
-
     render() {
         let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
 
