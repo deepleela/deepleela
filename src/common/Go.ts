@@ -2,27 +2,39 @@
 
 import { State } from "../components/Intersection";
 import { StoneColor } from './Constants';
+import { EventEmitter } from "events";
 
 type Coordinate = { row: number, col: number };
 
-export default class Go {
+export default class Go extends EventEmitter {
 
     private koStones?: { coor: Coordinate, stoneColor: State, deadStones: Coordinate[], deadColor: State };
+    private current = State.Black;
+    private deadlines: [number, number] = [0, 0];  // black, white
+    private stopWatch: NodeJS.Timer;
 
     history: { stone: State, coor: Coordinate }[] = [];
     board: State[][];
     size: number;
-    current = State.Black;
-    get currentColor(): StoneColor { return this.current === State.Black ? 'B' : 'W' };
+
+    set time(value: number) {
+        let ms = value * 60 * 1000;
+        this.deadlines = [ms, ms];
+    }
+
+    get blackTime() { return this.deadlines[0]; }
+
+    get whiteTime() { return this.deadlines[1]; }
+
+    get currentColor(): StoneColor { return this.current === State.Black ? 'B' : 'W'; }
 
     constructor(size: number) {
+        super();
         this.board = this.create(size);
     }
 
     private create(size: number) {
-
         this.size = size >= 7 ? size : 19;
-
         let states: State[][] = [];
 
         for (let i = 0; i < size; i++) {
@@ -89,6 +101,7 @@ export default class Go {
      * @param col cartesian coord y
      */
     play(row: number, col: number) {
+        // Convert cartesian coord to array offset
         let { x, y } = { x: this.size - row, y: col - 1 };
         row = x;
         col = y;
@@ -147,6 +160,16 @@ export default class Go {
         this.history.push({ stone: this.current, coor: { row, col } });
         this.turn();
         return true;
+    }
+
+    start() {
+        if (this.stopWatch) clearInterval(this.stopWatch);
+
+        this.stopWatch = setInterval(() => {
+            this.currentColor === 'B' ? this.deadlines[0] -= 1000 : this.deadlines[1] -= 1000;
+            if (this.deadlines.some(i => i <= 0)) clearInterval(this.stopWatch);
+            this.emit('tick');
+        }, 1000);
     }
 
     isEmpty(row: number, col: number) {

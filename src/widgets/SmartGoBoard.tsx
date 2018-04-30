@@ -18,25 +18,31 @@ interface SmartGoBoardProps extends React.HTMLProps<HTMLElement> {
 
 interface SmartGoBoardStates {
     disabled?: boolean;
-
+    remaingTime?: string;
 }
 
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
 
     private readonly client = GameClient.default;
     private game = new Go(19);
-    private endingTimestamp: number = Number.POSITIVE_INFINITY;
-    gameMode: 'ai' | 'self' = 'self';
-    state: SmartGoBoardStates = {};
+    gameMode: 'ai' | 'self' | 'guest' = 'self';
+    state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';
     engine: string;
+
+    componentDidMount() {
+        this.game.on('tick', () => {
+            let m = moment.duration(this.game.currentColor === 'B' ? this.game.blackTime : this.game.whiteTime);
+            let remaingTime = `${m.hours().toString().padStart(2, '0')}:${m.minutes().toString().padStart(2, '0')}:${m.seconds().toString().padStart(2, '0')}`;
+            this.setState({ remaingTime });
+        });
+    }
 
     async newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
         this.engine = config.engine;
-        console.log('time', config.time);
-        this.endingTimestamp = config.time * 60 * 1000 + Date.now();
+        this.game.time = config.time;
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
@@ -49,6 +55,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.forceUpdate();
+        this.game.start();
         return results;
     }
 
@@ -88,16 +95,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.play(coord.x, coord.y);
     }
 
+
+
     render() {
         let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
 
         let whitePlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
         let blackPlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
 
-        let remaingms = moment.duration(this.endingTimestamp - Date.now());
-        let remaining = this.endingTimestamp === Number.POSITIVE_INFINITY || this.endingTimestamp < Date.now() ? '' : `0${remaingms.hours()}:${remaingms.minutes()}:${remaingms.seconds()}`;
-
-        moment.duration()
         return (
             <div>
                 <Board
@@ -117,7 +122,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <span>{blackPlayer || '---'}</span>
                         </div>
 
-                        <div style={{ color: '#ccc', marginTop: 7, fontSize: 11 }}>{this.gameMode === 'self' ? '--:--' : remaining}</div>
+                        <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11 }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
 
                         <div style={{ marginRight: 32, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 16, height: 16, marginRight: 4, marginTop: -2 }}>
