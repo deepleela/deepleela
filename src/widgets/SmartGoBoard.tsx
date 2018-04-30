@@ -113,7 +113,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
-                    coordinate={window.innerWidth >= 800}
+                    showCoordinate={window.innerWidth >= 800}
+                    hightlightCoord={this.game.currentCartesianCoord}
                 />
 
                 <div style={{ marginTop: -12, }}>

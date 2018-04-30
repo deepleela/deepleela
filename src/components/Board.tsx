@@ -7,7 +7,8 @@ interface BoardProps {
     className?: string;
     id?: string;
     disabled?: boolean;
-    coordinate?: boolean;
+    showCoordinate?: boolean;
+    hightlightCoord?: { x: number, y: number };
 
     /**
      * Calls when users click a position on board, cartesian coordinate
@@ -60,11 +61,11 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', display: this.props.coordinate ? 'block' : 'none', }}>{19 - i}</div>
+                            <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', display: this.props.showCoordinate ? 'block' : 'none', }}>{19 - i}</div>
 
                             {row.map((state, j) => (
-                                <div>
-                                    {i === (this.props.size - 1) ?
+                                <div key={`${i},${j}`}>
+                                    {this.props.showCoordinate && i === (this.props.size - 1) ?
                                         <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: '#ccc', top: top + 12 }}>
                                             {'ABCDEFGHJKLMNOPQRST'[j]}
                                         </div>
@@ -79,14 +80,16 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         col={j + 1}
                                         lineThickness={2}
                                         disabled={this.props.disabled}
-                                        // highlight={i === this.state.lastPlacedPosition.row && j === this.state.lastPlacedPosition.col}
+                                        highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         width={size}
                                         state={state}
                                         topEdge={i === 0}
                                         bottomEdge={i === dimension - 1}
                                         leftEdge={j === 0}
                                         rightEdge={j === dimension - 1}
-                                        star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0} />
+                                        star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
+                                        highlightSize={gridWidth > 25 ? 'large' : 'small'}
+                                    />
                                 </div>
                             ))}
 

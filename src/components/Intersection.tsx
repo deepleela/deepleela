@@ -20,6 +20,7 @@ interface IntersectionProps {
     row: number;
     col: number;
     style?: CSSProperties & { whiteStoneColor?: string, blackStoneColor?: string };
+    highlightSize?: 'large' | 'small';
 }
 
 interface IntersectionStates {
@@ -56,6 +57,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
 
     render() {
         const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
+        const highlightSize = this.props.highlightSize === 'small' ? 4 : 8;
 
         return (
 
@@ -68,7 +70,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div style={{ pointerEvents: 'none', background: gridColor, width: this.props.lineThickness || 1, position: 'absolute', left: '50%', top: this.props.topEdge ? '50%' : 0, bottom: this.props.bottomEdge ? '50%' : 0, transform: 'translateX(-50%)' }} />
 
                 {/* Star Point */}
-                {this.props.star ? <div style={{ pointerEvents: 'none', background: 'lightgrey', borderRadius: 9000, height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
+                {this.props.star ? <div style={{ pointerEvents: 'none', background: 'lightgrey', borderRadius: '50%', height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
 
                 {/* Touch Surface */}
                 <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
@@ -79,6 +81,10 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                         this.props.state === State.White ?
                             <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white' }} /> : undefined
                 }
+
+                {/* ${this.props.state === State.Black ? 'white' : 'black'} */}
+                {this.props.highlight ? <div style={{ pointerEvents: 'none', opacity: 0.7, background: `deeppink`, borderRadius: '50%', height: highlightSize, width: highlightSize, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
+
             </div>
         );
     }

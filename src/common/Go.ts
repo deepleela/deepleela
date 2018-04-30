@@ -16,7 +16,8 @@ export default class Go extends EventEmitter {
     history: { stone: State, coor: Coordinate }[] = [];
     board: State[][];
     size: number;
-
+    currentCartesianCoord = { x: -1, y: -1 };
+    
     set time(value: number) {
         let ms = value * 60 * 1000;
         this.deadlines = [ms, ms];
@@ -102,6 +103,7 @@ export default class Go extends EventEmitter {
      */
     play(row: number, col: number) {
         // Convert cartesian coord to array offset
+        let currentCoord = { x: row, y: col };
         let { x, y } = { x: this.size - row, y: col - 1 };
         row = x;
         col = y;
@@ -159,6 +161,8 @@ export default class Go extends EventEmitter {
 
         this.history.push({ stone: this.current, coor: { row, col } });
         this.turn();
+        this.currentCartesianCoord = currentCoord;
+        
         return true;
     }
 
