@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CSSProperties } from 'react';
 import Stone from './Stone';
-
+import './Styles.css';
 
 interface IntersectionProps {
     width: number;
@@ -75,15 +75,21 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 {/* Touch Surface */}
                 <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
 
+                {this.props.row % 5 === 0 && this.props.col % 4 === 0 ?
+                    <div className={'heatmap'} style={{
+                        transform: 'scale(1.7)', width: '100%', height: '100%', position: 'absolute', zIndex: 1, pointerEvents: 'none',
+                    }}></div> : undefined
+                }
+
                 {
                     this.props.state === State.Black ?
-                        <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black' }} /> :
+                        <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} /> :
                         this.props.state === State.White ?
-                            <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white' }} /> : undefined
+                            <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} /> : undefined
                 }
 
                 {/* ${this.props.state === State.Black ? 'white' : 'black'} */}
-                {this.props.highlight ? <div style={{ pointerEvents: 'none', opacity: 0.7, background: `deeppink`, borderRadius: '50%', height: highlightSize, width: highlightSize, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
+                {this.props.highlight ? <div style={{ pointerEvents: 'none', opacity: 0.7, background: `deeppink`, borderRadius: '50%', zIndex: 3, height: highlightSize, width: highlightSize, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
 
             </div>
         );

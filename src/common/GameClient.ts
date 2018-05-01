@@ -128,7 +128,14 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    heatmap() {
-        
+    heatmap(): Promise<number[][]> {
+        return new Promise(resolve => {
+            let cmd = CommandBuilder.leela_heatmap(this.msgId++);
+            this.sendGtpCommand(cmd);
+            this.pendingCallbacks.set(cmd.id!, (mapstr: string) => {
+                let data: number[][] = JSON.parse(mapstr);
+                resolve(data);
+            });
+        });
     }
 }

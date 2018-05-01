@@ -1,0 +1,4 @@
+.heatmap {
+    background: radial-gradient(ellipse at center, rgba(255,0,72,1) 0%,rgba(255,255,255,0) 80%,rgba(255,255,255,0) 100%);
+    transition: all 0.5s;
+}
