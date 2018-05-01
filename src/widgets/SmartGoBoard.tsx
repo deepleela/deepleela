@@ -44,6 +44,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
         this.engine = config.engine;
         this.game.time = config.time;
+        this.setState({ heatmap: undefined });
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
@@ -63,7 +64,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
         this.engine = 'leela';
-
+        this.setState({ heatmap: undefined });
+        
         let results = await this.client.requestAI('leela');
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 6.5, time: 60 * 24 });
@@ -91,8 +93,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async genmove(color: StoneColor) {
-        let move = await this.client.genmove('B');
-        let coord = Board.stringToCartesianCoord(move);
+        let result = await this.client.genmove(color);
+        console.log(result);
+        let coord = Board.stringToCartesianCoord(result.move);
         this.game.play(coord.x, coord.y);
         this.setState({ heatmap: await this.client.heatmap() });
     }

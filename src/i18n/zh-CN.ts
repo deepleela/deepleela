@@ -7,6 +7,9 @@ export const lang = {
         loadsgf: '载入SGF',
         exportsgf: '导出SGF',
 
+        showHeatmap: 'AI预测',
+        showWinrate: '显示胜率',
+
         pass: '弃权',
         resign: '认输',
         score: '评分',

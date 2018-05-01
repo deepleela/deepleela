@@ -1,4 +1,5 @@
 export const GridLineColor = '#efefef';
+export const GridLineColorTransparent = '#efefef20';
 export const BoardColor = '#e5ba67';
 export const WhiteStoneColor = '#dedede';
 export const BlackStoneColor = '#3c3c44';

@@ -7,6 +7,9 @@ export const lang = {
         loadsgf: 'Load SGF',
         exportsgf: 'Export SGF',
 
+        showHeatmap: 'Show Heatmap',
+        showWinrate: 'Show Winrate',
+
         pass: 'Pass',
         resign: 'Resign',
         score: 'Score Game',

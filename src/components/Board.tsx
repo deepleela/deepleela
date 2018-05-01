@@ -55,6 +55,9 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
         let top = gridWidth / 2 - 6.25;
 
+
+        let gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
+
         return (
             <div className={this.props.className} id={this.props.id} style={this.props.style} draggable={false}>
 
@@ -62,12 +65,12 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', }}>{19 - i}</div> : undefined}
-                            
+                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#cccccc80', }}>{19 - i}</div> : undefined}
+
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
                                     {this.props.showCoordinate && i === (this.props.size - 1) ?
-                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: '#ccc', top: top + 12 }}>
+                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: '#cccccc80', top: top + 12 }}>
                                             {'ABCDEFGHJKLMNOPQRST'[j]}
                                         </div>
                                         : undefined
@@ -75,7 +78,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                                     <Intersection
                                         onClick={(r, c) => this.onClick(r, c)}
-                                        style={{ color: this.props.style ? this.props.style.gridColor : undefined, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
+                                        style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
                                         key={j}
                                         row={19 - i}
                                         col={j + 1}

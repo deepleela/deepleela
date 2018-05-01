@@ -4,6 +4,12 @@ import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
 
+interface Variation {
+    visits: number;
+    stats: { W: string };
+    variation: string[];
+}
+
 export default class GameClient extends EventEmitter {
 
     static readonly url = process.env.NODE_ENV === 'production' ? 'wss://' : 'ws://192.168.31.54:3301';
@@ -108,12 +114,15 @@ export default class GameClient extends EventEmitter {
         if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
     }
 
-    genmove(color: StoneColor): Promise<string> {
+    genmove(color: StoneColor): Promise<{ move: string, variations: Variation[] }> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.genmove(color, this.msgId++);
             this.sendGtpCommand(cmd);
-            this.pendingCallbacks.set(cmd.id!, (resp: Response) => {
-                resolve(resp.content as string);
+            this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
+                let result = JSON.parse(resultstr);
+                let gtpresp = Response.fromString(result.respstr);
+                let variations = result.variations;
+                resolve({ move: gtpresp.content!, variations });
             });
         });
     }
@@ -138,4 +147,5 @@ export default class GameClient extends EventEmitter {
             });
         });
     }
+
 }
