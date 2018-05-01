@@ -17,6 +17,7 @@ interface BoardProps {
 
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
     states: State[][];
+    heatmap?: number[][];
 }
 
 interface BoardStates {
@@ -61,8 +62,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', display: this.props.showCoordinate ? 'block' : 'none', }}>{19 - i}</div>
-
+                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#ccc', }}>{19 - i}</div> : undefined}
+                            
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
                                     {this.props.showCoordinate && i === (this.props.size - 1) ?
@@ -89,6 +90,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         rightEdge={j === dimension - 1}
                                         star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
                                         highlightSize={gridWidth > 25 ? 'large' : 'small'}
+                                        heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
                                     />
                                 </div>
                             ))}

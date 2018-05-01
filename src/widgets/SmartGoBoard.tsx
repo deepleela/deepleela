@@ -79,17 +79,15 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             return;
         }
 
-        this.forceUpdate();
+        this.setState({ heatmap: undefined });
 
         if (this.gameMode === 'self') return;
 
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
-        this.setState({ heatmap: await this.client.heatmap() });
+        // this.setState({ heatmap: await this.client.heatmap() });
 
         await this.genmove(this.game.currentColor);
-
-        this.forceUpdate();
     }
 
     private async genmove(color: StoneColor) {
@@ -109,12 +107,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         return (
             <div {...this.props}>
-                {/* <HeatmapBoard
-                    style={{ padding: 15, position: 'absolute', top: 0, left: 0, backgroundColor: 'pink', width: '100%', height: '100%', }}
-                    size={19}
-                    heatmap={this.state.heatmap}
-                /> */}
-                {/* <Board size={19} states={this.game.board} style={{ position: 'absolute', padding: 15, width: '100%', height: '100%' }} /> */}
                 <Board
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
@@ -123,6 +115,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                     showCoordinate={window.innerWidth >= 800}
                     hightlightCoord={this.game.currentCartesianCoord}
+                    heatmap={this.state.heatmap}
                 />
 
                 <div style={{ marginTop: -12, }}>

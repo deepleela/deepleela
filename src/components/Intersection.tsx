@@ -21,6 +21,7 @@ interface IntersectionProps {
     col: number;
     style?: CSSProperties & { whiteStoneColor?: string, blackStoneColor?: string };
     highlightSize?: 'large' | 'small';
+    heatmap?: number;
 }
 
 interface IntersectionStates {
@@ -70,17 +71,13 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div style={{ pointerEvents: 'none', background: gridColor, width: this.props.lineThickness || 1, position: 'absolute', left: '50%', top: this.props.topEdge ? '50%' : 0, bottom: this.props.bottomEdge ? '50%' : 0, transform: 'translateX(-50%)' }} />
 
                 {/* Star Point */}
-                {this.props.star ? <div style={{ pointerEvents: 'none', background: 'lightgrey', borderRadius: '50%', height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
+                {this.props.star ? <div style={{ pointerEvents: 'none', background: 'lightgrey', borderRadius: '50%', height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', }} /> : null}
 
                 {/* Touch Surface */}
                 <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
 
-                {this.props.row % 5 === 0 && this.props.col % 4 === 0 ?
-                    <div className={'heatmap'} style={{
-                        transform: 'scale(1.7)', width: '100%', height: '100%', position: 'absolute', zIndex: 1, pointerEvents: 'none',
-                    }}></div> : undefined
-                }
-
+                <div className={'heatmap'} style={{ transform: `scale(1.${this.props.heatmap || 0})`, opacity: this.props.heatmap && this.props.heatmap > 0 ? 0.5 + (this.props.heatmap || 0) / 20 : 0, width: '100%', height: '100%', position: 'absolute', zIndex: 1, top: 0, left: 0, pointerEvents: 'none', transition: 'all 0.5s', }} />
+                {/* this.props.heatmap && this.props.heatmap > 0 ?  */}
                 {
                     this.props.state === State.Black ?
                         <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} /> :
