@@ -13,8 +13,10 @@ import { StoneColor } from '../common/Constants';
 import * as moment from 'moment';
 import * as Utils from '../lib/Utils';
 
-interface SmartGoBoardProps extends React.HTMLProps<HTMLDivElement> {
-
+interface SmartGoBoardProps {
+    id?: any;
+    showHeatmap?: boolean;
+    showWinrate?: boolean;
 }
 
 interface SmartGoBoardStates {
@@ -72,7 +74,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 6.5, time: 60 * 24 });
 
-        this.forceUpdate();
+        await this.peekWinrate();
         return results[0];
     }
 
@@ -85,25 +87,44 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.setState({ heatmap: undefined });
 
-        if (this.gameMode === 'self') return;
-
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
-        // this.setState({ heatmap: await this.client.heatmap() });
+
+        await this.peekWinrate();
+
+        if (this.gameMode === 'self') return;
 
         await this.genmove(this.game.currentColor);
     }
 
     private async genmove(color: StoneColor) {
         let result = await this.client.genmove(color);
-    
-        this.board.setVariations(result.variations);
-        await Utils.sleep(5000);
-    
+
+        if (this.props.showWinrate) {
+            this.board.setVariations(result.variations);
+            await Utils.sleep(7000);
+        }
+
         let coord = Board.stringToCartesianCoord(result.move);
         this.game.play(coord.x, coord.y);
-        this.setState({ heatmap: await this.client.heatmap() });
+
+        if (this.props.showHeatmap) {
+            this.setState({ heatmap: await this.client.heatmap() });
+        }
+
+        if (this.props.showWinrate) {
+            await this.peekWinrate();
+        }
+    }
+
+    private async peekWinrate() {
         this.board.clearVariations();
+        this.setState({ disabled: true });
+
+        let variations = await this.client.peekWinrate(this.game.currentColor);
+        this.board.setVariations(variations);
+        
+        this.setState({ disabled: false });
     }
 
     render() {
@@ -115,7 +136,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
 
         return (
-            <div {...this.props}>
+            <div id={this.props.id}>
                 <Board
                     ref={e => this.board = e!}
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}

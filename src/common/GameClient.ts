@@ -4,6 +4,7 @@ import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
 import { Variation } from "../components/Board";
+import { resolve } from "path";
 
 export default class GameClient extends EventEmitter {
 
@@ -112,34 +113,62 @@ export default class GameClient extends EventEmitter {
     genmove(color: StoneColor): Promise<{ move: string, variations: Variation[] }> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.genmove(color, this.msgId++);
-            this.sendGtpCommand(cmd);
+
             this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
                 let result = JSON.parse(resultstr);
                 let gtpresp = Response.fromString(result.respstr);
                 let variations = result.variations;
                 resolve({ move: gtpresp.content!, variations });
             });
+
+            this.sendGtpCommand(cmd);
+        });
+    }
+
+    peekWinrate(color: StoneColor): Promise<Variation[]> {
+        return new Promise(resolve => {
+            let cmd = CommandBuilder.genmove(color, this.msgId++);
+
+            this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
+                let result = JSON.parse(resultstr);
+                let variations = result.variations;
+
+                let undo = CommandBuilder.undo(this.msgId++);
+
+                this.pendingCallbacks.set(undo.id!, (resp: Response) => {
+                    console.log('undo', resp);
+                    resolve(variations);
+                });
+
+                this.sendGtpCommand(undo);
+            });
+
+            this.sendGtpCommand(cmd);
         });
     }
 
     play(color: StoneColor, move: string): Promise<boolean> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.play(color, move, this.msgId++);
-            this.sendGtpCommand(cmd);
+
             this.pendingCallbacks.set(cmd.id!, (resp: Response) => {
                 resolve(resp === null);
             });
+
+            this.sendGtpCommand(cmd);
         });
     }
 
     heatmap(): Promise<number[][]> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.leela_heatmap(this.msgId++);
-            this.sendGtpCommand(cmd);
+
             this.pendingCallbacks.set(cmd.id!, (mapstr: string) => {
                 let data: number[][] = JSON.parse(mapstr);
                 resolve(data);
             });
+
+            this.sendGtpCommand(cmd);
         });
     }
 

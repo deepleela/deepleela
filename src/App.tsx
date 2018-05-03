@@ -141,7 +141,7 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} />
+            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} showWinrate={true} />
           </div>
         </div>
 
