@@ -3,6 +3,10 @@
     transition: all 0.5s;
 }
 
-.winrate-high {
+.winrate {
+    border: 1px solid purple;    
+}
 
+.winrate-high {
+    border: 1px solid rgb(232, 5, 136);
 }

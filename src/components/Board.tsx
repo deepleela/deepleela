@@ -2,9 +2,14 @@ import * as React from 'react';
 import Intersection, { State } from './Intersection';
 import { CSSProperties } from 'react';
 
+export interface Variation {
+    visits: number;
+    stats: { W: string };
+    variation: string[];
+}
+
 interface BoardProps {
     size: number;
-    className?: string;
     id?: string;
     disabled?: boolean;
     showCoordinate?: boolean;
@@ -18,9 +23,12 @@ interface BoardProps {
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
     states: State[][];
     heatmap?: number[][];
+    fontSize?: number;
 }
 
 interface BoardStates {
+    variationStates: (Variation | undefined)[][];
+    highestWinrateVariationOffset?: { x: number, y: number };
 }
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
@@ -42,9 +50,56 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         return { x, y };
     }
 
+    constructor(props: BoardProps, ctx?: any) {
+        super(props, ctx);
+
+        let variationStates: (Variation | undefined)[][] = [];
+
+        for (let i = 0; i < props.size; i++) {
+            variationStates[i] = [];
+            for (let j = 0; j < props.size; j++) {
+                variationStates[i].push(undefined);
+            }
+        }
+
+        this.state = { variationStates };
+    }
+
     private onClick(row: number, col: number) {
         if (!this.props.onIntersectionClicked) return;
         this.props.onIntersectionClicked(row, col);
+    }
+
+    private onWinrateHover() {
+
+    }
+
+    setVariations(varitations: Variation[]) {
+        this.clearVariations();
+
+        varitations.forEach(v => {
+            let position = Board.stringToCartesianCoord(v.variation[0]);
+            let arrayOffset = Board.cartesianCoordToArrayPosition(position.x, position.y);
+            this.state.variationStates[arrayOffset.x][arrayOffset.y] = v;
+        });
+
+        let hightest = varitations[0];
+        if (!hightest) {
+            this.forceUpdate();
+            return;
+        }
+
+        let pos = Board.stringToCartesianCoord(varitations[0].variation[0]);
+        let offset = Board.cartesianCoordToArrayPosition(pos.x, pos.y);
+        this.setState({ highestWinrateVariationOffset: offset });
+    }
+
+    clearVariations() {
+        this.state.variationStates.forEach((row, i) => {
+            row.forEach((col, j) => {
+                row[j] = undefined;
+            });
+        });
     }
 
     render() {
@@ -55,11 +110,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
         let top = gridWidth / 2 - 6.25;
 
-
         let gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
 
         return (
-            <div className={this.props.className} id={this.props.id} style={this.props.style} draggable={false}>
+            <div id={this.props.id} style={this.props.style} draggable={false}>
 
                 <div style={{ background: this.props.style ? (this.props.style.background || '') : '', padding: 4, paddingBottom: `${0.6 + size}%`, }}>
 
@@ -94,6 +148,12 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
                                         highlightSize={gridWidth > 25 ? 'large' : 'small'}
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
+                                        winrate={this.state.variationStates[i][j] ? {
+                                            value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),
+                                            visits: this.state.variationStates[i][j]!.visits,
+                                            highest: this.state.highestWinrateVariationOffset ? this.state.highestWinrateVariationOffset.x === i && this.state.highestWinrateVariationOffset.y === j : false,
+                                            fontSize: this.props.fontSize
+                                        } : undefined}
                                     />
                                 </div>
                             ))}

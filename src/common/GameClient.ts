@@ -3,12 +3,7 @@ import { Protocol, ProtocolDef } from 'deepleela-common';
 import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
-
-interface Variation {
-    visits: number;
-    stats: { W: string };
-    variation: string[];
-}
+import { Variation } from "../components/Board";
 
 export default class GameClient extends EventEmitter {
 

@@ -11,6 +11,7 @@ import { NewGameDialogStates } from '../dialogs/NewGameDialog';
 import { State } from '../components/Intersection';
 import { StoneColor } from '../common/Constants';
 import * as moment from 'moment';
+import * as Utils from '../lib/Utils';
 
 interface SmartGoBoardProps extends React.HTMLProps<HTMLDivElement> {
 
@@ -24,6 +25,7 @@ interface SmartGoBoardStates {
 
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
 
+    private board: Board;
     private readonly client = GameClient.default;
     private game = new Go(19);
     gameMode: 'ai' | 'self' | 'guest' = 'self';
@@ -65,7 +67,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.gameMode = 'self';
         this.engine = 'leela';
         this.setState({ heatmap: undefined });
-        
+
         let results = await this.client.requestAI('leela');
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 6.5, time: 60 * 24 });
@@ -94,10 +96,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async genmove(color: StoneColor) {
         let result = await this.client.genmove(color);
-        console.log(result);
+    
+        this.board.setVariations(result.variations);
+        await Utils.sleep(5000);
+    
         let coord = Board.stringToCartesianCoord(result.move);
         this.game.play(coord.x, coord.y);
         this.setState({ heatmap: await this.client.heatmap() });
+        this.board.clearVariations();
     }
 
     render() {
@@ -111,6 +117,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return (
             <div {...this.props}>
                 <Board
+                    ref={e => this.board = e!}
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
                     states={this.game.board}
