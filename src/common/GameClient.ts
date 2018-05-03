@@ -8,7 +8,7 @@ import { resolve } from "path";
 
 export default class GameClient extends EventEmitter {
 
-    static readonly url = process.env.NODE_ENV === 'production' ? 'wss://' : 'ws://192.168.31.54:3301';
+    static readonly url = process.env.NODE_ENV === 'production' ? `ws${location.protocol === 'https:' ? 's' : ''}://w.deepleela.com` : 'ws://192.168.31.54:3301';
     static readonly default = new GameClient();
 
     private ws: WebSocket;
@@ -136,7 +136,6 @@ export default class GameClient extends EventEmitter {
                 let undo = CommandBuilder.undo(this.msgId++);
 
                 this.pendingCallbacks.set(undo.id!, (resp: Response) => {
-                    console.log('undo', resp);
                     resolve(variations);
                 });
 

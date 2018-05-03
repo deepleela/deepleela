@@ -1,5 +1,6 @@
 .heatmap {
-    background: radial-gradient(ellipse at center, rgba(255,0,72,1) 0%,rgba(255,255,255,0) 67%,rgba(255,255,255,0) 100%);
+    /* background: radial-gradient(ellipse at center, rgba(255,0,72,0.85) 0%, rgba(255, 255, 255, 0.00) 67%,rgba(255,255,255,0) 100%); */
+    background: radial-gradient(ellipse at center, rgba(35,219,255,1) 0%, rgba(255, 255, 255, 0) 67%,rgba(0,0,0,0) 100%);
     transition: all 0.5s;
 }
 
@@ -8,5 +9,5 @@
 }
 
 .winrate-high {
-    border: 1px solid rgb(232, 5, 136);
+    border: 1px solid rgb(5, 232, 35);
 }

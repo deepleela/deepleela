@@ -49,6 +49,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.engine = config.engine;
         this.game.time = config.time;
         this.setState({ heatmap: undefined });
+        this.board.clearVariations();
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
@@ -69,6 +70,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.gameMode = 'self';
         this.engine = 'leela';
         this.setState({ heatmap: undefined });
+        this.board.clearVariations();
 
         let results = await this.client.requestAI('leela');
         this.game.clear();
@@ -80,7 +82,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     async onStonePlaced(x: number, y: number) {
         this.board.clearVariations();
-        
+
         let lastColor = this.game.currentColor;
 
         if (!this.game.play(x, y)) {
