@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Intersection, { State } from './Intersection';
+import Intersection, { State, WinRate } from './Intersection';
 import { CSSProperties } from 'react';
 
 export interface Variation {
@@ -70,8 +70,11 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         this.props.onIntersectionClicked(row, col);
     }
 
-    private onWinrateHover() {
-
+    private onVariationHover(row: number, col: number) {
+        let { x, y } = Board.cartesianCoordToArrayPosition(row, col);
+        let branch = this.state.variationStates[x][y];
+        if (!branch) return;
+        branch.variation;
     }
 
     setVariations(varitations: Variation[]) {
@@ -107,10 +110,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const dimension = this.props.size;
 
         const boardParent = document.getElementById('board');
-        let gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
-        let top = gridWidth / 2 - 6.25;
+        const gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
+        const top = gridWidth / 2 - 6.25;
 
-        let gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
+        const gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
 
         return (
             <div id={this.props.id} style={this.props.style} draggable={false}>
@@ -154,6 +157,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                             highest: this.state.highestWinrateVariationOffset ? this.state.highestWinrateVariationOffset.x === i && this.state.highestWinrateVariationOffset.y === j : false,
                                             fontSize: this.props.fontSize
                                         } : undefined}
+                                        onVariationHover={(row, col) => this.onVariationHover(row, col)}
                                     />
                                 </div>
                             ))}
