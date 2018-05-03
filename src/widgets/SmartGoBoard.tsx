@@ -30,6 +30,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private board: Board;
     private readonly client = GameClient.default;
     private game = new Go(19);
+
     gameMode: 'ai' | 'self' | 'guest' = 'self';
     state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';
@@ -94,6 +95,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
 
+        if (this.gameMode === 'self' && this.props.showHeatmap) {
+            this.setState({ heatmap: await this.client.heatmap() });
+        }
+
         if (this.props.showWinrate) {
             await this.peekWinrate();
         }
@@ -108,7 +113,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.props.showWinrate) {
             this.board.setVariations(result.variations);
-            await Utils.sleep(7000);
+            await Utils.sleep(5000);
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
@@ -132,7 +137,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.setVariations(variations);
 
         this.setState({ disabled: false });
-        jQuery('html,body').css('cursor','default');
+        jQuery('html,body').css('cursor', 'default');
     }
 
     render() {
@@ -155,6 +160,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     showCoordinate={window.innerWidth >= 800}
                     hightlightCoord={this.game.currentCartesianCoord}
                     heatmap={this.state.heatmap}
+                    fontSize={window.innerWidth < 576 ? 6.25 : 10}
                 />
 
                 <div style={{ marginTop: -12, }}>

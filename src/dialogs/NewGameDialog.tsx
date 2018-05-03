@@ -26,7 +26,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
         super(props, ctx);
 
         let preferences = localStorage.getItem('newgame');
-        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120, engine: 'leela' };
+        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120, engine: 'Leela' };
         try {
             this.state = preferences ? JSON.parse(preferences) : defaultPreference;
         } catch (error) {
