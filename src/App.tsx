@@ -105,7 +105,7 @@ class App extends React.Component<any, AppStates> {
         <div style={{ position: 'relative' }}>
           <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
             <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px' }}>DeepLeela</span>
+            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7 }}>DeepLeela</span>
           </div>
 
           {/* Menu */}
