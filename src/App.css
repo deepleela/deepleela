@@ -26,6 +26,10 @@ html {
   visibility: hidden;
 }
 
+.display-none {
+	display: none;
+}
+
 .inline {
 	display: inline;
 }

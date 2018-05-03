@@ -79,6 +79,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     async onStonePlaced(x: number, y: number) {
+        this.board.clearVariations();
+        
         let lastColor = this.game.currentColor;
 
         if (!this.game.play(x, y)) {
@@ -90,7 +92,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
 
-        await this.peekWinrate();
+        if (this.props.showWinrate) {
+            await this.peekWinrate();
+        }
 
         if (this.gameMode === 'self') return;
 
@@ -120,11 +124,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private async peekWinrate() {
         this.board.clearVariations();
         this.setState({ disabled: true });
+        jQuery('html,body').css('cursor', 'progress');
 
         let variations = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(variations);
-        
+
         this.setState({ disabled: false });
+        jQuery('html,body').css('cursor','default');
     }
 
     render() {

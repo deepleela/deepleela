@@ -20,6 +20,9 @@ interface AppStates {
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
 
+  showWinrate?: boolean;
+  showHeatmap?: boolean;
+
   paddingTop: number;
 }
 
@@ -31,7 +34,7 @@ class App extends React.Component<any, AppStates> {
 
   constructor(props: any, ctx) {
     super(props, ctx);
-    this.state = { paddingTop: 0 };
+    this.state = { paddingTop: 0, showHeatmap: localStorage.getItem('heatmap') ? true : false, showWinrate: localStorage.getItem('winrate') ? true : false };
   }
 
   componentDidMount() {
@@ -119,8 +122,8 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
 
-                  <li><a href="#">{i18n.menu.showHeatmap}</a></li>
-                  <li><a href="#">{i18n.menu.showWinrate}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => localStorage.setItem('heatmap', this.state.showHeatmap ? 'true' : ''))}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => localStorage.setItem('winrate', this.state.showWinrate ? 'true' : ''))}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
@@ -141,7 +144,7 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} showWinrate={true} />
+            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} />
           </div>
         </div>
 
