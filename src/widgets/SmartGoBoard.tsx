@@ -167,6 +167,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     hightlightCoord={this.game.currentCartesianCoord}
                     heatmap={this.state.heatmap}
                     fontSize={window.innerWidth < 576 ? 6.25 : 10}
+                    currentColor={this.game.currentColor}
                 />
 
                 <div style={{ marginTop: -12, }}>

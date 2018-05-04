@@ -8,6 +8,10 @@ export interface Variation {
     variation: string[];
 }
 
+interface BranchState {
+    state: State;
+    moveNumber: number;
+}
 interface BoardProps {
     size: number;
     id?: string;
@@ -24,10 +28,12 @@ interface BoardProps {
     states: State[][];
     heatmap?: number[][];
     fontSize?: number;
+    currentColor: 'W' | 'B';
 }
 
 interface BoardStates {
     variationStates: (Variation | undefined)[][];
+    branchStates: (BranchState | undefined)[][];
     highestWinrateVariationOffset?: { x: number, y: number };
 }
 
@@ -50,22 +56,36 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         return { x, y };
     }
 
+    static stringToArrayPosition(coord: string) {
+        let cartesian = Board.stringToCartesianCoord(coord);
+        return Board.cartesianCoordToArrayPosition(cartesian.x, cartesian.y);
+    }
+
     constructor(props: BoardProps, ctx?: any) {
         super(props, ctx);
 
         let variationStates: (Variation | undefined)[][] = [];
 
         for (let i = 0; i < props.size; i++) {
-            variationStates[i] = [];
+            variationStates.push([]);
             for (let j = 0; j < props.size; j++) {
                 variationStates[i].push(undefined);
             }
         }
 
-        this.state = { variationStates };
+        let branchStates: (BranchState | undefined)[][] = [];
+        for (let i = 0; i < props.size; i++) {
+            branchStates.push([]);
+            for (let j = 0; j < props.size; j++) {
+                branchStates[i].push(undefined)
+            }
+        }
+
+        this.state = { variationStates, branchStates };
     }
 
     private onClick(row: number, col: number) {
+        this.clearBranchStates();
         if (!this.props.onIntersectionClicked) return;
         this.props.onIntersectionClicked(row, col);
     }
@@ -75,7 +95,17 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let branch = this.state.variationStates[x][y];
         if (!branch) return;
         if (!branch.variation || branch.variation.length === 0) return;
-        
+
+        let currColor = this.props.currentColor;
+
+        branch.variation.forEach((value, i) => {
+            let { x, y } = Board.stringToArrayPosition(value);
+            let state = currColor === 'B' ? State.Black : State.White;
+            currColor = currColor === 'B' ? 'W' : 'B';
+            this.state.branchStates[x][y] = { state, moveNumber: i + 1 };
+        });
+
+        this.forceUpdate();
     }
 
     setVariations(varitations: Variation[]) {
@@ -99,11 +129,21 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     clearVariations() {
-        this.state.variationStates.forEach((row, i) => {
-            row.forEach((col, j) => {
-                row[j] = undefined;
-            });
-        });
+        for (let i = 0; i < this.props.size; i++) {
+            for (let j = 0; j < this.props.size; j++) {
+                this.state.variationStates[i][j] = undefined;
+            }
+        }
+    }
+
+    clearBranchStates() {
+        for (let i = 0; i < this.props.size; i++) {
+            for (let j = 0; j < this.props.size; j++) {
+                this.state.branchStates[i][j] = undefined;
+            }
+        }
+
+        this.forceUpdate();
     }
 
     render() {
@@ -144,7 +184,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         disabled={this.props.disabled}
                                         highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         width={size}
-                                        state={state}
+                                        state={state === State.Empty ? (this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.state : state) : state}
                                         topEdge={i === 0}
                                         bottomEdge={i === dimension - 1}
                                         leftEdge={j === 0}
@@ -156,9 +196,11 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                             value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),
                                             visits: this.state.variationStates[i][j]!.visits,
                                             highest: this.state.highestWinrateVariationOffset ? this.state.highestWinrateVariationOffset.x === i && this.state.highestWinrateVariationOffset.y === j : false,
-                                            fontSize: this.props.fontSize
                                         } : undefined}
+                                        fontSize={this.props.fontSize}
                                         onVariationHover={(row, col) => this.onVariationHover(row, col)}
+                                        onVariationHoverLeave={(row, col) => this.clearBranchStates()}
+                                        moveNumber={this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.moveNumber : undefined}
                                     />
                                 </div>
                             ))}
