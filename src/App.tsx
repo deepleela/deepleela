@@ -45,7 +45,7 @@ class App extends React.Component<any, AppStates> {
     Modal.setAppElement('#main');
 
     const calcPaddingTop = () => {
-      let top = (window.innerHeight - 96 - document.getElementById('board')!.getBoundingClientRect().height) / 2;
+      let top = (window.innerHeight - 96 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
       this.setState({ paddingTop: top });
     };
 
@@ -146,7 +146,7 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard id="board" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} />
+            <SmartGoBoard id="smartboard" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} />
           </div>
         </div>
 

@@ -74,7 +74,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let { x, y } = Board.cartesianCoordToArrayPosition(row, col);
         let branch = this.state.variationStates[x][y];
         if (!branch) return;
-        branch.variation;
+        if (!branch.variation || branch.variation.length === 0) return;
+        
     }
 
     setVariations(varitations: Variation[]) {
@@ -109,7 +110,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const size = 100.0 / this.props.size;
         const dimension = this.props.size;
 
-        const boardParent = document.getElementById('board');
+        const boardParent = document.getElementById('smartboard');
         const gridWidth = boardParent ? boardParent.getBoundingClientRect().height * (size / 100.0) : 0;
         const top = gridWidth / 2 - 6.25;
 

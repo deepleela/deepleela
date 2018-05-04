@@ -23,6 +23,7 @@ interface SmartGoBoardStates {
     disabled?: boolean;
     remaingTime?: string;
     heatmap?: number[][];
+    isThinking?: boolean;
 }
 
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
@@ -130,14 +131,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async peekWinrate() {
         this.board.clearVariations();
-        this.setState({ disabled: true });
-        jQuery('html,body').css('cursor', 'progress');
+        this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
         let variations = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(variations);
 
-        this.setState({ disabled: false });
-        jQuery('html,body').css('cursor', 'default');
+        this.setState({ disabled: false, isThinking: false });
     }
 
     render() {
@@ -147,10 +146,17 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let blackPlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
+        let board = document.getElementById('board');
+        let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / 19 / 2 : 0) + 19;
 
         return (
-            <div id={this.props.id}>
+            <div id={this.props.id} style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 8, color: 'lightgreey', marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
+                    {i18n.notifications.aiIsThinking}
+                </div>
+
                 <Board
+                    id='board'
                     ref={e => this.board = e!}
                     style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
