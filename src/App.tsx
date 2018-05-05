@@ -13,6 +13,7 @@ import GameClient from './common/GameClient';
 import { Protocol } from 'deepleela-common';
 import Go from './common/Go';
 import SmartGoBoard from './widgets/SmartGoBoard';
+import BoardController from './widgets/BoardController';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -99,7 +100,7 @@ class App extends React.Component<any, AppStates> {
     }
 
     return (
-      <div id="main" className="App" style={{}} >
+      <div id="main" className="App" style={{ position: 'relative' }} >
 
         {/* Head Aera */}
         <div style={{ position: 'relative' }}>
@@ -149,6 +150,8 @@ class App extends React.Component<any, AppStates> {
             <SmartGoBoard id="smartboard" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} />
           </div>
         </div>
+
+        <BoardController className='board-controller' style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>
