@@ -11,7 +11,9 @@
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-modal": "^3.4.4",
-    "react-scripts-ts": "2.15.1"
+    "react-scripts-ts": "2.15.1",
+    "sgfgrove": "^1.0.8",
+    "sgfjs": "Mistereo/sgfjs"
   },
   "scripts": {
     "start": "react-scripts-ts start",
