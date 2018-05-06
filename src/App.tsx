@@ -16,6 +16,9 @@ import SmartGoBoard from './widgets/SmartGoBoard';
 import BoardController from './widgets/BoardController';
 
 interface AppStates {
+  whitePlayer?: string;
+  blackPlayer?: string;
+
   newGameDialogOpen?: boolean,
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
@@ -68,7 +71,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, showController: false });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -78,7 +81,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewSelfGame() {
-    this.setState({ loadingDialogOpen: true, showController: false });
+    this.setState({ loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
     if (!await this.smartBoard.newSelfGame()) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false });
   }
@@ -86,9 +89,10 @@ class App extends React.Component<any, AppStates> {
   onLoadSgf(sgf: string | undefined) {
     try {
       if (!sgf) return;
-      if (!this.boardController.loadSgf(sgf)) return;
+      let info = this.boardController.loadSgf(sgf);
+      if (!info) return;
 
-      this.setState({ showController: true });
+      this.setState({ showController: true, whitePlayer: info.whitePlayer, blackPlayer: info.blackPlayer });
     } finally {
       this.setState({ loadSgfDialogOpen: false });
     }
@@ -160,7 +164,7 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard id="smartboard" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} />
+            <SmartGoBoard id="smartboard" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} whitePlayer={this.state.whitePlayer} blackPlayer={this.state.blackPlayer} />
           </div>
         </div>
 

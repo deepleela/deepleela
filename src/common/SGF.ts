@@ -2,6 +2,8 @@ import * as sgfjs from 'sgfjs';
 import { State } from "../components/Intersection";
 import { stat } from 'fs';
 import { StoneColor } from './Constants';
+import Go from './Go';
+import Board from '../components/Board';
 
 export interface Tree {
     props: {
@@ -25,10 +27,10 @@ export default class SGF {
         let whitePlayer = tree.props.PW;
 
         let size = Number.parseInt(tree.props.SZ || '19');
-        let init = this.createEmptyBoard(size);
+        let game = new Go(size);
 
         let snapshots: State[][][] = [];
-        snapshots.push(init);
+        snapshots.push(this.createBoardFrom(game.board));
 
         let coords: { x: number, y: number }[] = [];
         coords.push({ x: -1, y: -1 });
@@ -37,14 +39,15 @@ export default class SGF {
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;
 
+            if (!pos) game.pass();
+
             if (pos && pos.length == 2) {
-                let row = SGF.alphabets.indexOf(pos[0]);
-                let col = SGF.alphabets.indexOf(pos[1]);
+                let row = SGF.alphabets.indexOf(pos[1]);
+                let col = SGF.alphabets.indexOf(pos[0]);
+                let coord = Board.arrayPositionToCartesianCoord(row, col);
+                game.play(coord.x, coord.y)
 
-                let currentBoard = this.createBoardFrom(snapshots[snapshots.length - 1]);
-                currentBoard[row][col] = color === 'B' ? State.Black : color === 'W' ? State.White : State.Empty;
-
-                snapshots.push(currentBoard);
+                snapshots.push(this.createBoardFrom(game.board));
                 coords.push({ x: row, y: col });
             }
 
@@ -52,18 +55,6 @@ export default class SGF {
         }
 
         return { snapshots, whitePlayer, blackPlayer, size, coords };
-    }
-
-    static createEmptyBoard(size: number) {
-        let states: State[][] = [];
-        for (let i = 0; i < size; i++) {
-            states.push([]);
-            for (let j = 0; j < size; j++) {
-                states[i].push(State.Empty);
-            }
-        }
-
-        return states;
     }
 
     static createBoardFrom(states: State[][]) {

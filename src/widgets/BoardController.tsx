@@ -71,13 +71,13 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon:  chevron-left; ratio: 1;'></span>
                         <span uk-icon='icon:  chevron-left; ratio: 1.2' style={{ display: 'inline-block', marginLeft: -16 }}></span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, --this.currentIndex))}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, this.currentIndex = this.currentIndex - 1 < 0 ? 0 : this.currentIndex - 1))}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick() : undefined}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 2, display: 'block' }}>AI</span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(++this.currentIndex, this.snapshots.length - 1))}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(this.currentIndex = this.currentIndex + 1 === this.snapshots.length ? this.currentIndex : this.currentIndex + 1, this.snapshots.length - 1))}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.last} onClick={e => this.triggerSnapshotChange(this.currentIndex = this.snapshots.length - 1)}>

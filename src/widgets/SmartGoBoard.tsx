@@ -17,6 +17,8 @@ interface SmartGoBoardProps {
     id?: any;
     showHeatmap?: boolean;
     showWinrate?: boolean;
+    whitePlayer?: string;
+    blackPlayer?: string;
 }
 
 interface SmartGoBoardStates {
@@ -32,7 +34,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private readonly client = GameClient.default;
     private game = new Go(19);
 
-    gameMode: 'ai' | 'self' | 'guest' = 'self';
+    gameMode: 'ai' | 'self' | 'guest' | 'review' = 'self';
     state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';
     engine: string;
@@ -85,6 +87,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     setBoard(state: State[][], coord: { x: number, y: number }) {
         this.game.board = state;
         this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
+        this.board.clearVariations();
         this.forceUpdate();
     }
 
@@ -148,8 +151,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     render() {
         let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
 
-        let whitePlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
-        let blackPlayer = this.gameMode === 'self' ? 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
+        let whitePlayer = this.gameMode === 'self' ? this.props.whitePlayer || 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
+        let blackPlayer = this.gameMode === 'self' ? this.props.blackPlayer || 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
         let board = document.getElementById('board');

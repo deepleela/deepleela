@@ -133,6 +133,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     clearVariations() {
+        if (!this.state.branchStates || this.state.branchStates.length === 0) return;
+        
         for (let i = 0; i < this.props.size; i++) {
             for (let j = 0; j < this.props.size; j++) {
                 this.state.variationStates[i][j] = undefined;
