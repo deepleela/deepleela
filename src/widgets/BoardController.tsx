@@ -5,16 +5,20 @@ import './Styles.css'
 import { Interactable } from 'interactjs';
 import i18n from '../i18n';
 import SGF from '../common/SGF';
+import { State } from '../components/Intersection';
+import { CSSProperties } from 'react';
 
-interface BoardControllerProps extends React.HTMLProps<HTMLDivElement> {
+interface BoardControllerProps {
+    style?: CSSProperties;
     onAIThinkingClick?: () => void;
-    onFirstClick?: () => void;
-    onLastClick?: () => void;
-    onPreviousClick?: () => void;
-    onNextClick?: () => void;
+    onSnapshotChange?: (snapshot: State[][], coord: { x: number, y: number }) => void;
 }
 
 export default class BoardController extends React.Component<BoardControllerProps, {}> {
+
+    private snapshots: State[][][];
+    private coords: { x: number, y: number }[];
+    currentIndex = 0;
 
     componentDidMount() {
         const xKey = 'board-controller-x';
@@ -41,34 +45,42 @@ export default class BoardController extends React.Component<BoardControllerProp
 
     loadSgf(sgf: string) {
         try {
-            let snapshots = SGF.import(sgf);
-            return true;
+            let tree = SGF.import(sgf);
+            this.snapshots = tree.snapshots;
+            this.coords = tree.coords;
+            return tree;
         } catch{
-            return false;
+            return null;
         }
+    }
+
+    private triggerSnapshotChange(index: number) {
+        if (!this.props.onSnapshotChange) return;
+        let snapshot = this.snapshots[index];
+        this.props.onSnapshotChange(snapshot, this.coords[index]);
     }
 
     render() {
         return (
-            <div id='board-controller' {...this.props}>
+            <div id='board-controller' style={this.props.style} className='board-controller'>
                 <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', backdropFilter: 'blur(25px)' }}>
                     <div id='draggable-handler'>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
-                    <div className='touch' uk-tooltip={i18n.tips.first}>
-                        <span uk-icon='icon:  chevron-left; ratio: 1; color: deepskyblue'></span>
+                    <div className='touch' uk-tooltip={i18n.tips.first} onClick={e => this.triggerSnapshotChange(this.currentIndex = 0)}>
+                        <span uk-icon='icon:  chevron-left; ratio: 1;'></span>
                         <span uk-icon='icon:  chevron-left; ratio: 1.2' style={{ display: 'inline-block', marginLeft: -16 }}></span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, --this.currentIndex))}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' uk-tooltip={i18n.tips.aithingking}>
+                    <div className='touch' uk-tooltip={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick() : undefined}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 2, display: 'block' }}>AI</span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(++this.currentIndex, this.snapshots.length - 1))}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' uk-tooltip={i18n.tips.last}>
+                    <div className='touch' uk-tooltip={i18n.tips.last} onClick={e => this.triggerSnapshotChange(this.currentIndex = this.snapshots.length - 1)}>
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>

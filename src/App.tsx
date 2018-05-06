@@ -164,7 +164,10 @@ class App extends React.Component<any, AppStates> {
           </div>
         </div>
 
-        <BoardController ref={e => this.boardController = e!} className='board-controller' style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
+        <BoardController
+          ref={e => this.boardController = e!}
+          onSnapshotChange={(snapshot, coord) => this.smartBoard.setBoard(snapshot, coord)}
+          style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>

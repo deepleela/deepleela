@@ -61,6 +61,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         return Board.cartesianCoordToArrayPosition(cartesian.x, cartesian.y);
     }
 
+    static arrayPositionToCartesianCoord(x: number, y: number, size = 19) {
+        return { x: size - x, y: y + 1 };
+    }
+
     constructor(props: BoardProps, ctx?: any) {
         super(props, ctx);
 

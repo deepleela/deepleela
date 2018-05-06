@@ -82,7 +82,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results[0];
     }
 
-    async onStonePlaced(x: number, y: number) {
+    setBoard(state: State[][], coord: { x: number, y: number }) {
+        this.game.board = state;
+        this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
+        this.forceUpdate();
+    }
+
+    private async onStonePlaced(x: number, y: number) {
         this.board.clearVariations();
 
         let lastColor = this.game.currentColor;

@@ -30,6 +30,9 @@ export default class SGF {
         let snapshots: State[][][] = [];
         snapshots.push(init);
 
+        let coords: { x: number, y: number }[] = [];
+        coords.push({ x: -1, y: -1 });
+
         while (child.length > 0) {
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;
@@ -42,12 +45,13 @@ export default class SGF {
                 currentBoard[row][col] = color === 'B' ? State.Black : color === 'W' ? State.White : State.Empty;
 
                 snapshots.push(currentBoard);
+                coords.push({ x: row, y: col });
             }
 
             child = child[0].childs;
         }
 
-        return { snapshots, whitePlayer, blackPlayer, size };
+        return { snapshots, whitePlayer, blackPlayer, size, coords };
     }
 
     static createEmptyBoard(size: number) {
