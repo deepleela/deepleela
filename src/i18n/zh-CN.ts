@@ -44,5 +44,13 @@ export const lang = {
     button: {
         ok: '确定',
         cancel: '取消',
-    }
+    },
+
+    tips: {
+        first: '开始',
+        previous: '上一步',
+        next: '下一步',
+        last: '最后',
+        aithingking: 'AI 思考'
+    },
 }

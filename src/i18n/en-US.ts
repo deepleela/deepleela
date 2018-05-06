@@ -44,5 +44,13 @@ export const lang = {
     button: {
         ok: 'OK',
         cancel: 'Cancel',
-    }
+    },
+
+    tips: {
+        first: 'First',
+        previous: 'Previous',
+        next: 'Next',
+        last: 'Last',
+        aithingking: 'AI Thinking'
+    },
 }

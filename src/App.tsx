@@ -36,7 +36,7 @@ class App extends React.Component<any, AppStates> {
   constructor(props: any, ctx) {
     super(props, ctx);
 
-    if (localStorage.getItem('winrate') === null) localStorage.setItem('winrate', 'true');
+    if (localStorage.getItem('heatmap') === null) localStorage.setItem('heatmap', 'true');
     this.state = { paddingTop: 0, showHeatmap: localStorage.getItem('heatmap') ? true : false, showWinrate: localStorage.getItem('winrate') ? true : false };
   }
 
