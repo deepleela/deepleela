@@ -7,19 +7,22 @@ interface SGFDialogProps {
     sgf?: string;
     isOpen?: boolean;
     readOnly?: boolean;
-    onOk?: () => void;
+    onOk?: (sgf?: string) => void;
     onCancel?: () => void;
 }
 
 export default class SGFDialog extends React.Component<SGFDialogProps, any>{
 
+    textarea: HTMLTextAreaElement;
+
     render() {
+
         return (
             <Modal isOpen={this.props.isOpen} style={largeBox} shouldCloseOnOverlayClick={true}>
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{this.props.readOnly ? i18n.dialogs.sgf.export : i18n.dialogs.sgf.load}</legend>
                     <div className="uk-margin">
-                        <textarea className="uk-textarea" placeholder="SGF" rows={12} style={{ resize: 'none' }} readOnly={this.props.readOnly} />
+                        <textarea ref={e => this.textarea = e!} className="uk-textarea" placeholder="SGF" rows={12} style={{ resize: 'none' }} readOnly={this.props.readOnly} />
                     </div>
 
                     <div style={{ height: 1, width: '100%', backgroundColor: '#eee', marginBottom: 12 }} />
@@ -27,7 +30,7 @@ export default class SGFDialog extends React.Component<SGFDialogProps, any>{
                         <button className="uk-button uk-button-default" type="button" style={{ width: '49%', }} onClick={e => this.props.onCancel ? this.props.onCancel() : undefined}>
                             {i18n.button.cancel}
                         </button>
-                        <button className="uk-button uk-button-primary" type="button" style={{ width: '49%', }} onClick={e => { this.props.onOk ? this.props.onOk() : undefined; }}>
+                        <button className="uk-button uk-button-primary" type="button" style={{ width: '49%', }} onClick={e => { this.props.onOk ? this.props.onOk(this.textarea.value) : undefined; }}>
                             {i18n.button.ok}
                         </button>
                     </div>

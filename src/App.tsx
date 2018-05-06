@@ -23,6 +23,7 @@ interface AppStates {
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
+  showController?: boolean;
 
   paddingTop: number;
 }
@@ -32,6 +33,7 @@ class App extends React.Component<any, AppStates> {
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   private smartBoard: SmartGoBoard;
+  private boardController: BoardController;
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -66,7 +68,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, showController: false });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -76,9 +78,20 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewSelfGame() {
-    this.setState({ loadingDialogOpen: true });
+    this.setState({ loadingDialogOpen: true, showController: false });
     if (!await this.smartBoard.newSelfGame()) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false });
+  }
+
+  onLoadSgf(sgf: string | undefined) {
+    try {
+      if (!sgf) return;
+      if (!this.boardController.loadSgf(sgf)) return;
+
+      this.setState({ showController: true });
+    } finally {
+      this.setState({ loadSgfDialogOpen: false });
+    }
   }
 
   fadeIn() {
@@ -151,7 +164,7 @@ class App extends React.Component<any, AppStates> {
           </div>
         </div>
 
-        <BoardController className='board-controller' style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, }} />
+        <BoardController ref={e => this.boardController = e!} className='board-controller' style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>
@@ -162,7 +175,7 @@ class App extends React.Component<any, AppStates> {
 
         {/* Dialogs Aera */}
         <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} />
-        <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} />
+        <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={sgf => this.onLoadSgf(sgf)} />
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />
       </div>

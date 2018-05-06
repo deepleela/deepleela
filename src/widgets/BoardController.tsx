@@ -4,6 +4,7 @@ import * as interactjs from 'interactjs';
 import './Styles.css'
 import { Interactable } from 'interactjs';
 import i18n from '../i18n';
+import SGF from '../common/SGF';
 
 interface BoardControllerProps extends React.HTMLProps<HTMLDivElement> {
     onAIThinkingClick?: () => void;
@@ -34,8 +35,17 @@ export default class BoardController extends React.Component<BoardControllerProp
             onend: e => {
                 localStorage.setItem(xKey, e.clientX.toString());
                 localStorage.setItem(yKey, e.clientY.toString());
-            }
+            },
         });
+    }
+
+    loadSgf(sgf: string) {
+        try {
+            let snapshots = SGF.import(sgf);
+            return true;
+        } catch{
+            return false;
+        }
     }
 
     render() {
@@ -46,16 +56,16 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.first}>
-                        <span uk-icon='icon:  chevron-left; ratio: 1'></span>
+                        <span uk-icon='icon:  chevron-left; ratio: 1; color: deepskyblue'></span>
                         <span uk-icon='icon:  chevron-left; ratio: 1.2' style={{ display: 'inline-block', marginLeft: -16 }}></span>
                     </div>
-                    <div className='touch' style={{ marginTop: 2 }} uk-tooltip={i18n.tips.previous}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.aithingking}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 2, display: 'block' }}>AI</span>
                     </div>
-                    <div className='touch' style={{ marginTop: 2 }} uk-tooltip={i18n.tips.next}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.last}>
