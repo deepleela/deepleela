@@ -132,7 +132,13 @@ export default class GameClient extends EventEmitter {
 
             this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
                 let result = JSON.parse(resultstr);
-                let variations = result.variations;
+                let variations = result.variations as Variation[];
+
+                if (color === 'W') {
+                    variations.forEach(v => {
+                        v.stats.W = `${(1 - Number.parseFloat(v.stats.W) / 100) * 100}%`;
+                    });
+                }
 
                 let undo = CommandBuilder.undo(this.msgId++);
 

@@ -34,7 +34,7 @@ interface BoardProps {
 interface BoardStates {
     variationStates: (Variation | undefined)[][];
     branchStates: (BranchState | undefined)[][];
-    highestWinrateVariationOffset?: { x: number, y: number };
+    highlightWinrateVariationOffset?: { x: number, y: number };
 }
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
@@ -121,15 +121,15 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
             this.state.variationStates[arrayOffset.x][arrayOffset.y] = v;
         });
 
-        let hightest = varitations[0];
-        if (!hightest) {
+        let highlight = varitations[0];
+        if (!highlight) {
             this.forceUpdate();
             return;
         }
 
         let pos = Board.stringToCartesianCoord(varitations[0].variation[0]);
         let offset = Board.cartesianCoordToArrayPosition(pos.x, pos.y);
-        this.setState({ highestWinrateVariationOffset: offset });
+        this.setState({ highlightWinrateVariationOffset: offset });
     }
 
     clearVariations() {
@@ -201,7 +201,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         winrate={this.state.variationStates[i][j] ? {
                                             value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),
                                             visits: this.state.variationStates[i][j]!.visits,
-                                            highest: this.state.highestWinrateVariationOffset ? this.state.highestWinrateVariationOffset.x === i && this.state.highestWinrateVariationOffset.y === j : false,
+                                            highest: this.state.highlightWinrateVariationOffset ? this.state.highlightWinrateVariationOffset.x === i && this.state.highlightWinrateVariationOffset.y === j : false,
                                         } : undefined}
                                         fontSize={this.props.fontSize}
                                         onVariationHover={(row, col) => this.onVariationHover(row, col)}

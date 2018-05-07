@@ -95,7 +95,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div className={isSafari ? 'heatmap-safari' : 'heatmap'} style={{ transform: `scale(1.${this.props.heatmap || 0})`, opacity: this.props.heatmap && this.props.heatmap > 0 && !this.props.winrate ? 0.5 + (this.props.heatmap || 0) / 20 : 0, width: '100%', height: '100%', position: 'absolute', zIndex: 1, top: 0, left: 0, pointerEvents: 'none', transition: 'all 0.5s', }} />
 
                 {/* Winrate */}
-                <div style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
+                <div uk-tooltip={this.props.winrate ? `${this.props.winrate.visits} Visits` : undefined} style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
                     onMouseEnter={e => this.onMouseEnter(e)} onClick={e => this.onClick(e)}
                     onTouchStart={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}
                     onTouchCancel={e => this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined}
