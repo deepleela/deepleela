@@ -11,9 +11,9 @@ export default class Go extends EventEmitter {
     private koStones?: { coor: Coordinate, stoneColor: State, deadStones: Coordinate[], deadColor: State };
     private deadlines: [number, number] = [0, 0];  // black, white
     private stopWatch: NodeJS.Timer;
+    private _board: State[][];
 
     history: { stone: State, coor: Coordinate }[] = [];
-    board: State[][];
     size: number;
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
@@ -31,7 +31,7 @@ export default class Go extends EventEmitter {
 
     constructor(size: number) {
         super();
-        this.board = this.create(size);
+        this._board = this.create(size);
     }
 
     private create(size: number) {
@@ -70,7 +70,7 @@ export default class Go extends EventEmitter {
     }
 
     private findGroup(row: number, col: number) {
-        let target = this.board[row][col];
+        let target = this._board[row][col];
         if (target === State.Empty) return null;
 
         let visited = new Map<string, boolean>();
@@ -84,7 +84,7 @@ export default class Go extends EventEmitter {
 
             let neighbors = this.findNeighbors(stone.row, stone.col);
             neighbors.forEach(neighbor => {
-                let state = this.board[neighbor.row][neighbor.col];
+                let state = this._board[neighbor.row][neighbor.col];
                 if (state === State.Empty) liberties++;
                 if (state === target) queue.push({ row: neighbor.row, col: neighbor.col });
             });
@@ -95,6 +95,13 @@ export default class Go extends EventEmitter {
 
         return { liberties, stones };
     }
+
+    set board(value: State[][]) {
+        this._board = value;
+        this.history = [];
+    }
+
+    get board() { return this._board; }
 
     /**
      * Play a stone on board
@@ -110,7 +117,7 @@ export default class Go extends EventEmitter {
 
         if (!this.isEmpty(row, col)) return false;
 
-        this.board[row][col] = this.current;
+        this._board[row][col] = this.current;
 
         let captured: Coordinate[][] = [];
 
@@ -118,7 +125,7 @@ export default class Go extends EventEmitter {
         let neighbors = this.findNeighbors(row, col);
 
         neighbors.forEach(neighbor => {
-            let state = this.board[neighbor.row][neighbor.col];
+            let state = this._board[neighbor.row][neighbor.col];
 
             if (state === State.Empty || state === this.current) return;
 
@@ -130,7 +137,7 @@ export default class Go extends EventEmitter {
 
         let suicideGroup = this.findGroup(row, col);
         if (captured.length === 0 && suicideGroup && suicideGroup.liberties === 0) {
-            this.board[row][col] = State.Empty;
+            this._board[row][col] = State.Empty;
             return false;
         }
 
@@ -145,12 +152,12 @@ export default class Go extends EventEmitter {
             this.koStones.deadStones.length === 1 &&
             this.koStones.deadColor === this.current
         ) {
-            this.board[row][col] = State.Empty;
+            this._board[row][col] = State.Empty;
             return false;
         }
 
         // Remove dead stones
-        deadStones.forEach(stone => this.board[stone.row][stone.col] = State.Empty);
+        deadStones.forEach(stone => this._board[stone.row][stone.col] = State.Empty);
 
         // Memorize last dead stones
         if (deadStones.length > 0) {
@@ -177,7 +184,7 @@ export default class Go extends EventEmitter {
     }
 
     isEmpty(row: number, col: number) {
-        return this.board[row][col] === State.Empty;
+        return this._board[row][col] === State.Empty;
     }
 
     pass() {
@@ -186,7 +193,7 @@ export default class Go extends EventEmitter {
 
     clear(resize?: number) {
         this.history = [];
-        this.board = this.create(resize || (this.board.length || 19));
+        this._board = this.create(resize || (this._board.length || 19));
         this.current = State.Black;
         this.currentCartesianCoord = { x: -1, y: -1 };
     }

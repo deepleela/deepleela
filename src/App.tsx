@@ -184,7 +184,7 @@ class App extends React.Component<any, AppStates> {
         <BoardController
           ref={e => this.boardController = e!}
           onSnapshotChange={(snapshot, coord, color) => this.smartBoard.setBoard(snapshot, coord, color)}
-          onAIThinkingClick={(sgf, step) => this.smartBoard.querySgfWinrate(sgf, step)}
+          onAIThinkingClick={(sgf, step) => this.smartBoard.peekSgfWinrate(sgf, step)}
           style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
 
         {/* Footer Aera */}

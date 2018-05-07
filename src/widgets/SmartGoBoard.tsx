@@ -157,7 +157,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: false, isThinking: false });
     }
 
-    async querySgfWinrate(sgf: string, sgfStep: number, size = 19) {
+    async peekSgfWinrate(sgf: string, sgfStep: number, size = 19) {
         let moves = SGF.parse2Move(sgf, sgfStep);
         let userMoves = this.game.history.filter(s => s.stone != State.Empty).map(s => {
             let coord = Board.arrayPositionToCartesianCoord(s.coor.row, s.coor.col);
@@ -175,6 +175,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let vars = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(vars);
+        if (vars.length === 0) {
+            this.setState({ heatmap: await this.client.heatmap() });
+        }
 
         this.setState({ disabled: false, isThinking: false });
     }
