@@ -97,12 +97,12 @@ class App extends React.Component<any, AppStates> {
         return;
       }
 
-      this.setState({ showController: true, whitePlayer: info.whitePlayer, blackPlayer: info.blackPlayer });
-
       if (info.snapshots.length > 0 && info.coords.length > 0) {
-        this.smartBoard.setBoard(info.snapshots[0], info.coords[0]);
+        this.smartBoard.setBoard(info.snapshots[0], info.coords[0], info.stonesColor[0]);
         this.smartBoard.gameMode = 'review';
       }
+
+      this.setState({ showController: true, whitePlayer: info.whitePlayer, blackPlayer: info.blackPlayer });
     } finally {
       this.setState({ loadSgfDialogOpen: false });
     }
@@ -180,7 +180,7 @@ class App extends React.Component<any, AppStates> {
 
         <BoardController
           ref={e => this.boardController = e!}
-          onSnapshotChange={(snapshot, coord) => this.smartBoard.setBoard(snapshot, coord)}
+          onSnapshotChange={(snapshot, coord, color) => this.smartBoard.setBoard(snapshot, coord, color)}
           style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
 
         {/* Footer Aera */}

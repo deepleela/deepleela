@@ -118,7 +118,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 </div>
 
                 {/* Move Number */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
                     {this.props.moveNumber}
                 </div>
 

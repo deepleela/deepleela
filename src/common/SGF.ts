@@ -60,11 +60,7 @@ export default class SGF {
         let newBoard: State[][] = [];
 
         for (let i = 0; i < states.length; i++) {
-            newBoard.push([]);
-
-            for (let j = 0; j < states[i].length; j++) {
-                newBoard[i].push(states[i][j]);
-            }
+            newBoard.push(Array.from(states[i]));
         }
 
         return newBoard;

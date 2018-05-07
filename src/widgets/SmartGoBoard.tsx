@@ -12,6 +12,7 @@ import { State } from '../components/Intersection';
 import { StoneColor } from '../common/Constants';
 import * as moment from 'moment';
 import * as Utils from '../lib/Utils';
+import SGF from '../common/SGF';
 
 interface SmartGoBoardProps {
     id?: any;
@@ -84,10 +85,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results[0];
     }
 
-    setBoard(state: State[][], coord: { x: number, y: number }, currentColor: StoneColor = 'W') {
-        this.game.board = state;
+    setBoard(board: State[][], coord: { x: number, y: number }, currentColor: StoneColor = 'B') {
+        console.log('currColor', currentColor);
+        this.game.board = SGF.createBoardFrom(board);
         this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
-        this.game.current = currentColor === 'W' ? State.White : State.Black;
+        this.game.current = currentColor === 'W' ? State.Black : State.White;
         this.board.clearVariations();
         this.setState({ heatmap: undefined });
     }
@@ -159,8 +161,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     render() {
         let shouldBeDisabled = ['self','review'].includes(this.gameMode) ? false : this.game.currentColor !== this.userStone;
 
-        let whitePlayer = this.props.whitePlayer || this.gameMode === 'ai' ? this.engine : 'Human';
-        let blackPlayer = this.props.blackPlayer || this.gameMode === 'ai' ? this.engine : 'Human';
+        let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
+        let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
         let board = document.getElementById('board');

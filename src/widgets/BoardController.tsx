@@ -76,7 +76,7 @@ export default class BoardController extends React.Component<BoardControllerProp
     render() {
         return (
             <div id='board-controller' style={this.props.style} className='board-controller'>
-                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.5)', userSelect: 'none', backdropFilter: 'blur(25px)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.75)', userSelect: 'none', backdropFilter: 'blur(25px)' }}>
                     <div id='draggable-handler'>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
@@ -88,7 +88,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
                     <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick() : undefined}>
-                        <span style={{ fontWeight: 100, fontSize: 19, marginTop: 2, display: 'block' }}>AI</span>
+                        <span style={{ fontWeight: 100, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif' }}>AI</span>
                     </div>
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(this.currentIndex = this.currentIndex + 1 === this.snapshots.length ? this.currentIndex : this.currentIndex + 1, this.snapshots.length - 1))}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
