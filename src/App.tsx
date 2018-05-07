@@ -87,12 +87,22 @@ class App extends React.Component<any, AppStates> {
   }
 
   onLoadSgf(sgf: string | undefined) {
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
+
     try {
       if (!sgf) return;
       let info = this.boardController.loadSgf(sgf);
-      if (!info) return;
+      if (!info) {
+        UIkit.notification(i18n.notifications.invalidSgf, );
+        return;
+      }
 
       this.setState({ showController: true, whitePlayer: info.whitePlayer, blackPlayer: info.blackPlayer });
+
+      if (info.snapshots.length > 0 && info.coords.length > 0) {
+        this.smartBoard.setBoard(info.snapshots[0], info.coords[0]);
+        this.smartBoard.gameMode = 'review';
+      }
     } finally {
       this.setState({ loadSgfDialogOpen: false });
     }

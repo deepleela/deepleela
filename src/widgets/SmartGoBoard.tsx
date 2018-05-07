@@ -84,11 +84,17 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results[0];
     }
 
-    setBoard(state: State[][], coord: { x: number, y: number }) {
+    setBoard(state: State[][], coord: { x: number, y: number }, currentColor: StoneColor = 'W') {
         this.game.board = state;
         this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
+        this.game.current = currentColor === 'W' ? State.White : State.Black;
         this.board.clearVariations();
-        this.forceUpdate();
+        this.setState({ heatmap: undefined });
+    }
+
+    clearBoard() {
+        this.game.clear();
+        this.setState({ heatmap: undefined });
     }
 
     private async onStonePlaced(x: number, y: number) {
@@ -101,6 +107,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.setState({ heatmap: undefined });
+
+        if (this.gameMode === 'review') return;
 
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
@@ -149,10 +157,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     render() {
-        let shouldBeDisabled = this.gameMode === 'self' ? false : this.game.currentColor !== this.userStone;
+        let shouldBeDisabled = ['self','review'].includes(this.gameMode) ? false : this.game.currentColor !== this.userStone;
 
-        let whitePlayer = this.gameMode === 'self' ? this.props.whitePlayer || 'Human' : this.userStone === 'W' ? 'Human' : this.engine;
-        let blackPlayer = this.gameMode === 'self' ? this.props.blackPlayer || 'Human' : this.userStone === 'B' ? 'Human' : this.engine;
+        let whitePlayer = this.props.whitePlayer || this.gameMode === 'ai' ? this.engine : 'Human';
+        let blackPlayer = this.props.blackPlayer || this.gameMode === 'ai' ? this.engine : 'Human';
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
         let board = document.getElementById('board');

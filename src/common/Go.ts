@@ -9,13 +9,13 @@ type Coordinate = { row: number, col: number };
 export default class Go extends EventEmitter {
 
     private koStones?: { coor: Coordinate, stoneColor: State, deadStones: Coordinate[], deadColor: State };
-    private current = State.Black;
     private deadlines: [number, number] = [0, 0];  // black, white
     private stopWatch: NodeJS.Timer;
 
     history: { stone: State, coor: Coordinate }[] = [];
     board: State[][];
     size: number;
+    current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
 
     set time(value: number) {

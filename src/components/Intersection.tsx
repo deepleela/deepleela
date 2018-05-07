@@ -108,12 +108,14 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     </div>
                 </div>
 
-                {
-                    this.props.state === State.Black ?
-                        <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} /> :
-                        this.props.state === State.White ?
-                            <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} /> : undefined
-                }
+                <div className='center-div'>
+                    {
+                        this.props.state === State.Black ?
+                            <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} /> :
+                            this.props.state === State.White ?
+                                <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} /> : undefined
+                    }
+                </div>
 
                 {/* Move Number */}
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>

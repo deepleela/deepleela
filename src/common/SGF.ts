@@ -30,10 +30,8 @@ export default class SGF {
         let game = new Go(size);
 
         let snapshots: State[][][] = [];
-        snapshots.push(this.createBoardFrom(game.board));
-
         let coords: { x: number, y: number }[] = [];
-        coords.push({ x: -1, y: -1 });
+        let stonesColor: StoneColor[] = [];
 
         while (child.length > 0) {
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
@@ -49,12 +47,13 @@ export default class SGF {
 
                 snapshots.push(this.createBoardFrom(game.board));
                 coords.push({ x: row, y: col });
+                stonesColor.push(color!);
             }
 
             child = child[0].childs;
         }
 
-        return { snapshots, whitePlayer, blackPlayer, size, coords };
+        return { snapshots, whitePlayer, blackPlayer, size, coords, stonesColor };
     }
 
     static createBoardFrom(states: State[][]) {

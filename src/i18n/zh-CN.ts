@@ -39,6 +39,7 @@ export const lang = {
         serversBusy: (number) => `服务器繁忙，请稍后再试. 等待服务用户: ${number}`,
         aiNotAvailable: `本局暂时不会得到AI的建议`,
         aiIsThinking: 'AI 正在思考...',
+        invalidSgf: '无效SGF，请重新填写',
     },
 
     button: {
