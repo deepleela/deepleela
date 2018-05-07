@@ -8,15 +8,18 @@ import SGF from '../common/SGF';
 import { State } from '../components/Intersection';
 import { CSSProperties } from 'react';
 import { StoneColor } from '../common/Constants';
+import GameClient from '../common/GameClient';
 
 interface BoardControllerProps {
     style?: CSSProperties;
-    onAIThinkingClick?: () => void;
+    onAIThinkingClick?: (sgf: string, step: number) => void;
     onSnapshotChange?: (snapshot: State[][], coord: { x: number, y: number }, currentColor: StoneColor) => void;
 }
 
 export default class BoardController extends React.Component<BoardControllerProps, {}> {
 
+    private sgf: string;
+    private boardSize: number;
     private snapshots: State[][][];
     private coords: { x: number, y: number }[];
     private stonesColor: StoneColor[];
@@ -47,12 +50,14 @@ export default class BoardController extends React.Component<BoardControllerProp
 
     loadSgf(sgf: string) {
         this.reset();
+        this.sgf = sgf;
 
         try {
             let tree = SGF.import(sgf);
             this.snapshots = tree.snapshots;
             this.coords = tree.coords;
             this.stonesColor = tree.stonesColor;
+            this.boardSize = tree.size;
             return tree;
         } catch (error) {
             console.error(error);
@@ -87,7 +92,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, this.currentIndex = this.currentIndex - 1 < 0 ? 0 : this.currentIndex - 1))}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick() : undefined}>
+                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick(this.sgf, this.currentIndex + 1) : undefined}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif' }}>AI</span>
                     </div>
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(this.currentIndex = this.currentIndex + 1 === this.snapshots.length ? this.currentIndex : this.currentIndex + 1, this.snapshots.length - 1))}>

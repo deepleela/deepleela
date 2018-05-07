@@ -79,14 +79,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let results = await this.client.requestAI('leela');
         this.game.clear();
-        this.client.initBoard({ handicap: 0, komi: 6.5, time: 60 * 24 });
+        this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
 
         await this.peekWinrate();
         return results[0];
     }
 
     setBoard(board: State[][], coord: { x: number, y: number }, currentColor: StoneColor = 'B') {
-        console.log('currColor', currentColor);
         this.game.board = SGF.createBoardFrom(board);
         this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
         this.game.current = currentColor === 'W' ? State.Black : State.White;
@@ -158,8 +157,30 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: false, isThinking: false });
     }
 
+    async querySgfWinrate(sgf: string, sgfStep: number, size = 19) {
+        let moves = SGF.parse2Move(sgf, sgfStep);
+        let userMoves = this.game.history.filter(s => s.stone != State.Empty).map(s => {
+            let coord = Board.arrayPositionToCartesianCoord(s.coor.row, s.coor.col);
+            let coordstr = Board.cartesianCoordToString(coord.x, coord.y);
+            return [s.stone === State.Black ? 'B' : 'W', coordstr];
+        }) as [StoneColor, string][];
+
+        moves = moves.concat(userMoves);
+
+        this.board.clearVariations();
+        this.setState({ disabled: true, isThinking: true });
+
+        await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
+        await this.client.loadMoves(moves);
+
+        let vars = await this.client.peekWinrate(this.game.currentColor);
+        this.board.setVariations(vars);
+
+        this.setState({ disabled: false, isThinking: false });
+    }
+
     render() {
-        let shouldBeDisabled = ['self','review'].includes(this.gameMode) ? false : this.game.currentColor !== this.userStone;
+        let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false : this.game.currentColor !== this.userStone;
 
         let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
         let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? this.engine : 'Human');

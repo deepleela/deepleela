@@ -5,6 +5,7 @@ import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
 import { Variation } from "../components/Board";
 import { resolve } from "path";
+import SGF from "./SGF";
 
 export default class GameClient extends EventEmitter {
 
@@ -168,6 +169,19 @@ export default class GameClient extends EventEmitter {
             });
 
             this.sendGtpCommand(cmd);
+        });
+    }
+
+    loadSgf(sgf: string, step: number) {
+        let moves = SGF.parse2Move(sgf, step);
+        return this.loadMoves(moves);
+    }
+
+    loadMoves(moves: [string, string][]) {
+        return new Promise(resolve => {
+            let cmd = { name: 'loadMoves', args: moves, id: this.msgId++ };
+            this.pendingCallbacks.set(cmd.id!, (msg: string) => resolve(msg));
+            this.sendSysMessage(cmd);
         });
     }
 

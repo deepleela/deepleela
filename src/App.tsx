@@ -14,6 +14,7 @@ import { Protocol } from 'deepleela-common';
 import Go from './common/Go';
 import SmartGoBoard from './widgets/SmartGoBoard';
 import BoardController from './widgets/BoardController';
+import CommandBuilder from './common/CommandBuilder';
 
 interface AppStates {
   whitePlayer?: string;
@@ -65,8 +66,10 @@ class App extends React.Component<any, AppStates> {
 
     GameClient.default.once('connected', async () => {
       let success = await this.smartBoard.newSelfGame();
+      this.setState({ loadingDialogOpen: false });
+
       if (!success) UIkit.notification(i18n.notifications.aiNotAvailable);
-      this.setState({ loadingDialogOpen: false })
+
     });
   }
 
@@ -181,6 +184,7 @@ class App extends React.Component<any, AppStates> {
         <BoardController
           ref={e => this.boardController = e!}
           onSnapshotChange={(snapshot, coord, color) => this.smartBoard.setBoard(snapshot, coord, color)}
+          onAIThinkingClick={(sgf, step) => this.smartBoard.querySgfWinrate(sgf, step)}
           style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
 
         {/* Footer Aera */}

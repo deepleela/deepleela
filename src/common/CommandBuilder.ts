@@ -39,6 +39,10 @@ export default class CommandBuilder {
         return { id, name: 'komi', args: [komi] };
     }
 
+    static loadSgf(sgf: string, id?: number): Command {
+        return { id, name: 'loadsgf', args: [sgf] };
+    }
+
     static fixed_handicap(numberOfStones: number, id?: number): Command {
         return { id, name: 'fixed_handicap', args: [numberOfStones] };
     }
