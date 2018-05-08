@@ -3,12 +3,14 @@ import { CSSProperties } from 'react';
 
 interface StoneProps {
     style: CSSProperties;
+    highlight?: boolean;
+    highlightSize?: number;
 }
 
 export default class Stone extends React.Component<StoneProps, any> {
 
     render() {
-        let margin = '6.25%';
+        let margin = '6.5%';
         return (
             <div style={Object.assign({
                 backgroundColor: this.props.style.color,
@@ -16,7 +18,15 @@ export default class Stone extends React.Component<StoneProps, any> {
                 position: 'absolute',
                 top: margin, right: margin, bottom: margin, left: margin,
                 pointerEvents: 'none',
-            }, this.props.style)} />
+                display: 'flex',
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center'
+            } as CSSProperties, this.props.style)}>
+                {
+                    this.props.highlight ? <div style={{ width: this.props.highlightSize || 5, height: this.props.highlightSize || 5, borderRadius: '50%', background: 'deeppink', opacity: 0.75 }}></div> : undefined
+                }
+            </div>
         );
     }
 }

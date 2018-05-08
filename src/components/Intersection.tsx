@@ -74,6 +74,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
         const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
         const highlightSize = this.props.highlightSize === 'small' ? 5 : 8;
         const moveNumberPaddingTop = this.props.highlightSize === 'small' ? 0 : 2;
+        const winrateMargin = this.props.highlightSize === 'small' ? '3%' : '4.3%';
         const winrate = (this.props.winrate || {}) as WinRate;
 
         return (
@@ -96,7 +97,8 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div className={isSafari ? 'heatmap-safari' : 'heatmap'} style={{ transform: `scale(1.${this.props.heatmap || 0})`, opacity: this.props.heatmap && this.props.heatmap > 0 && !this.props.winrate ? 0.5 + (this.props.heatmap || 0) / 20 : 0, width: '100%', height: '100%', position: 'absolute', zIndex: 1, top: 0, left: 0, pointerEvents: 'none', transition: 'all 0.5s', }} />
 
                 {/* Winrate */}
-                <div uk-tooltip={this.props.winrate ? `${this.props.winrate.visits} Visits` : undefined} style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
+                <div uk-tooltip={this.props.winrate ? `${this.props.winrate.visits} Visits` : undefined}
+                    style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
                     onMouseEnter={e => this.onMouseEnter(e)} onClick={e => this.onClick(e)}
                     onTouchStart={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}
                     onTouchCancel={e => this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined}
@@ -104,7 +106,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     onMouseLeave={e => { this.onMouseLeave(e); this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined }}
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
-                    <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: '5%', marginTop: '5%', borderRadius: '50%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', }}>
+                    <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '50%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
                         {winrate.value ? winrate.value.toFixed(1) : undefined}
                     </div>
                 </div>
@@ -112,9 +114,9 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div className='center-div'>
                     {
                         this.props.state === State.Black ?
-                            <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} /> :
+                            <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} highlight={this.props.highlight} highlightSize={highlightSize} /> :
                             this.props.state === State.White ?
-                                <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} /> : undefined
+                                <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} highlight={this.props.highlight} highlightSize={highlightSize} /> : undefined
                     }
                 </div>
 
@@ -122,9 +124,6 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
                     {this.props.moveNumber}
                 </div>
-
-                {/* Highlight Star */}
-                {this.props.highlight ? <div style={{ pointerEvents: 'none', opacity: 0.7, background: `deeppink`, borderRadius: '50%', zIndex: 3, height: highlightSize, width: highlightSize, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
 
             </div>
         );
