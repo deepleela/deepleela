@@ -72,7 +72,8 @@ export default class Intersection extends React.Component<IntersectionProps, Int
 
     render() {
         const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
-        const highlightSize = this.props.highlightSize === 'small' ? 4 : 8;
+        const highlightSize = this.props.highlightSize === 'small' ? 5 : 8;
+        const moveNumberPaddingTop = this.props.highlightSize === 'small' ? 0 : 2;
         const winrate = (this.props.winrate || {}) as WinRate;
 
         return (
@@ -118,11 +119,11 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 </div>
 
                 {/* Move Number */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
                     {this.props.moveNumber}
                 </div>
 
-                {/* ${this.props.state === State.Black ? 'white' : 'black'} */}
+                {/* Highlight Star */}
                 {this.props.highlight ? <div style={{ pointerEvents: 'none', opacity: 0.7, background: `deeppink`, borderRadius: '50%', zIndex: 3, height: highlightSize, width: highlightSize, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} /> : null}
 
             </div>

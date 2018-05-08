@@ -115,7 +115,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.client.play(lastColor, move);
 
         if (this.gameMode === 'self' && this.props.showHeatmap) {
-            this.setState({ heatmap: await this.client.heatmap() });
+            this.setState({ disabled: true });
+            let heatmap = await this.client.heatmap();
+            this.setState({ heatmap, disabled: false });
         }
 
         if (this.props.showWinrate) {
