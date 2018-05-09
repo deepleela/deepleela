@@ -174,7 +174,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async peekSgfWinrate(sgf: string, sgfStep: number, size = 19) {
         let moves = SGF.parse2Move(sgf, sgfStep);
         let userMoves = this.game.history.filter(s => s.stone != State.Empty).map(s => {
-            let coord = Board.arrayPositionToCartesianCoord(s.coor.row, s.coor.col);
+            let coord = Board.arrayPositionToCartesianCoord(s.coor.x, s.coor.y);
             let coordstr = Board.cartesianCoordToString(coord.x, coord.y);
             return [s.stone === State.Black ? 'B' : 'W', coordstr];
         }) as [StoneColor, string][];

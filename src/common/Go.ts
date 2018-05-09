@@ -4,7 +4,7 @@ import { State } from "../components/Intersection";
 import { StoneColor } from './Constants';
 import { EventEmitter } from "events";
 
-type Coordinate = { row: number, col: number };
+type Coordinate = { x: number, y: number };
 
 export default class Go extends EventEmitter {
 
@@ -61,10 +61,10 @@ export default class Go extends EventEmitter {
 
         let neighbors: Coordinate[] = [];
 
-        if (row > 0) neighbors.push({ row: row - 1, col }); // upper neighbor
-        if (row < this.size - 1) neighbors.push({ row: row + 1, col }); // lower neighbor
-        if (col > 0) neighbors.push({ row, col: col - 1 }); // left neighbor
-        if (col < this.size - 1) neighbors.push({ row, col: col + 1 }); // right neighbor
+        if (row > 0) neighbors.push({ x: row - 1, y: col }); // upper neighbor
+        if (row < this.size - 1) neighbors.push({ x: row + 1, y: col }); // lower neighbor
+        if (col > 0) neighbors.push({ x: row, y: col - 1 }); // left neighbor
+        if (col < this.size - 1) neighbors.push({ x: row, y: col + 1 }); // right neighbor
 
         return neighbors;
     }
@@ -74,22 +74,22 @@ export default class Go extends EventEmitter {
         if (target === State.Empty) return null;
 
         let visited = new Map<string, boolean>();
-        let queue = [{ row, col }];
+        let queue = [{ x: row, y: col }];
         let liberties = 0;
-        let stones: { row: number, col: number }[] = [];
+        let stones: { x: number, y: number }[] = [];
 
         while (queue.length > 0) {
             let stone = queue.pop()!;
-            if (visited.get(`${stone.row}-${stone.col}`)) continue;
+            if (visited.get(`${stone.x}-${stone.y}`)) continue;
 
-            let neighbors = this.findNeighbors(stone.row, stone.col);
+            let neighbors = this.findNeighbors(stone.x, stone.y);
             neighbors.forEach(neighbor => {
-                let state = this._board[neighbor.row][neighbor.col];
+                let state = this._board[neighbor.x][neighbor.y];
                 if (state === State.Empty) liberties++;
-                if (state === target) queue.push({ row: neighbor.row, col: neighbor.col });
+                if (state === target) queue.push({ x: neighbor.x, y: neighbor.y });
             });
 
-            visited.set(`${stone.row}-${stone.col}`, true);
+            visited.set(`${stone.x}-${stone.y}`, true);
             stones.push(stone);
         }
 
@@ -125,11 +125,11 @@ export default class Go extends EventEmitter {
         let neighbors = this.findNeighbors(row, col);
 
         neighbors.forEach(neighbor => {
-            let state = this._board[neighbor.row][neighbor.col];
+            let state = this._board[neighbor.x][neighbor.y];
 
             if (state === State.Empty || state === this.current) return;
 
-            let group = this.findGroup(neighbor.row, neighbor.col);
+            let group = this.findGroup(neighbor.x, neighbor.y);
             if (group === null) return;
 
             if (group.liberties === 0) captured.push(group.stones);
@@ -146,8 +146,8 @@ export default class Go extends EventEmitter {
         // Detect ko 
         if (deadStones.length === 1 &&
             this.koStones &&
-            deadStones[0].row === this.koStones.coor.row &&
-            deadStones[0].col === this.koStones.coor.col &&
+            deadStones[0].x === this.koStones.coor.x &&
+            deadStones[0].y === this.koStones.coor.y &&
             this.koStones.stoneColor === this.opponentOf(this.current) &&
             this.koStones.deadStones.length === 1 &&
             this.koStones.deadColor === this.current
@@ -157,16 +157,16 @@ export default class Go extends EventEmitter {
         }
 
         // Remove dead stones
-        deadStones.forEach(stone => this._board[stone.row][stone.col] = State.Empty);
+        deadStones.forEach(stone => this._board[stone.x][stone.y] = State.Empty);
 
         // Memorize last dead stones
         if (deadStones.length > 0) {
-            this.koStones = { coor: { row, col }, stoneColor: this.current, deadColor: this.opponentOf(this.current), deadStones };
+            this.koStones = { coor: { x, y }, stoneColor: this.current, deadColor: this.opponentOf(this.current), deadStones };
         } else {
             this.koStones = undefined;
         }
 
-        this.history.push({ stone: this.current, coor: { row, col } });
+        this.history.push({ stone: this.current, coor: { x, y } });
         this.turn();
         this.currentCartesianCoord = currentCoord;
 

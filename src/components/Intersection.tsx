@@ -40,9 +40,9 @@ interface IntersectionStates {
 }
 
 export enum State {
-    White = -1,
-    Empty = 0,
-    Black = 1,
+    White = 'W',
+    Empty = '',
+    Black = 'B',
 }
 
 // http://www.surfingsuccess.com/javascript/javascript-browser-detection.html#.WurdwdOFO34
