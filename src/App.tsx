@@ -158,7 +158,8 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
 
-                  <li><a href="#">{i18n.menu.pass}</a></li>
+                  <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
+                  <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
                   <li><a href="#">{i18n.menu.resign}</a></li>
                   <li><a href="#">{i18n.menu.score}</a></li>
 

@@ -191,4 +191,11 @@ export default class GameClient extends EventEmitter {
         });
     }
 
+    undo() {
+        return new Promise(resolve => {
+            let cmd = CommandBuilder.undo(this.msgId++);
+            this.pendingCallbacks.set(cmd.id!, () => resolve());
+            this.sendGtpCommand(cmd);
+        })
+    }
 }

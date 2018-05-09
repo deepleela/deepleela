@@ -10,6 +10,7 @@ export const lang = {
         showHeatmap: 'Show Heatmap',
         showWinrate: 'Show Winrate',
 
+        undo: 'Undo',
         pass: 'Pass',
         resign: 'Resign',
         score: 'Score Game',

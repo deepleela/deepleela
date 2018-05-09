@@ -112,8 +112,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.gameMode === 'review') return;
 
+        this.setState({ disabled: true });
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
+        this.setState({ disabled: false });
 
         if (this.gameMode === 'self' && this.props.showHeatmap) {
             this.setState({ disabled: true });
@@ -189,6 +191,19 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     exportGame() {
         return this.game.genSgf();
+    }
+
+    async undo() {
+        if (!this.game.undo()) return;
+        await this.client.undo();
+        this.board.clearVariations();
+        this.setState({ heatmap: undefined });
+    }
+
+    async pass() {
+        if (this.gameMode !== 'ai') return;
+        this.game.pass();
+
     }
 
     render() {

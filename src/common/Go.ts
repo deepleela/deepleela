@@ -191,6 +191,18 @@ export default class Go extends EventEmitter {
         return true;
     }
 
+    undo() {
+        if (!this.isLatestCursor) return false;
+
+        this.snapshots.pop();
+        this.mainBranch.pop();
+        this.board = this.snapshots.length > 0 ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this.board = this.create(this.size);
+        this.cursor = this.snapshots.length - 1;
+        this.currentCartesianCoord = this.mainBranch.length > 0 ? this.mainBranch[this.mainBranch.length - 1].cartesianCoord : { x: -1, y: -1 };
+        this.turn();
+        return true;
+    }
+
     start() {
         if (this.stopWatch) clearInterval(this.stopWatch);
 

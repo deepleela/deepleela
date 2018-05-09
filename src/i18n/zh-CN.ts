@@ -10,6 +10,7 @@ export const lang = {
         showHeatmap: '开启 AI 预测',
         showWinrate: '自动显示胜率',
 
+        undo: '悔棋',
         pass: '弃权',
         resign: '认输',
         score: '评分',
