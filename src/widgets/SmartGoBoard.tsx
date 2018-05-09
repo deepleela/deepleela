@@ -95,6 +95,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined });
     }
 
+    changeCursor(delta: number) {
+        if (delta > 0 && this.game.isLatestCursor) return;
+
+        this.board.clearVariations();
+        this.game.changeCursor(delta);
+        this.setState({ heatmap: undefined });
+    }
+
     clearBoard() {
         this.game.clear();
         this.setState({ heatmap: undefined });
@@ -117,7 +125,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.client.play(lastColor, move);
 
         if (this.props.onStonePlaced) {
-            this.game.clearHistory();
             this.props.onStonePlaced(lastColor, { x, y }, this.game.board);
         }
 
@@ -156,7 +163,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         if (this.props.onStonePlaced) {
-            this.game.clearHistory();
             this.props.onStonePlaced(color, coord, this.game.board);
         }
     }
@@ -171,17 +177,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: false, isThinking: false });
     }
 
-    async peekSgfWinrate(sgf: string, sgfStep: number, size = 19) {
-        let moves = SGF.parse2Move(sgf, sgfStep);
-        let userMoves = this.game.history.filter(s => s.stone != State.Empty).map(s => {
-            let coord = Board.arrayPositionToCartesianCoord(s.coor.x, s.coor.y);
-            let coordstr = Board.cartesianCoordToString(coord.x, coord.y);
-            return [s.stone === State.Black ? 'B' : 'W', coordstr];
-        }) as [StoneColor, string][];
+    async peekSgfWinrate() {
+        if (this.state.isThinking) return;
 
-        moves = moves.concat(userMoves);
+        let moves = this.game.genMoves();
         console.log(moves);
-
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
 
@@ -195,6 +195,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.setState({ disabled: false, isThinking: false });
+    }
+
+    importGame(game: Go) {
+        this.game = game;
+        this.board.clearVariations();
+        this.setState({ heatmap: undefined });
     }
 
     render() {

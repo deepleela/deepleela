@@ -13,13 +13,13 @@ import Board from '../components/Board';
 
 interface BoardControllerProps {
     style?: CSSProperties;
-    onAIThinkingClick?: (sgf: string, step: number) => void;
+    onAIThinkingClick?: () => void;
+    onCursorChange?: (delta: number) => void;
     onSnapshotChange?: (snapshot: State[][], coord: { x: number, y: number }, currentColor: StoneColor) => void;
 }
 
 export default class BoardController extends React.Component<BoardControllerProps, {}> {
 
-    private dynamic = false;
     private sgf: string;
     private boardSize: number;
     private snapshots: State[][][] = [];
@@ -56,9 +56,6 @@ export default class BoardController extends React.Component<BoardControllerProp
 
         try {
             let tree = SGF.import(sgf);
-            this.snapshots = tree.snapshots;
-            this.arrayCoords = tree.coords;
-            this.stonesColor = tree.stonesColor;
             this.boardSize = tree.size;
             return tree;
         } catch (error) {
@@ -74,11 +71,9 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.arrayCoords.push(Board.cartesianCoordToArrayPosition(coord.x, coord.y));
         this.snapshots.push(SGF.createBoardFrom(board));
         this.currentIndex = this.snapshots.length - 1;
-        this.dynamic = true;
     }
 
     reset() {
-        this.dynamic = false;
         this.snapshots = [];
         this.arrayCoords = [];
         this.stonesColor = [];
@@ -94,10 +89,12 @@ export default class BoardController extends React.Component<BoardControllerProp
 
     private triggerAIThinking() {
         if (!this.props.onAIThinkingClick) return;
-        if (this.dynamic) {
-            this.sgf = SGF.genSGF(this.stonesColor, this.arrayCoords);
-        }
-        this.props.onAIThinkingClick(this.sgf, this.currentIndex + 1);
+        this.props.onAIThinkingClick();
+    }
+
+    private triggerCursorChange(delta: number) {
+        if (!this.props.onCursorChange) return;
+        this.props.onCursorChange(delta);
     }
 
     render() {
@@ -107,20 +104,20 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div id='draggable-handler'>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.first} onClick={e => this.triggerSnapshotChange(this.currentIndex = 0)}>
+                    <div className='touch' data-message={i18n.tips.first} onClick={e => this.triggerCursorChange(-10)}>
                         <span uk-icon='icon:  chevron-left; ratio: 1;'></span>
                         <span uk-icon='icon:  chevron-left; ratio: 1.2' style={{ display: 'inline-block', marginLeft: -16 }}></span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, this.currentIndex = this.currentIndex - 1 < 0 ? 0 : this.currentIndex - 1))}>
+                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerCursorChange(-1)}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
                     <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.triggerAIThinking()}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif' }}>AI</span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(this.currentIndex = this.currentIndex + 1 === this.snapshots.length ? this.currentIndex : this.currentIndex + 1, this.snapshots.length - 1))}>
+                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerSnapshotChange(this.currentIndex = this.snapshots.length - 1)}>
+                    <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerCursorChange(10)}>
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>

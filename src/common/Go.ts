@@ -3,8 +3,11 @@
 import { State } from "../components/Intersection";
 import { StoneColor } from './Constants';
 import { EventEmitter } from "events";
+import SGF from "./SGF";
+import Board from "../components/Board";
 
-type Coordinate = { x: number, y: number };
+export type Coordinate = { x: number, y: number };
+type Moves = { stone: State, arrayCoord: Coordinate, cartesianCoord: Coordinate }[];
 
 export default class Go extends EventEmitter {
 
@@ -13,7 +16,11 @@ export default class Go extends EventEmitter {
     private stopWatch: NodeJS.Timer;
     private _board: State[][];
 
-    history: { stone: State, coor: Coordinate }[] = [];
+    snapshots: State[][][] = [];
+    mainBranch: Moves = [];
+    cursor = -1;
+
+    history: Moves = [];
     size: number;
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
@@ -28,6 +35,8 @@ export default class Go extends EventEmitter {
     get whiteTime() { return this.deadlines[1]; }
 
     get currentColor(): StoneColor { return this.current === State.Black ? 'B' : 'W'; }
+
+    get isLatestCursor() { return this.cursor === -1 || this.cursor === this.snapshots.length - 1 };
 
     constructor(size: number) {
         super();
@@ -166,9 +175,18 @@ export default class Go extends EventEmitter {
             this.koStones = undefined;
         }
 
-        this.history.push({ stone: this.current, coor: { x, y } });
-        this.turn();
+        this.history.push({ stone: this.current, arrayCoord: { x, y }, cartesianCoord: currentCoord });
         this.currentCartesianCoord = currentCoord;
+
+        // Just save the latest board on main branch
+        if (this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
+            this.snapshots.push(SGF.createBoardFrom(this.board));
+            this.mainBranch.push({ stone: this.current, arrayCoord: { x, y }, cartesianCoord: currentCoord });
+            this.history = []; // reset history
+            this.cursor = this.snapshots.length - 1;
+        }
+
+        this.turn();
 
         return true;
     }
@@ -193,12 +211,32 @@ export default class Go extends EventEmitter {
 
     clear(resize?: number) {
         this.history = [];
+        this.mainBranch = [];
+        this.snapshots = [];
+        this.cursor = -1;
         this._board = this.create(resize || (this._board.length || 19));
         this.current = State.Black;
         this.currentCartesianCoord = { x: -1, y: -1 };
     }
 
-    clearHistory() {
-        this.history = [];
+    changeCursor(delta: number) {
+        if (this.snapshots.length === 0) return;
+
+        this.cursor = Math.max(0, Math.min(this.cursor + delta, this.snapshots.length - 1));
+        this.board = SGF.createBoardFrom(this.snapshots[this.cursor]);
+
+        let state = this.mainBranch[this.cursor];
+        this.currentCartesianCoord = state.cartesianCoord;
+        this.current = this.opponentOf(state.stone);
+    }
+
+    genMoves() {
+        let moves = this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+        return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
+    }
+
+    genSgf() {
+        let moves = this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+        return SGF.genSGF(moves);
     }
 }

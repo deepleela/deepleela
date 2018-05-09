@@ -15,6 +15,7 @@ import Go from './common/Go';
 import SmartGoBoard from './widgets/SmartGoBoard';
 import BoardController from './widgets/BoardController';
 import CommandBuilder from './common/CommandBuilder';
+import SGF from './common/SGF';
 
 interface AppStates {
   whitePlayer?: string;
@@ -98,18 +99,13 @@ class App extends React.Component<any, AppStates> {
 
     try {
       if (!sgf) return;
-      let info = this.boardController.loadSgf(sgf);
-      if (!info) {
-        UIkit.notification(i18n.notifications.invalidSgf, );
-        return;
-      }
 
-      if (info.snapshots.length > 0 && info.coords.length > 0) {
-        this.smartBoard.setBoard(info.snapshots[0], info.coords[0], info.stonesColor[0]);
-        this.smartBoard.gameMode = 'review';
-      }
-
-      this.setState({ showController: true, whitePlayer: info.whitePlayer, blackPlayer: info.blackPlayer });
+      let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
+      this.smartBoard.gameMode = 'review';
+      this.smartBoard.importGame(game);
+      this.setState({ showController: true, whitePlayer: whitePlayer, blackPlayer: blackPlayer });
+    } catch {
+      UIkit.notification(i18n.notifications.invalidSgf, );
     } finally {
       this.setState({ loadSgfDialogOpen: false });
     }
@@ -183,7 +179,7 @@ class App extends React.Component<any, AppStates> {
           <div className='element_to_magnify'>
             <SmartGoBoard id="smartboard"
               ref={e => this.smartBoard = e!}
-              onStonePlaced={(color, move, board) => this.boardController.appendMove(color, move, board)}
+              // onStonePlaced={(color, move, board) => this.boardController.appendMove(color, move, board)}
               showWinrate={this.state.showWinrate}
               showHeatmap={this.state.showHeatmap}
               whitePlayer={this.state.whitePlayer}
@@ -193,8 +189,8 @@ class App extends React.Component<any, AppStates> {
 
         <BoardController
           ref={e => this.boardController = e!}
-          onSnapshotChange={(snapshot, coord, color) => this.smartBoard.setBoard(snapshot, coord, color)}
-          onAIThinkingClick={(sgf, step) => this.smartBoard.peekSgfWinrate(sgf, step)}
+          onCursorChange={d => this.smartBoard.changeCursor(d)}
+          onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
           style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, }} />
 
         {/* Footer Aera */}

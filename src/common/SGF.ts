@@ -3,7 +3,7 @@ import * as sgfgrove from 'sgfgrove';
 import { State } from "../components/Intersection";
 import { stat } from 'fs';
 import { StoneColor } from './Constants';
-import Go from './Go';
+import Go, { Coordinate } from './Go';
 import Board from '../components/Board';
 
 export default class SGF {
@@ -46,10 +46,6 @@ export default class SGF {
         let size = Number.parseInt(tree.props.SZ || '19');
         let game = new Go(size);
 
-        let snapshots: State[][][] = [];
-        let coords: { x: number, y: number }[] = [];
-        let stonesColor: StoneColor[] = [];
-
         while (child && child.length > 0) {
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;
@@ -61,16 +57,12 @@ export default class SGF {
                 let col = SGF.alphabets.indexOf(pos[0]);
                 let coord = Board.arrayPositionToCartesianCoord(row, col);
                 game.play(coord.x, coord.y)
-
-                snapshots.push(this.createBoardFrom(game.board));
-                coords.push({ x: row, y: col });
-                stonesColor.push(color!);
             }
 
             child = child[0].childs;
         }
 
-        return { snapshots, whitePlayer, blackPlayer, size, coords, stonesColor };
+        return { whitePlayer, blackPlayer, size, game };
     }
 
     static createBoardFrom(states: State[][]) {
@@ -83,12 +75,12 @@ export default class SGF {
         return newBoard;
     }
 
-    static genSGF(colors: StoneColor[], moves: { x: number, y: number }[]) {
+    static genSGF(moves: { stone: State, arrayCoord: Coordinate }[]) {
 
         let data: any[] = [{ FF: 4, AP: 'DeepLeela' }];
         data = data.concat(moves.map((item, i) => {
-            let coor = `${SGF.alphabets[item.y]}${SGF.alphabets[item.x]}`;
-            return colors[i] === 'B' ? { B: coor } : { W: coor };
+            let coor = `${SGF.alphabets[item.arrayCoord.y]}${SGF.alphabets[item.arrayCoord.x]}`;
+            return item.stone === State.Black ? { B: coor } : { W: coor };
         }));
 
         let sgf = [[
