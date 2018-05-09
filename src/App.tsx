@@ -74,6 +74,8 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
+    this.boardController.reset();
+
     this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
@@ -84,6 +86,8 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewSelfGame() {
+    this.boardController.reset();
+
     this.setState({ loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
     if (!await this.smartBoard.newSelfGame()) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false });
@@ -177,7 +181,13 @@ class App extends React.Component<any, AppStates> {
         <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
           <div className={`magnify_glass hidden`} id='magnifyGlass' />
           <div className='element_to_magnify'>
-            <SmartGoBoard id="smartboard" ref={e => this.smartBoard = e!} showWinrate={this.state.showWinrate} showHeatmap={this.state.showHeatmap} whitePlayer={this.state.whitePlayer} blackPlayer={this.state.blackPlayer} />
+            <SmartGoBoard id="smartboard"
+              ref={e => this.smartBoard = e!}
+              onStonePlaced={(color, move, board) => this.boardController.appendMove(color, move, board)}
+              showWinrate={this.state.showWinrate}
+              showHeatmap={this.state.showHeatmap}
+              whitePlayer={this.state.whitePlayer}
+              blackPlayer={this.state.blackPlayer} />
           </div>
         </div>
 
@@ -185,7 +195,7 @@ class App extends React.Component<any, AppStates> {
           ref={e => this.boardController = e!}
           onSnapshotChange={(snapshot, coord, color) => this.smartBoard.setBoard(snapshot, coord, color)}
           onAIThinkingClick={(sgf, step) => this.smartBoard.peekSgfWinrate(sgf, step)}
-          style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, display: this.state.showController ? 'block' : 'none' }} />
+          style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>

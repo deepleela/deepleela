@@ -20,6 +20,8 @@ interface SmartGoBoardProps {
     showWinrate?: boolean;
     whitePlayer?: string;
     blackPlayer?: string;
+
+    onStonePlaced?: (color: StoneColor, coord: { x: number, y: number }, board: State[][]) => void;
 }
 
 interface SmartGoBoardStates {
@@ -114,6 +116,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
 
+        if (this.props.onStonePlaced) {
+            this.game.clearHistory();
+            this.props.onStonePlaced(lastColor, { x, y }, this.game.board);
+        }
+
         if (this.gameMode === 'self' && this.props.showHeatmap) {
             this.setState({ disabled: true });
             let heatmap = await this.client.heatmap();
@@ -147,6 +154,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (this.props.showWinrate) {
             await this.peekWinrate();
         }
+
+        if (this.props.onStonePlaced) {
+            this.game.clearHistory();
+            this.props.onStonePlaced(color, coord, this.game.board);
+        }
     }
 
     private async peekWinrate() {
@@ -168,12 +180,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }) as [StoneColor, string][];
 
         moves = moves.concat(userMoves);
+        console.log(moves);
 
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
 
         await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
-        await this.client.loadMoves(moves);
+        console.log(await this.client.loadMoves(moves));
 
         let vars = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(vars);

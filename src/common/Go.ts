@@ -198,4 +198,7 @@ export default class Go extends EventEmitter {
         this.currentCartesianCoord = { x: -1, y: -1 };
     }
 
+    clearHistory() {
+        this.history = [];
+    }
 }

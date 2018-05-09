@@ -1,4 +1,5 @@
 import * as sgfjs from 'sgfjs';
+import * as sgfgrove from 'sgfgrove';
 import { State } from "../components/Intersection";
 import { stat } from 'fs';
 import { StoneColor } from './Constants';
@@ -80,5 +81,21 @@ export default class SGF {
         }
 
         return newBoard;
+    }
+
+    static genSGF(colors: StoneColor[], moves: { x: number, y: number }[]) {
+
+        let data: any[] = [{ FF: 4, AP: 'DeepLeela' }];
+        data = data.concat(moves.map((item, i) => {
+            let coor = `${SGF.alphabets[item.y]}${SGF.alphabets[item.x]}`;
+            return colors[i] === 'B' ? { B: coor } : { W: coor };
+        }));
+
+        let sgf = [[
+            data,
+            []
+        ]];
+
+        return sgfgrove.stringify(sgf) as string;
     }
 }

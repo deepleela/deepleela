@@ -4,7 +4,7 @@ export const lang = {
 
         newgame_vs_leela: 'New Game (vs. Leela)',
         newgame_vs_self: 'New Game (vs. Self)',
-        loadsgf: 'Load SGF',
+        loadsgf: 'Review SGF',
         exportsgf: 'Export SGF',
 
         showHeatmap: 'Show Heatmap',

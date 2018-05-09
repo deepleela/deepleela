@@ -9,6 +9,7 @@ import { State } from '../components/Intersection';
 import { CSSProperties } from 'react';
 import { StoneColor } from '../common/Constants';
 import GameClient from '../common/GameClient';
+import Board from '../components/Board';
 
 interface BoardControllerProps {
     style?: CSSProperties;
@@ -18,11 +19,12 @@ interface BoardControllerProps {
 
 export default class BoardController extends React.Component<BoardControllerProps, {}> {
 
+    private dynamic = false;
     private sgf: string;
     private boardSize: number;
-    private snapshots: State[][][];
-    private coords: { x: number, y: number }[];
-    private stonesColor: StoneColor[];
+    private snapshots: State[][][] = [];
+    private arrayCoords: { x: number, y: number }[] = [];
+    private stonesColor: StoneColor[] = [];
     currentIndex = 0;
 
     componentDidMount() {
@@ -55,7 +57,7 @@ export default class BoardController extends React.Component<BoardControllerProp
         try {
             let tree = SGF.import(sgf);
             this.snapshots = tree.snapshots;
-            this.coords = tree.coords;
+            this.arrayCoords = tree.coords;
             this.stonesColor = tree.stonesColor;
             this.boardSize = tree.size;
             return tree;
@@ -65,17 +67,37 @@ export default class BoardController extends React.Component<BoardControllerProp
         }
     }
 
+    appendMove(color: StoneColor, coord: { x: number, y: number }, board: State[][]) {
+        if (this.currentIndex !== this.snapshots.length - 1 && this.snapshots.length !== 0) return; // if users play new variations at previous points, ignore it
+
+        this.stonesColor.push(color);
+        this.arrayCoords.push(Board.cartesianCoordToArrayPosition(coord.x, coord.y));
+        this.snapshots.push(SGF.createBoardFrom(board));
+        this.currentIndex = this.snapshots.length - 1;
+        this.dynamic = true;
+    }
+
     reset() {
+        this.dynamic = false;
         this.snapshots = [];
-        this.coords = [];
+        this.arrayCoords = [];
         this.stonesColor = [];
         this.currentIndex = 0;
     }
 
     private triggerSnapshotChange(index: number) {
         if (!this.props.onSnapshotChange) return;
+        if (this.snapshots.length === 0) return;
         let snapshot = this.snapshots[index];
-        this.props.onSnapshotChange(snapshot, this.coords[index], this.stonesColor[index]);
+        this.props.onSnapshotChange(snapshot, this.arrayCoords[index], this.stonesColor[index]);
+    }
+
+    private triggerAIThinking() {
+        if (!this.props.onAIThinkingClick) return;
+        if (this.dynamic) {
+            this.sgf = SGF.genSGF(this.stonesColor, this.arrayCoords);
+        }
+        this.props.onAIThinkingClick(this.sgf, this.currentIndex + 1);
     }
 
     render() {
@@ -92,7 +114,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerSnapshotChange(Math.max(0, this.currentIndex = this.currentIndex - 1 < 0 ? 0 : this.currentIndex - 1))}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.props.onAIThinkingClick ? this.props.onAIThinkingClick(this.sgf, this.currentIndex + 1) : undefined}>
+                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.triggerAIThinking()}>
                         <span style={{ fontWeight: 100, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif' }}>AI</span>
                     </div>
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerSnapshotChange(Math.min(this.currentIndex = this.currentIndex + 1 === this.snapshots.length ? this.currentIndex : this.currentIndex + 1, this.snapshots.length - 1))}>
