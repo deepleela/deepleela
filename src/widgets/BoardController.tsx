@@ -15,7 +15,6 @@ interface BoardControllerProps {
     style?: CSSProperties;
     onAIThinkingClick?: () => void;
     onCursorChange?: (delta: number) => void;
-    onSnapshotChange?: (snapshot: State[][], coord: { x: number, y: number }, currentColor: StoneColor) => void;
 }
 
 export default class BoardController extends React.Component<BoardControllerProps, {}> {
@@ -48,43 +47,6 @@ export default class BoardController extends React.Component<BoardControllerProp
                 localStorage.setItem(yKey, e.clientY.toString());
             },
         });
-    }
-
-    loadSgf(sgf: string) {
-        this.reset();
-        this.sgf = sgf;
-
-        try {
-            let tree = SGF.import(sgf);
-            this.boardSize = tree.size;
-            return tree;
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
-    }
-
-    appendMove(color: StoneColor, coord: { x: number, y: number }, board: State[][]) {
-        if (this.currentIndex !== this.snapshots.length - 1 && this.snapshots.length !== 0) return; // if users play new variations at previous points, ignore it
-
-        this.stonesColor.push(color);
-        this.arrayCoords.push(Board.cartesianCoordToArrayPosition(coord.x, coord.y));
-        this.snapshots.push(SGF.createBoardFrom(board));
-        this.currentIndex = this.snapshots.length - 1;
-    }
-
-    reset() {
-        this.snapshots = [];
-        this.arrayCoords = [];
-        this.stonesColor = [];
-        this.currentIndex = 0;
-    }
-
-    private triggerSnapshotChange(index: number) {
-        if (!this.props.onSnapshotChange) return;
-        if (this.snapshots.length === 0) return;
-        let snapshot = this.snapshots[index];
-        this.props.onSnapshotChange(snapshot, this.arrayCoords[index], this.stonesColor[index]);
     }
 
     private triggerAIThinking() {

@@ -14,6 +14,7 @@ export const lang = {
         resign: 'Resign',
         score: 'Score Game',
 
+        settings: 'Settings',
         about: 'About',
     },
 
@@ -30,7 +31,7 @@ export const lang = {
         },
 
         sgf: {
-            load: 'Load SGF',
+            load: 'Review SGF',
             export: 'Export SGF',
         }
     },

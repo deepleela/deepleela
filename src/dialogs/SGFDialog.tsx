@@ -22,7 +22,7 @@ export default class SGFDialog extends React.Component<SGFDialogProps, any>{
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{this.props.readOnly ? i18n.dialogs.sgf.export : i18n.dialogs.sgf.load}</legend>
                     <div className="uk-margin">
-                        <textarea ref={e => this.textarea = e!} className="uk-textarea" placeholder="SGF" rows={12} style={{ resize: 'none' }} readOnly={this.props.readOnly} />
+                        <textarea ref={e => this.textarea = e!} className="uk-textarea" placeholder="SGF" rows={12} style={{ resize: 'none' }} readOnly={this.props.readOnly} defaultValue={this.props.sgf} />
                     </div>
 
                     <div style={{ height: 1, width: '100%', backgroundColor: '#eee', marginBottom: 12 }} />

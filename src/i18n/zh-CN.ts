@@ -7,13 +7,14 @@ export const lang = {
         loadsgf: '复盘 SGF',
         exportsgf: '导出 SGF',
 
-        showHeatmap: 'AI 预测',
-        showWinrate: '显示胜率',
+        showHeatmap: '开启 AI 预测',
+        showWinrate: '自动显示胜率',
 
         pass: '弃权',
         resign: '认输',
         score: '评分',
 
+        settings: '设置',
         about: '关于',
     },
 
@@ -30,7 +31,7 @@ export const lang = {
         },
 
         sgf: {
-            load: '导入 SGF',
+            load: '复盘 SGF',
             export: '导出 SGF',
         }
     },

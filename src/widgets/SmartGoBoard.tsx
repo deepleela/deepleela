@@ -20,8 +20,6 @@ interface SmartGoBoardProps {
     showWinrate?: boolean;
     whitePlayer?: string;
     blackPlayer?: string;
-
-    onStonePlaced?: (color: StoneColor, coord: { x: number, y: number }, board: State[][]) => void;
 }
 
 interface SmartGoBoardStates {
@@ -87,14 +85,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results[0];
     }
 
-    setBoard(board: State[][], coord: { x: number, y: number }, currentColor: StoneColor = 'B') {
-        this.game.board = SGF.createBoardFrom(board);
-        this.game.currentCartesianCoord = Board.arrayPositionToCartesianCoord(coord.x, coord.y);
-        this.game.current = currentColor === 'W' ? State.Black : State.White;
-        this.board.clearVariations();
-        this.setState({ heatmap: undefined });
-    }
-
     changeCursor(delta: number) {
         if (delta > 0 && this.game.isLatestCursor) return;
 
@@ -105,6 +95,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     clearBoard() {
         this.game.clear();
+        this.board.clearVariations();
         this.setState({ heatmap: undefined });
     }
 
@@ -123,10 +114,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
-
-        if (this.props.onStonePlaced) {
-            this.props.onStonePlaced(lastColor, { x, y }, this.game.board);
-        }
 
         if (this.gameMode === 'self' && this.props.showHeatmap) {
             this.setState({ disabled: true });
@@ -162,9 +149,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             await this.peekWinrate();
         }
 
-        if (this.props.onStonePlaced) {
-            this.props.onStonePlaced(color, coord, this.game.board);
-        }
     }
 
     private async peekWinrate() {
@@ -203,8 +187,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined });
     }
 
+    exportGame() {
+        return this.game.genSgf();
+    }
+
     render() {
-        let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false : this.game.currentColor !== this.userStone;
+        let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
+            (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
+            this.game.currentColor !== this.userStone;
 
         let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
         let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
