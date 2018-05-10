@@ -10,13 +10,13 @@ interface StoneProps {
 export default class Stone extends React.Component<StoneProps, any> {
 
     render() {
-        let margin = '0%';
+        let margin = '6%';
         return (
             <div style={Object.assign({
                 backgroundColor: this.props.style.color,
                 borderRadius: '50%',
                 position: 'absolute',
-                margin: '6%',
+                margin: '0%',
                 top: margin, right: margin, bottom: margin, left: margin,
                 pointerEvents: 'none',
                 display: 'flex',

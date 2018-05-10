@@ -77,14 +77,16 @@ class App extends React.Component<any, AppStates> {
 
       let sgf = localStorage.getItem('kifu');
       if (sgf) {
-        let { game } = SGF.import(sgf);
-        if (!game) return;
-        this.smartBoard.importGame(game);
+        try {
+          let { game } = SGF.import(sgf);
+          if (!game) return;
+          await this.smartBoard.importGame(game);
+        } catch{ }
       }
 
       this.setState({ loadingDialogOpen: false });
 
-      // if (!success) UIkit.notification(i18n.notifications.aiNotAvailable);
+      if (!success) UIkit.notification({ message: i18n.notifications.aiNotAvailable, status: 'primary' });
 
     });
   }

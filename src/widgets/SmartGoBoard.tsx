@@ -78,7 +78,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
 
         let results = await this.client.requestAI('leela');
-        
+
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
 
@@ -143,7 +143,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.props.showWinrate && result.variations.length > 0) {
             this.board.setVariations(result.variations);
-            await Utils.sleep(5000);
+            await Utils.sleep(3000);
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
@@ -172,12 +172,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async peekSgfWinrate() {
         if (this.state.isThinking) return;
 
-        let moves = this.game.genMoves();
-
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
 
         await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
+
+        let moves = this.game.genMoves();
+        await this.client.loadMoves(moves);
 
         let vars = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(vars);
@@ -201,11 +202,15 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     async undo() {
-        if (!this.game.undo()) return;
-        this.setState({ disabled: true });
-        await this.client.undo();
-        this.board.clearVariations();
-        this.setState({ heatmap: undefined, disabled: false });
+        if (this.gameMode === 'ai' && this.game.currentColor != this.userStone) return;
+
+        for (let i = 0; i < (this.gameMode === 'ai' ? 2 : 1); i++) {
+            if (!this.game.undo()) return;
+            this.setState({ disabled: true });
+            await this.client.undo();
+            this.board.clearVariations();
+            this.setState({ heatmap: undefined, disabled: false });
+        }
     }
 
     async pass() {

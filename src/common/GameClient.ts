@@ -123,10 +123,14 @@ export default class GameClient extends EventEmitter {
     }
 
     initBoard(configs: { komi: number, handicap: number, time: number, }) {
-        this.sendGtpCommand(CommandBuilder.clear_board(this.msgId++));
-        if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
-        if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
-        if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
+        return new Promise(resolve => {
+            if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
+            if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
+            if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
+            let cmd = CommandBuilder.clear_board(this.msgId++);
+            this.pendingCallbacks.set(cmd.id!, () => resolve());
+            this.sendGtpCommand(cmd);
+        })
     }
 
     genmove(color: StoneColor): Promise<{ move: string, variations: Variation[] }> {
