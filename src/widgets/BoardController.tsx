@@ -5,6 +5,7 @@ import './Styles.css'
 import { Interactable } from 'interactjs';
 import i18n from '../i18n';
 import SGF from '../common/SGF';
+import * as constants from '../common/Constants';
 import { State } from '../components/Intersection';
 import { CSSProperties } from 'react';
 import { StoneColor } from '../common/Constants';
@@ -74,7 +75,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
                     <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.triggerAIThinking()}>
-                        <span style={{ fontWeight: 100, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif' }}>AI</span>
+                        <span style={{ fontWeight: 800, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif', color: constants.BlackStoneColor }}>AI</span>
                     </div>
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>

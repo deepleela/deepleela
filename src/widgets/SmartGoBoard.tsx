@@ -278,14 +278,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         return (
             <div id={this.props.id} style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 10, color: 'lightgreey', marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
 
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor }}
                     size={19}
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}

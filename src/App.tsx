@@ -157,7 +157,7 @@ class App extends React.Component<any, AppStates> {
           {/* Menu */}
           <div className='uk-inline' style={{ position: 'absolute', top: 0, left: 0, marginTop: 6, marginLeft: -6 }}>
             <button className="uk-button uk-button-default no-border">
-              <span id='menu-button' uk-icon="icon: menu" style={{ color: 'lightgrey', display: 'block' }}></span>
+              <span id='menu-button' uk-icon="icon: menu" style={{ color: ThemeManager.default.logoColor, display: 'block' }}></span>
             </button>
             <div id="menu" uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
               <div className="uk-nav uk-dropdown-nav" >
