@@ -63,30 +63,30 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
 
-    jQuery(window).on('unload', e => {
+    setTimeout(() => {
       let sgf = this.smartBoard.exportGame();
       localStorage.setItem('kifu', sgf);
-    });
+    }, 10 * 1000);
 
     // As default, create a self-playing game
 
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
-      let success = await this.smartBoard.newSelfGame();
+      // let success = await this.smartBoard.newSelfGame();
 
       let sgf = localStorage.getItem('kifu');
       if (sgf) {
         try {
           let { game } = SGF.import(sgf);
           if (!game) return;
-          await this.smartBoard.importGame(game);
+          await this.smartBoard.importGame(game, (localStorage.getItem('gamemode') || undefined) as any);
         } catch{ }
       }
 
       this.setState({ loadingDialogOpen: false });
 
-      if (!success) UIkit.notification({ message: i18n.notifications.aiNotAvailable, status: 'primary' });
+      // if (!success) UIkit.notification({ message: i18n.notifications.aiNotAvailable, status: 'primary' });
 
     });
   }
@@ -114,8 +114,7 @@ class App extends React.Component<any, AppStates> {
       if (!sgf) return;
 
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
-      this.smartBoard.gameMode = 'review';
-      this.smartBoard.importGame(game);
+      this.smartBoard.importGame(game, 'review');
       this.setState({ showController: true, whitePlayer: whitePlayer, blackPlayer: blackPlayer });
     } catch {
       UIkit.notification(i18n.notifications.invalidSgf, );

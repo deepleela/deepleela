@@ -15,7 +15,9 @@ export default class GameClient extends EventEmitter {
     private ws: WebSocket;
     private msgId = 2;
     private pendingCallbacks = new Map<number, Function>();
-    private aiConnected = false;
+    private reconnected = false;
+
+    aiConnected = false;
 
     constructor() {
         super();
@@ -33,13 +35,16 @@ export default class GameClient extends EventEmitter {
 
     private onopen = (ev: Event) => {
         super.emit('connected');
+        if (this.reconnected) super.emit('reconnected');
     }
 
     private onclose = (ev: CloseEvent) => {
+        this.aiConnected = false;
         setTimeout(() => this.reconnect(), 3000);
     }
 
     private onerror = (ev: Event) => {
+        this.aiConnected = false;
     }
 
     private onmessage = (ev: MessageEvent) => {
@@ -83,6 +88,7 @@ export default class GameClient extends EventEmitter {
             this.ws.close();
         }
 
+        this.reconnected = true;
         this.ws = this.createWs();
     }
 

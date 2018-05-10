@@ -29,13 +29,15 @@ interface SmartGoBoardStates {
     isThinking?: boolean;
 }
 
+type GameMode = 'ai' | 'self' | 'guest' | 'review';
+
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
 
     private board: Board;
     private readonly client = GameClient.default;
     private game = new Go(19);
 
-    gameMode: 'ai' | 'self' | 'guest' | 'review' = 'self';
+    gameMode: GameMode = 'self';
     state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';
     engine: string;
@@ -61,6 +63,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.client.initBoard(config);
         this.game.clear();
+        localStorage.setItem('gamemode', this.gameMode);
+        localStorage.setItem('userstone', this.userStone);
+        localStorage.setItem('gamengine', this.engine);
 
         if (config.selectedColor === 'W') {
             await this.genmove('B');
@@ -78,6 +83,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
 
         let results = await this.client.requestAI('leela');
+        localStorage.setItem('gamemode', this.gameMode);
 
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
@@ -100,6 +106,22 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined });
     }
 
+    private async checkAIOnline() {
+        if (this.client.aiConnected) return true;
+
+        let [success, pending] = await this.client.requestAI(this.engine || 'leela');
+        if (!success) {
+            UIkit.notification({ message: i18n.notifications.aiNotAvailable, status: 'primary' });
+            return false;
+        }
+
+        this.setState({ disabled: true });
+        await this.client.loadMoves(this.game.genMoves());
+        this.board.clearVariations();
+        this.setState({ heatmap: undefined, disabled: false });
+        return true;
+    }
+
     private async onStonePlaced(x: number, y: number) {
         this.board.clearVariations();
 
@@ -112,6 +134,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined });
 
         if (this.gameMode === 'review') return;
+
+        await this.checkAIOnline();
 
         this.setState({ disabled: true });
         let move = Board.cartesianCoordToString(x, y);
@@ -189,12 +213,17 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: false, isThinking: false });
     }
 
-    async importGame(game: Go) {
+    async importGame(game: Go, mode: GameMode = 'self') {
         this.game = game;
-        this.setState({ disabled: true });
-        await this.client.loadMoves(game.genMoves())
-        this.board.clearVariations();
-        this.setState({ heatmap: undefined, disabled: false });
+        this.gameMode = mode;
+
+        await this.checkAIOnline();
+
+        if (mode !== 'ai') return;
+        let userstone = (localStorage.getItem('userstone') || 'B') as StoneColor;
+        this.userStone = userstone;
+        if (game.currentColor === userstone) return;
+        await this.genmove(userstone === 'B' ? 'W' : 'B');
     }
 
     exportGame() {
