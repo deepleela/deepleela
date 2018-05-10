@@ -63,10 +63,15 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
 
-    setTimeout(() => {
+    setInterval(() => {
       let sgf = this.smartBoard.exportGame();
       localStorage.setItem('kifu', sgf);
     }, 10 * 1000);
+
+    window.onunload = () => {
+      let sgf = this.smartBoard.exportGame();
+      localStorage.setItem('kifu', sgf);
+    };
 
     // As default, create a self-playing game
 
@@ -210,7 +215,7 @@ class App extends React.Component<any, AppStates> {
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>
           <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', margin: ' 8px 0' }}>
-            &copy; 2018 DeepLeela | <a href="https://github.com/deepleela/deepleela" style={{ color: 'deepskyblue' }}>Github</a>
+            &copy; 2018 DeepLeela
           </div>
         </div>
 

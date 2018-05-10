@@ -106,7 +106,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     onMouseLeave={e => { this.onMouseLeave(e); this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined }}
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
-                    <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '50%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
+                    <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
                         {winrate.value ? winrate.value.toFixed(1) : undefined}
                     </div>
                 </div>
@@ -121,7 +121,13 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 </div>
 
                 {/* Move Number */}
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop, display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center', fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none', color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600, }}>
+                <div style={{
+                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop,
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center',
+                    verticalAlign: 'middle', textAlign: 'center',
+                    fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none',
+                    color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600,
+                }}>
                     {this.props.moveNumber}
                 </div>
 

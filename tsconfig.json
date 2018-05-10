@@ -5,7 +5,7 @@
     "target": "es5",
     "baseUrl": ".",
     "lib": ["es6", "dom", "es2018", "es2017.string"],
-    "sourceMap": true,
+    "sourceMap": false,
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",

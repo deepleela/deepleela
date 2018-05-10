@@ -40,7 +40,7 @@ export const lang = {
     notifications: {
         serversBusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
         aiNotAvailable: `You won't get AI's suggestions at this moment.`,
-        aiIsThinking: 'AI is thinking...',
+        aiIsThinking: 'AI is Thinking...',
         invalidSgf: 'Invalid SGF format',
     },
 

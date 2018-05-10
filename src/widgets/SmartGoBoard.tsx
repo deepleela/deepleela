@@ -159,6 +159,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async genmove(color: StoneColor) {
+        await this.checkAIOnline();
         let result = await this.client.genmove(color);
 
         if (['pass', 'resign'].includes(result.move)) {
@@ -195,6 +196,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     async peekSgfWinrate() {
         if (this.state.isThinking) return;
+        await this.checkAIOnline();
 
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
@@ -216,11 +218,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async importGame(game: Go, mode: GameMode = 'self') {
         this.game = game;
         this.gameMode = mode;
+        this.board.clearVariations();
+        this.setState({ heatmap: undefined });
 
         await this.checkAIOnline();
 
         if (mode !== 'ai') return;
         let userstone = (localStorage.getItem('userstone') || 'B') as StoneColor;
+        this.engine = localStorage.getItem('gamengine') || 'leela';
         this.userStone = userstone;
         if (game.currentColor === userstone) return;
         await this.genmove(userstone === 'B' ? 'W' : 'B');
@@ -271,7 +276,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         return (
             <div id={this.props.id} style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 8, color: 'lightgreey', marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 10, color: 'lightgreey', marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
 
