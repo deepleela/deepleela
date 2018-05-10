@@ -156,7 +156,7 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    peekWinrate(color: StoneColor): Promise<Variation[]> {
+    peekWinrate(color: StoneColor, blackOnly: boolean): Promise<Variation[]> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.genmove(color, this.msgId++);
 
@@ -164,7 +164,7 @@ export default class GameClient extends EventEmitter {
                 let result = JSON.parse(resultstr);
                 let variations = result.variations as Variation[];
 
-                if (color === 'W') {
+                if (color === 'W' && blackOnly) {
                     variations.forEach(v => {
                         v.stats.W = `${(1 - Number.parseFloat(v.stats.W) / 100) * 100}%`;
                     });

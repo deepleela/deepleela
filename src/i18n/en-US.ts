@@ -44,7 +44,7 @@ export const lang = {
             theme_sky_blue: 'Sky Blue',
             theme_sublime_vivid: 'Sublime Vivid',
             theme_timber: 'Timber',
-            winrate: 'Custom WinRate',
+            winrate: 'Custom Winrate',
             winrate_blackOnly: 'Black only',
             winrate_both: 'Show both winrates',
         }

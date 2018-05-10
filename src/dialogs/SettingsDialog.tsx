@@ -7,6 +7,7 @@ import i18n from '../i18n';
 import * as jQuery from 'jquery';
 import { littleBox, tinyBox } from './Styles';
 import './Styles.css';
+import UserPreferences from '../common/UserPreferences';
 
 interface SettingsDialogProps {
     isOpen?: boolean;
@@ -15,24 +16,24 @@ interface SettingsDialogProps {
 
 interface SettingsDialogStates {
     theme?: string;
+    winrateMode?: string;
 }
 
 export default class SettingsDialog extends React.Component<SettingsDialogProps, SettingsDialogStates>{
 
-    state = { theme: 'default' }
+    state = { theme: ThemeManager.default.theme, winrateMode: UserPreferences.instance.winrateBlackOnly ? '1' : '' };
 
     private onThemesChange(value: string) {
         this.setState({ theme: value });
-        jQuery('html').removeClass().addClass(value);
-
-        if (value === 'default') {
-            ThemeManager.default.applyDefault();
-        } else {
-            ThemeManager.default.applyTransparent();
-        }
+        ThemeManager.default.applyTheme(value);
 
         if (this.state.theme === value) return;
         this.forceUpdate();
+    }
+
+    private onWinrateModeChange(value: string) {
+        this.setState({ winrateMode: value });
+        UserPreferences.instance.winrateBlackOnly = value ? true : false;
     }
 
     render() {
@@ -48,10 +49,23 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
                                 <option value="default">{i18n.dialogs.settings.theme_default}</option>
                                 <option value="sublime-vivid">{i18n.dialogs.settings.theme_sublime_vivid}</option>
                                 <option value="skyblue">{i18n.dialogs.settings.theme_sky_blue}</option>
-                                <option value="timber">{i18n.dialogs.settings.theme_timber}</option>                                
+                                <option value="timber">{i18n.dialogs.settings.theme_timber}</option>
                                 <option value="purpink">{i18n.dialogs.settings.theme_purpink}</option>
                             </select>
                             <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
+                                <span className="selected-text"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="uk-margin">
+                        <label className="uk-form-label">{i18n.dialogs.settings.winrate}:</label>
+                        <div className="full-width" uk-form-custom="target: > * > span.selected-text">
+                            <select style={{ width: '100%' }} onChange={e => this.onWinrateModeChange(e.target.value)} defaultValue={this.state.winrateMode}>
+                                <option value={''}>{i18n.dialogs.settings.winrate_both}</option>
+                                <option value={'1'}>{i18n.dialogs.settings.winrate_blackOnly}</option>
+                            </select>
+                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
                                 <span className="selected-text"></span>
                             </button>
                         </div>

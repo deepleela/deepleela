@@ -14,6 +14,7 @@ import { StoneColor } from '../common/Constants';
 import * as moment from 'moment';
 import * as Utils from '../lib/Utils';
 import SGF from '../common/SGF';
+import UserPreferences from '../common/UserPreferences';
 
 interface SmartGoBoardProps {
     id?: any;
@@ -189,7 +190,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
-        let variations = await this.client.peekWinrate(this.game.currentColor);
+        let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.instance.winrateBlackOnly);
         this.board.setVariations(variations);
 
         this.setState({ disabled: false, isThinking: false });
@@ -207,7 +208,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
-        let vars = await this.client.peekWinrate(this.game.currentColor);
+        let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.instance.winrateBlackOnly);
         this.board.setVariations(vars);
         if (vars.length === 0) {
             this.setState({ heatmap: await this.client.heatmap() });
