@@ -78,6 +78,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
 
         let results = await this.client.requestAI('leela');
+        
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
 
@@ -115,6 +116,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: true });
         let move = Board.cartesianCoordToString(x, y);
         await this.client.play(lastColor, move);
+
         this.setState({ disabled: false });
 
         if (this.gameMode === 'self' && this.props.showHeatmap) {
@@ -135,7 +137,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private async genmove(color: StoneColor) {
         let result = await this.client.genmove(color);
 
-        if (this.props.showWinrate) {
+        if (['pass', 'resign'].includes(result.move)) {
+            return;
+        }
+
+        if (this.props.showWinrate && result.variations.length > 0) {
             this.board.setVariations(result.variations);
             await Utils.sleep(5000);
         }
@@ -167,12 +173,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (this.state.isThinking) return;
 
         let moves = this.game.genMoves();
-        console.log(moves);
+
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
 
         await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
-        console.log(await this.client.loadMoves(moves));
 
         let vars = await this.client.peekWinrate(this.game.currentColor);
         this.board.setVariations(vars);
@@ -183,10 +188,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: false, isThinking: false });
     }
 
-    importGame(game: Go) {
+    async importGame(game: Go) {
         this.game = game;
+        this.setState({ disabled: true });
+        await this.client.loadMoves(game.genMoves())
         this.board.clearVariations();
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, disabled: false });
     }
 
     exportGame() {
@@ -195,15 +202,25 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     async undo() {
         if (!this.game.undo()) return;
+        this.setState({ disabled: true });
         await this.client.undo();
         this.board.clearVariations();
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, disabled: false });
     }
 
     async pass() {
-        if (this.gameMode !== 'ai') return;
-        this.game.pass();
+        this.setState({ disabled: true, heatmap: undefined, });
+        this.board.clearVariations();
 
+        await this.client.pass(this.game.currentColor);
+        this.game.pass();
+        if (this.gameMode === 'ai') await this.genmove(this.game.currentColor);
+
+        this.setState({ disabled: false });
+    }
+
+    async resign() {
+        await this.client.resign(this.game.currentColor);
     }
 
     render() {
@@ -211,8 +228,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
 
-        let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
-        let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? this.engine : 'Human');
+        let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
+        let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
         let board = document.getElementById('board');

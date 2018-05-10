@@ -63,15 +63,28 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
 
+    jQuery(window).on('unload', e => {
+      let sgf = this.smartBoard.exportGame();
+      localStorage.setItem('kifu', sgf);
+    });
+
     // As default, create a self-playing game
 
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
       let success = await this.smartBoard.newSelfGame();
+
+      let sgf = localStorage.getItem('kifu');
+      if (sgf) {
+        let { game } = SGF.import(sgf);
+        if (!game) return;
+        this.smartBoard.importGame(game);
+      }
+
       this.setState({ loadingDialogOpen: false });
 
-      if (!success) UIkit.notification(i18n.notifications.aiNotAvailable);
+      // if (!success) UIkit.notification(i18n.notifications.aiNotAvailable);
 
     });
   }
@@ -160,11 +173,12 @@ class App extends React.Component<any, AppStates> {
 
                   <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
-                  <li><a href="#">{i18n.menu.resign}</a></li>
+                  <li><a href="#" onClick={e => this.smartBoard.resign()}>{i18n.menu.resign}</a></li>
                   <li><a href="#">{i18n.menu.score}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
+                  <li><a href="#">{i18n.menu.settings}</a></li>
                   <li><a href="#">{i18n.menu.about}</a></li>
 
                 </ul></div>

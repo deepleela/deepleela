@@ -13,8 +13,9 @@ export default class GameClient extends EventEmitter {
     static readonly default = new GameClient();
 
     private ws: WebSocket;
-    private msgId = 0;
+    private msgId = 2;
     private pendingCallbacks = new Map<number, Function>();
+    private aiConnected = false;
 
     constructor() {
         super();
@@ -55,6 +56,12 @@ export default class GameClient extends EventEmitter {
                     this.pendingCallbacks.delete(resp.id!);
                     break;
                 case 'sys':
+                    if (msg.data.name === 'airelease') {
+                        this.aiConnected = false;
+                        this.emit('airelease');
+                        break;
+                    }
+
                     callback = this.pendingCallbacks.get(msg.data.id);
                     if (!callback) return;
                     callback(msg.data.args);
@@ -82,14 +89,21 @@ export default class GameClient extends EventEmitter {
     get connected() { return this.ws.readyState === WebSocket.OPEN }
 
     sendGtpCommand(cmd: Command) {
-        if (!this.connected) return;
+        if (!this.connected || !this.aiConnected) {
+            setImmediate(() => this.pendingCallbacks.delete(cmd.id || -1));
+            return false;
+        }
 
         let msg = { type: 'gtp', data: Command.toString(cmd) };
         this.ws.send(JSON.stringify(msg));
+        return true;
     }
 
     sendSysMessage(cmd: Command) {
-        if (!this.connected) return false;
+        if (!this.connected) {
+            setImmediate(() => this.pendingCallbacks.delete(cmd.id || -1));
+            return false;
+        }
 
         let msg: ProtocolDef = { type: 'sys', data: cmd }
         this.ws.send(JSON.stringify(msg));
@@ -99,8 +113,12 @@ export default class GameClient extends EventEmitter {
     requestAI(engine: string): Promise<[boolean, number]> {
         return new Promise(resolve => {
             let cmd: Command = { id: this.msgId++, name: Protocol.sys.requestAI, args: engine };
+            this.pendingCallbacks.set(cmd.id!, (args: [boolean, number]) => {
+                this.aiConnected = args[0];
+                resolve(args);
+            });
+
             if (!this.sendSysMessage(cmd)) resolve([false, -1]);
-            this.pendingCallbacks.set(cmd.id!, (args: [boolean, number]) => resolve(args));
         });
     }
 
@@ -122,7 +140,9 @@ export default class GameClient extends EventEmitter {
                 resolve({ move: gtpresp.content!, variations });
             });
 
-            this.sendGtpCommand(cmd);
+            if (!this.sendGtpCommand(cmd)) {
+                resolve({ move: '', variations: [] });
+            }
         });
     }
 
@@ -149,7 +169,9 @@ export default class GameClient extends EventEmitter {
                 this.sendGtpCommand(undo);
             });
 
-            this.sendGtpCommand(cmd);
+            if (!this.sendGtpCommand(cmd)) {
+                resolve([]);
+            }
         });
     }
 
@@ -158,10 +180,12 @@ export default class GameClient extends EventEmitter {
             let cmd = CommandBuilder.play(color, move, this.msgId++);
 
             this.pendingCallbacks.set(cmd.id!, (resp: Response) => {
-                resolve(resp === null);
+                resolve(resp.error === false);
             });
 
-            this.sendGtpCommand(cmd);
+            if (!this.sendGtpCommand(cmd)) {
+                resolve(false);
+            }
         });
     }
 
@@ -174,7 +198,9 @@ export default class GameClient extends EventEmitter {
                 resolve(data);
             });
 
-            this.sendGtpCommand(cmd);
+            if (!this.sendGtpCommand(cmd)) {
+                resolve(undefined);
+            }
         });
     }
 
@@ -187,7 +213,10 @@ export default class GameClient extends EventEmitter {
         return new Promise(resolve => {
             let cmd = { name: 'loadMoves', args: moves, id: this.msgId++ };
             this.pendingCallbacks.set(cmd.id!, (msg: string) => resolve(msg));
-            this.sendSysMessage(cmd);
+
+            if (!this.sendSysMessage(cmd)) {
+                resolve();
+            }
         });
     }
 
@@ -195,7 +224,17 @@ export default class GameClient extends EventEmitter {
         return new Promise(resolve => {
             let cmd = CommandBuilder.undo(this.msgId++);
             this.pendingCallbacks.set(cmd.id!, () => resolve());
-            this.sendGtpCommand(cmd);
+            if (!this.sendGtpCommand(cmd)) {
+                resolve();
+            }
         })
+    }
+
+    pass(color: StoneColor) {
+        return this.play(color, 'pass');
+    }
+
+    resign(color: StoneColor) {
+        return this.play(color, 'resign');
     }
 }
