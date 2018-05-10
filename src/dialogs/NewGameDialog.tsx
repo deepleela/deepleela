@@ -54,10 +54,10 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                                 <option value="B">{i18n.dialogs.newgame.black}</option>
                                 <option value="W">{i18n.dialogs.newgame.white}</option>
                             </select>
-                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
-                                <Stone style={{ color: this.state.selectedColor == "B" ? constants.BlackStoneColor : constants.WhiteStoneColor, width: 18, height: 18, top: 0, right: 0, bottom: 0, left: 0, position: 'relative', margin: '0 4px' }} />
+                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
+                                <Stone className='inline-block' style={{ color: this.state.selectedColor == "B" ? constants.BlackStoneColor : constants.WhiteStoneColor, width: 18, height: 18, top: 0, right: 0, bottom: 0, left: 0, position: 'relative', margin: '0 4px' }} />
                                 <span className="selected-text"></span>
-                                <span uk-icon="icon: chevron-down"></span>
+                                <span uk-icon="icon: chevron-down" className='inline-block'></span>
                             </button>
                         </div>
                     </div>
@@ -69,7 +69,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                                 <option value="Leela">{'Leela'}</option>
                                 <option value="LeelaZero">{'Leela-Zero'}</option>
                             </select>
-                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
+                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
                                 <span className="selected-text"></span>
                                 <span uk-icon="icon: chevron-down"></span>
                             </button>

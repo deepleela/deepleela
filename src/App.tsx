@@ -7,6 +7,7 @@ import i18n from './i18n';
 import NewGameDialog, { NewGameDialogStates } from './dialogs/NewGameDialog';
 import SGFDialog from './dialogs/SGFDialog';
 import LoadingDialog from './dialogs/LoadingDialog';
+import SettingsDialog from './dialogs/SettingsDialog';
 import Modal from 'react-modal';
 import * as jQuery from 'jquery';
 import GameClient from './common/GameClient';
@@ -16,6 +17,7 @@ import SmartGoBoard from './widgets/SmartGoBoard';
 import BoardController from './widgets/BoardController';
 import CommandBuilder from './common/CommandBuilder';
 import SGF from './common/SGF';
+import ThemeManager from './common/ThemeManager';
 
 interface AppStates {
   whitePlayer?: string;
@@ -25,6 +27,7 @@ interface AppStates {
   loadSgfDialogOpen?: boolean,
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
+  settingsDialogOpen?: boolean;
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
@@ -78,8 +81,6 @@ class App extends React.Component<any, AppStates> {
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
-      // let success = await this.smartBoard.newSelfGame();
-
       let sgf = localStorage.getItem('kifu');
       if (sgf) {
         try {
@@ -90,9 +91,6 @@ class App extends React.Component<any, AppStates> {
       }
 
       this.setState({ loadingDialogOpen: false });
-
-      // if (!success) UIkit.notification({ message: i18n.notifications.aiNotAvailable, status: 'primary' });
-
     });
   }
 
@@ -153,7 +151,7 @@ class App extends React.Component<any, AppStates> {
         <div style={{ position: 'relative' }}>
           <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
             <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7 }}>DeepLeela</span>
+            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
           </div>
 
           {/* Menu */}
@@ -184,7 +182,7 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
 
-                  <li><a href="#">{i18n.menu.settings}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ settingsDialogOpen: true })}>{i18n.menu.settings}</a></li>
                   <li><a href="#">{i18n.menu.about}</a></li>
 
                 </ul></div>
@@ -214,7 +212,7 @@ class App extends React.Component<any, AppStates> {
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>
-          <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', margin: ' 8px 0' }}>
+          <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0' }}>
             &copy; 2018 DeepLeela
           </div>
         </div>
@@ -223,6 +221,7 @@ class App extends React.Component<any, AppStates> {
         <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} />
         <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={sgf => this.onLoadSgf(sgf)} />
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} sgf={this.state.sgf} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
+        <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />
       </div>
     );

@@ -34,6 +34,19 @@ export const lang = {
         sgf: {
             load: 'Review SGF',
             export: 'Export SGF',
+        },
+
+        settings: {
+            title: 'Settings',
+            themes: 'Themes',
+            theme_default: 'Default',
+            theme_purpink: 'Purpink',
+            theme_sky_blue: 'Sky Blue',
+            theme_sublime_vivid: 'Sublime Vivid',
+            theme_timber: 'Timber',
+            winrate: 'Custom WinRate',
+            winrate_blackOnly: 'Black only',
+            winrate_both: 'Show both winrates',
         }
     },
 

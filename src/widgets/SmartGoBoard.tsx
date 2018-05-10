@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as constants from '../common/Constants';
+import ThemeManager from '../common/ThemeManager';
 import Board from '../components/Board';
 import Stone from '../components/Stone';
 import i18n from '../i18n';
@@ -283,7 +284,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: constants.GridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: constants.BlackStoneColor, whiteStoneColor: constants.WhiteStoneColor }}
                     size={19}
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}
@@ -299,7 +300,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     <div style={{ display: 'flex', width: '100%', margin: 'auto', fontSize: 10, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
                         <div style={{ marginLeft: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
-                                <Stone style={{ color: constants.BlackStoneColor, }} />
+                                <Stone style={{ color: constants.BlackStoneColor, opacity: 0.7 }} />
                             </div>
                             <span>{blackPlayer || '---'}</span>
                         </div>
@@ -308,7 +309,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
                         <div style={{ marginRight: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
-                                <Stone style={{ color: constants.WhiteStoneColor, }} />
+                                <Stone style={{ color: constants.WhiteStoneColor, opacity: 0.7 }} />
                             </div>
                             <span>{whitePlayer || '---'}</span>
                         </div>

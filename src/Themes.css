@@ -1,17 +1,23 @@
-.shadow-night {
-  background: #000000; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #0e0d0d, #53346d); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #0e0d0d, #53346d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.skyblue {
+  background: #1c92d2; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #1c92d2, #f2fcfe); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #1c92d2, #f2fcfe); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.middle-night-city {
-  background: #232526; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #232526, #414345); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #232526, #414345); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+.purpink {
+  background: #7f00ff; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #7f00ff, #e100ff); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #7f00ff, #e100ff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .sublime-vivid {
   background: #fc466b; /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #fc466b, #3f5efb); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #fc466b, #3f5efb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.timber {
+  background: #fc00ff; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #fc00ff, #00dbde); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #fc00ff, #00dbde); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }

@@ -62,7 +62,7 @@ export default class BoardController extends React.Component<BoardControllerProp
     render() {
         return (
             <div id='board-controller' style={this.props.style} className='board-controller'>
-                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.75)', userSelect: 'none', backdropFilter: 'blur(25px)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', }}>
                     <div id='draggable-handler'>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
