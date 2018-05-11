@@ -50,3 +50,22 @@
       -webkit-transform: scale(1.0);
     }
   }
+
+  .coin-div {
+    margin: 8px 0px;
+    font-size: 12px;
+  }
+
+  .coin-div span {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%;
+  }
+
+  .coin-div img {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    margin-right: 8px;
+  }

@@ -111,7 +111,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     </div>
                 </div>
 
-                <div className='center-div' style={{ opacity: this.props.state !== State.Empty ? 1 : 0, transitionDelay: `${(this.props.moveNumber || 0) / 5}s`, transition: 'opacity 0.8s' }}>
+                <div className='center-div' style={{ transition: `opacity ${this.props.moveNumber ? 0.5 : 0}s`, opacity: this.props.state !== State.Empty ? 1 : 0, transitionDelay: `${(this.props.moveNumber || 0) / 5}s`, }}>
                     {
                         this.props.state === State.Black ?
                             <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} highlight={this.props.highlight} highlightSize={highlightSize} /> :

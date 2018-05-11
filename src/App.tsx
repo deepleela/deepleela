@@ -19,6 +19,7 @@ import CommandBuilder from './common/CommandBuilder';
 import SGF from './common/SGF';
 import ThemeManager from './common/ThemeManager';
 import InfoDialog from './dialogs/InfoDialog';
+import AboutDialog from './dialogs/AboutDialog';
 
 interface AppStates {
   whitePlayer?: string;
@@ -30,6 +31,7 @@ interface AppStates {
   loadingDialogOpen?: boolean;
   settingsDialogOpen?: boolean;
   infoDialogOpen?: boolean;
+  aboutDialogOpen?: boolean;
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
@@ -192,7 +194,7 @@ class App extends React.Component<any, AppStates> {
                   <li className="uk-nav-divider"></li>
 
                   <li><a href="#" onClick={e => this.setState({ settingsDialogOpen: true })}>{i18n.menu.settings}</a></li>
-                  <li><a href="#">{i18n.menu.about}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ aboutDialogOpen: true })} > {i18n.menu.about}</a></li>
 
                 </ul></div>
             </div>
@@ -205,7 +207,6 @@ class App extends React.Component<any, AppStates> {
           <div className='element_to_magnify'>
             <SmartGoBoard id="smartboard"
               ref={e => this.smartBoard = e!}
-              // onStonePlaced={(color, move, board) => this.boardController.appendMove(color, move, board)}
               showWinrate={this.state.showWinrate}
               showHeatmap={this.state.showHeatmap}
               whitePlayer={this.state.whitePlayer}
@@ -233,6 +234,7 @@ class App extends React.Component<any, AppStates> {
         <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />
         <InfoDialog isOpen={this.state.infoDialogOpen} onOk={() => this.setState({ infoDialogOpen: false })} title={this.state.info ? this.state.info.title : undefined} message={this.state.info ? this.state.info.message : undefined} />
+        <AboutDialog isOpen={this.state.aboutDialogOpen} onOk={() => this.setState({ aboutDialogOpen: false })} />
       </div>
     );
   }
