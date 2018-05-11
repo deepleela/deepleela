@@ -238,12 +238,23 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async undo() {
         if (this.gameMode === 'ai' && this.game.currentColor != this.userStone) return;
 
-        for (let i = 0; i < (this.gameMode === 'ai' ? 2 : 1); i++) {
+        const subUndo = async () => {
             if (!this.game.undo()) return;
             this.setState({ disabled: true });
             await this.client.undo();
             this.board.clearVariations();
-            this.setState({ heatmap: undefined, disabled: false });
+            this.setState({ disabled: false, heatmap: undefined });
+            return;
+        }
+
+        await subUndo();
+
+        if (this.gameMode !== 'ai') {
+            return;
+        }
+
+        while (this.game.currentColor !== this.userStone) {
+            await subUndo();
         }
     }
 
@@ -251,7 +262,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: true, heatmap: undefined, });
         this.board.clearVariations();
 
-        await this.client.pass(this.game.currentColor);
+        console.log('pass', await this.client.pass(this.game.currentColor));
         this.game.pass();
         if (this.gameMode === 'ai') await this.genmove(this.game.currentColor);
 
@@ -266,6 +277,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
+
+        if (shouldBeDisabled) console.log(this.game.currentColor, this.userStone);
 
         let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
         let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');

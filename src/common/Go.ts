@@ -199,7 +199,16 @@ export default class Go extends EventEmitter {
         this.board = this.snapshots.length > 0 ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this.board = this.create(this.size);
         this.cursor = this.snapshots.length - 1;
         this.currentCartesianCoord = this.mainBranch.length > 0 ? this.mainBranch[this.mainBranch.length - 1].cartesianCoord : { x: -1, y: -1 };
-        this.turn();
+
+        let step = this.mainBranch[this.mainBranch.length - 1];
+        if (step && this.currentColor === step.stone) {
+            this.turn();
+        }
+
+        if (!step) {
+            this.current = this.opponentOf(State.White);
+        }
+
         return true;
     }
 
