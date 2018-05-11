@@ -247,4 +247,17 @@ export default class GameClient extends EventEmitter {
     resign(color: StoneColor) {
         return this.play(color, 'resign');
     }
+
+    finalScore() {
+        return new Promise<string | undefined>(resolve => {
+            let cmd = CommandBuilder.final_score(this.msgId++);
+            this.pendingCallbacks.set(cmd.id!, (value: Response) => {
+                resolve(value.content as string);
+            });
+
+            if (!this.sendGtpCommand(cmd)) {
+                resolve();
+            }
+        });
+    }
 }

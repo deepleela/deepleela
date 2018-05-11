@@ -1,5 +1,6 @@
 html {
 	user-select: none;
+	transition: background 2.5s;
 }
 
 .magnify {

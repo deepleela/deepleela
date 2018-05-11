@@ -178,7 +178,7 @@ class App extends React.Component<any, AppStates> {
                   <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.resign()}>{i18n.menu.resign}</a></li>
-                  <li><a href="#">{i18n.menu.score}</a></li>
+                  <li><a href="#" onClick={e => GameClient.default.finalScore()}>{i18n.menu.score}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
