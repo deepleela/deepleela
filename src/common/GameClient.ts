@@ -54,23 +54,24 @@ export default class GameClient extends EventEmitter {
 
             switch (msg.type) {
                 case 'gtp':
-                    let resp = Response.fromString(msg.data);
+                    let resp = Response.fromString(msg.data as string);
                     callback = this.pendingCallbacks.get(resp.id || -1);
                     if (!callback) return;
                     callback(resp);
                     this.pendingCallbacks.delete(resp.id!);
                     break;
                 case 'sys':
-                    if (msg.data.name === 'airelease') {
+                    let data: any = msg.data;
+                    if (data.name === 'airelease') {
                         this.aiConnected = false;
                         this.emit('airelease');
                         break;
                     }
 
-                    callback = this.pendingCallbacks.get(msg.data.id);
+                    callback = this.pendingCallbacks.get(data.id);
                     if (!callback) return;
-                    callback(msg.data.args);
-                    this.pendingCallbacks.delete(msg.data.id);
+                    callback(data.args);
+                    this.pendingCallbacks.delete(data.id);
                     break;
             }
 

@@ -18,6 +18,7 @@ import BoardController from './widgets/BoardController';
 import CommandBuilder from './common/CommandBuilder';
 import SGF from './common/SGF';
 import ThemeManager from './common/ThemeManager';
+import InfoDialog from './dialogs/InfoDialog';
 
 interface AppStates {
   whitePlayer?: string;
@@ -28,12 +29,14 @@ interface AppStates {
   exportSgfDialogOpen?: boolean,
   loadingDialogOpen?: boolean;
   settingsDialogOpen?: boolean;
+  infoDialogOpen?: boolean;
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
   showController?: boolean;
 
   sgf?: string;
+  info?: { title: string, message: string },
 
   paddingTop: number;
 }
@@ -126,6 +129,12 @@ class App extends React.Component<any, AppStates> {
     }
   }
 
+  async popScoreInfo() {
+    this.setState({ loadingDialogOpen: true });
+    let info = await GameClient.default.finalScore() || '';
+    this.setState({ loadingDialogOpen: false, infoDialogOpen: true, info: { title: i18n.dialogs.info.title_score, message: info } });
+  }
+
   fadeIn() {
     jQuery('body').addClass('uk-animation-fade');
   }
@@ -178,7 +187,7 @@ class App extends React.Component<any, AppStates> {
                   <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.resign()}>{i18n.menu.resign}</a></li>
-                  <li><a href="#" onClick={e => GameClient.default.finalScore()}>{i18n.menu.score}</a></li>
+                  <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
@@ -223,6 +232,7 @@ class App extends React.Component<any, AppStates> {
         <SGFDialog isOpen={this.state.exportSgfDialogOpen} sgf={this.state.sgf} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
         <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />
+        <InfoDialog isOpen={this.state.infoDialogOpen} onOk={() => this.setState({ infoDialogOpen: false })} title={this.state.info ? this.state.info.title : undefined} message={this.state.info ? this.state.info.message : undefined} />
       </div>
     );
   }

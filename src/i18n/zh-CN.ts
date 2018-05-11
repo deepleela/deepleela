@@ -36,6 +36,11 @@ export const lang = {
             export: '导出 SGF',
         },
 
+        info: {
+            title_score: '对局形势',
+
+        },
+
         settings: {
             title: '设置',
             themes: '主题',

@@ -36,6 +36,11 @@ export const lang = {
             export: 'Export SGF',
         },
 
+        info: {
+            title_score: 'Game Score',
+
+        },
+
         settings: {
             title: 'Settings',
             themes: 'Themes',
