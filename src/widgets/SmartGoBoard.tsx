@@ -118,7 +118,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.setState({ disabled: true });
-        await this.client.loadMoves(this.game.genMoves());
+        await this.client.loadMoves(this.game.genMoves(true));
         this.board.clearVariations();
         this.setState({ heatmap: undefined, disabled: false });
         return true;
@@ -162,7 +162,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async genmove(color: StoneColor) {
         await this.checkAIOnline();
-        
+
         this.setState({ isThinking: true });
         let result = await this.client.genmove(color);
         this.setState({ isThinking: false });
@@ -171,7 +171,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             return;
         }
 
-        if (this.props.showWinrate && result.variations.length > 0) {
+        if (this.props.showWinrate && result.variations.length > 0 && this.game.isLatestCursor) {
             this.board.setVariations(result.variations);
             await Utils.sleep(2000);
         }
@@ -179,23 +179,21 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let coord = Board.stringToCartesianCoord(result.move);
         this.game.play(coord.x, coord.y, true);
 
-        this.setState({ heatmap: this.props.showHeatmap ? await this.client.heatmap() : undefined });
+        this.setState({ heatmap: this.props.showHeatmap && this.game.isLatestCursor ? await this.client.heatmap() : undefined });
 
-        if (this.props.showWinrate) {
+        if (this.props.showWinrate && this.game.isLatestCursor) {
             await this.peekWinrate();
         }
 
     }
 
     private async peekWinrate() {
-        if (!this.game.isLatestCursor) return;
-
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.instance.winrateBlackOnly);
-        this.board.setVariations(variations);
 
+        this.board.setVariations(variations);
         this.setState({ disabled: false, isThinking: false });
     }
 
@@ -206,8 +204,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: true });
 
+        // peek winrate
         await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
-
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
@@ -218,6 +216,15 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.setState({ disabled: false, isThinking: false });
+
+        if (this.gameMode === 'review') return;
+
+        // recover to main branch if the game mode is not review
+        this.setState({ disabled: true });
+        await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
+        let mainMoves = this.game.genMoves(true);
+        await this.client.loadMoves(mainMoves);
+        this.setState({ disabled: false })
     }
 
     async importGame(game: Go, mode: GameMode = 'self') {

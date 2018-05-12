@@ -256,8 +256,8 @@ export default class Go extends EventEmitter {
         this.current = this.opponentOf(state.stone);
     }
 
-    genMoves() {
-        let moves = this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+    genMoves(mainBranch = false) {
+        let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 
