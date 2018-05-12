@@ -66,20 +66,20 @@ export default class Go extends EventEmitter {
         return stone === State.Black ? State.White : State.Black;
     }
 
-    private findNeighbors(row: number, col: number) {
+    private static findNeighbors(row: number, col: number, boardSize: number) {
 
         let neighbors: Coordinate[] = [];
 
         if (row > 0) neighbors.push({ x: row - 1, y: col }); // upper neighbor
-        if (row < this.size - 1) neighbors.push({ x: row + 1, y: col }); // lower neighbor
+        if (row < boardSize - 1) neighbors.push({ x: row + 1, y: col }); // lower neighbor
         if (col > 0) neighbors.push({ x: row, y: col - 1 }); // left neighbor
-        if (col < this.size - 1) neighbors.push({ x: row, y: col + 1 }); // right neighbor
+        if (col < boardSize - 1) neighbors.push({ x: row, y: col + 1 }); // right neighbor
 
         return neighbors;
     }
 
-    private findGroup(row: number, col: number) {
-        let target = this._board[row][col];
+    private static findGroup(row: number, col: number, board: State[][]) {
+        let target = board[row][col];
         if (target === State.Empty) return null;
 
         let visited = new Map<string, boolean>();
@@ -91,9 +91,9 @@ export default class Go extends EventEmitter {
             let stone = queue.pop()!;
             if (visited.get(`${stone.x}-${stone.y}`)) continue;
 
-            let neighbors = this.findNeighbors(stone.x, stone.y);
+            let neighbors = Go.findNeighbors(stone.x, stone.y, board.length);
             neighbors.forEach(neighbor => {
-                let state = this._board[neighbor.x][neighbor.y];
+                let state = board[neighbor.x][neighbor.y];
                 if (state === State.Empty) liberties++;
                 if (state === target) queue.push({ x: neighbor.x, y: neighbor.y });
             });
@@ -117,34 +117,36 @@ export default class Go extends EventEmitter {
      * @param row cartesian coord x
      * @param col cartesian coord y
      */
-    play(row: number, col: number) {
+    play(row: number, col: number, mainBranch = false) {
         // Convert cartesian coord to array offset
         let currentCoord = { x: row, y: col };
         let { x, y } = { x: this.size - row, y: col - 1 };
         row = x;
         col = y;
 
-        if (!this.isEmpty(row, col)) return false;
+        let currBoard = mainBranch && this.snapshots.length > 0 ? this.snapshots[this.snapshots.length - 1] : this._board;
+
+        if (!Go.isEmpty(row, col, currBoard)) return false;
 
         this._board[row][col] = this.current;
 
         let captured: Coordinate[][] = [];
 
         // finding neighbors to detect atari and dead stones
-        let neighbors = this.findNeighbors(row, col);
+        let neighbors = Go.findNeighbors(row, col, this.size);
 
         neighbors.forEach(neighbor => {
             let state = this._board[neighbor.x][neighbor.y];
 
             if (state === State.Empty || state === this.current) return;
 
-            let group = this.findGroup(neighbor.x, neighbor.y);
+            let group = Go.findGroup(neighbor.x, neighbor.y, this._board);
             if (group === null) return;
 
             if (group.liberties === 0) captured.push(group.stones);
         });
 
-        let suicideGroup = this.findGroup(row, col);
+        let suicideGroup = Go.findGroup(row, col, this._board);
         if (captured.length === 0 && suicideGroup && suicideGroup.liberties === 0) {
             this._board[row][col] = State.Empty;
             return false;
@@ -222,8 +224,8 @@ export default class Go extends EventEmitter {
         }, 1000);
     }
 
-    isEmpty(row: number, col: number) {
-        return this._board[row][col] === State.Empty;
+    static isEmpty(row: number, col: number, board: State[][]) {
+        return board[row][col] === State.Empty;
     }
 
     pass() {

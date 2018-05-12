@@ -28,7 +28,7 @@ export default class ThemeManager {
     }
 
     applyTransparent(theme: string) {
-        this.gridLineColor = '#efefef50';
+        this.gridLineColor = '#f0f0f050';
         this.logoColor = '#ffffffA0';
         this.subtextColor = this.logoColor;
         this.whiteStoneColor = '#fff';

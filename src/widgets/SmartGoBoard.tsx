@@ -174,7 +174,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
-        this.game.play(coord.x, coord.y);
+        this.game.play(coord.x, coord.y, true);
 
         this.setState({ heatmap: this.props.showHeatmap ? await this.client.heatmap() : undefined });
 
