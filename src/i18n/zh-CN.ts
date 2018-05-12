@@ -38,6 +38,7 @@ export const lang = {
 
         info: {
             title_score: '对局形势',
+            resigns: (color: string) => `${color} 认输`,
         },
 
         about: {

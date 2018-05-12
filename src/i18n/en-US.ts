@@ -38,6 +38,7 @@ export const lang = {
 
         info: {
             title_score: 'Game Score',
+            resigns: (color: string) => `${color} resigns`,
         },
 
         about: {

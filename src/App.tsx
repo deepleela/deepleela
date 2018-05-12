@@ -133,8 +133,16 @@ class App extends React.Component<any, AppStates> {
 
   async popScoreInfo() {
     this.setState({ loadingDialogOpen: true });
-    let info = await GameClient.default.finalScore() || '';
-    this.setState({ loadingDialogOpen: false, infoDialogOpen: true, info: { title: i18n.dialogs.info.title_score, message: info } });
+    let msg = await GameClient.default.finalScore() || '';
+    this.setState({ loadingDialogOpen: false, infoDialogOpen: true, info: { title: i18n.dialogs.info.title_score, message: msg } });
+  }
+
+  async popResignInfo() {
+    this.setState({ loadingDialogOpen: true });
+    let player = await this.smartBoard.resign();
+    let msg = await GameClient.default.finalScore() || '';
+    let info = { title: i18n.dialogs.info.title_score, message: `${i18n.dialogs.info.resigns(player)}, ${msg}` };
+    this.setState({ loadingDialogOpen: false, infoDialogOpen: true, info });
   }
 
   fadeIn() {
@@ -188,7 +196,7 @@ class App extends React.Component<any, AppStates> {
 
                   <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
-                  <li><a href="#" onClick={e => this.smartBoard.resign()}>{i18n.menu.resign}</a></li>
+                  <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
                   <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
 
                   <li className="uk-nav-divider"></li>

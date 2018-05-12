@@ -274,7 +274,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: true, heatmap: undefined, });
         this.board.clearVariations();
 
-        console.log('pass', await this.client.pass(this.game.currentColor));
+        await this.client.pass(this.game.currentColor);
         this.game.pass();
         if (this.gameMode === 'ai') await this.genmove(this.game.currentColor);
 
@@ -282,7 +282,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     async resign() {
+        this.setState({ disabled: true });
         await this.client.resign(this.game.currentColor);
+        return (this.game.currentColor === 'W' ? this.props.whitePlayer : this.props.blackPlayer) || this.game.currentColor;
     }
 
     render() {
