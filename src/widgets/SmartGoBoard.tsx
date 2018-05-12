@@ -162,7 +162,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async genmove(color: StoneColor) {
         await this.checkAIOnline();
+        
+        this.setState({ isThinking: true });
         let result = await this.client.genmove(color);
+        this.setState({ isThinking: false });
 
         if (['pass', 'resign'].includes(result.move)) {
             return;
@@ -170,7 +173,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.props.showWinrate && result.variations.length > 0) {
             this.board.setVariations(result.variations);
-            await Utils.sleep(3000);
+            await Utils.sleep(2000);
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
@@ -185,6 +188,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async peekWinrate() {
+        if (!this.game.isLatestCursor) return;
+
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
@@ -232,7 +237,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     exportGame() {
-        return this.game.genSgf();
+        return this.game.genSgf(true);
     }
 
     async undo() {
@@ -277,8 +282,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
-
-        if (shouldBeDisabled) console.log(this.game.currentColor, this.userStone);
 
         let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
         let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');

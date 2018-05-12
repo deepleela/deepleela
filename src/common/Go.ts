@@ -36,7 +36,7 @@ export default class Go extends EventEmitter {
 
     get currentColor(): StoneColor { return this.current === State.Black ? 'B' : 'W'; }
 
-    get isLatestCursor() { return this.cursor === -1 || this.cursor === this.snapshots.length - 1 };
+    get isLatestCursor() { return (this.cursor === -1 && this.snapshots.length === 0) || this.cursor === this.snapshots.length - 1 };
 
     constructor(size: number) {
         super();
@@ -117,18 +117,19 @@ export default class Go extends EventEmitter {
      * @param row cartesian coord x
      * @param col cartesian coord y
      */
-    play(row: number, col: number, mainBranch = false) {
+    play(row: number, col: number, forceMainBranch = false) {
         // Convert cartesian coord to array offset
         let currentCoord = { x: row, y: col };
         let { x, y } = { x: this.size - row, y: col - 1 };
         row = x;
         col = y;
 
-        let currBoard = mainBranch && this.snapshots.length > 0 ? this.snapshots[this.snapshots.length - 1] : this._board;
+        let currBoard = forceMainBranch && this.snapshots.length > 0 && !this.isLatestCursor ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this._board;
+        let currStone = forceMainBranch && this.mainBranch.length > 0 && !this.isLatestCursor ? this.opponentOf(this.mainBranch[this.mainBranch.length - 1].stone) : this.current;
 
         if (!Go.isEmpty(row, col, currBoard)) return false;
 
-        this._board[row][col] = this.current;
+        currBoard[row][col] = currStone;
 
         let captured: Coordinate[][] = [];
 
@@ -136,19 +137,20 @@ export default class Go extends EventEmitter {
         let neighbors = Go.findNeighbors(row, col, this.size);
 
         neighbors.forEach(neighbor => {
-            let state = this._board[neighbor.x][neighbor.y];
+            let state = currBoard[neighbor.x][neighbor.y];
 
-            if (state === State.Empty || state === this.current) return;
+            if (state === State.Empty || state === currStone) return;
 
-            let group = Go.findGroup(neighbor.x, neighbor.y, this._board);
+
+            let group = Go.findGroup(neighbor.x, neighbor.y, currBoard);
             if (group === null) return;
 
             if (group.liberties === 0) captured.push(group.stones);
         });
 
-        let suicideGroup = Go.findGroup(row, col, this._board);
+        let suicideGroup = Go.findGroup(row, col, currBoard);
         if (captured.length === 0 && suicideGroup && suicideGroup.liberties === 0) {
-            this._board[row][col] = State.Empty;
+            currBoard[row][col] = State.Empty;
             return false;
         }
 
@@ -159,33 +161,34 @@ export default class Go extends EventEmitter {
             this.koStones &&
             deadStones[0].x === this.koStones.coor.x &&
             deadStones[0].y === this.koStones.coor.y &&
-            this.koStones.stoneColor === this.opponentOf(this.current) &&
+            this.koStones.stoneColor === this.opponentOf(currStone) &&
             this.koStones.deadStones.length === 1 &&
-            this.koStones.deadColor === this.current
+            this.koStones.deadColor === currStone
         ) {
-            this._board[row][col] = State.Empty;
+            currBoard[row][col] = State.Empty;
             return false;
         }
 
         // Remove dead stones
-        deadStones.forEach(stone => this._board[stone.x][stone.y] = State.Empty);
+        deadStones.forEach(stone => currBoard[stone.x][stone.y] = State.Empty);
 
         // Memorize last dead stones
         if (deadStones.length > 0) {
-            this.koStones = { coor: { x, y }, stoneColor: this.current, deadColor: this.opponentOf(this.current), deadStones };
+            this.koStones = { coor: { x, y }, stoneColor: currStone, deadColor: this.opponentOf(currStone), deadStones };
         } else {
             this.koStones = undefined;
         }
 
-        this.history.push({ stone: this.current, arrayCoord: { x, y }, cartesianCoord: currentCoord });
-        this.currentCartesianCoord = currentCoord;
+        this.history.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
+        this.currentCartesianCoord = !this.isLatestCursor && forceMainBranch ? this.currentCartesianCoord : currentCoord;
 
         // Just save the latest board on main branch
-        if (this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
-            this.snapshots.push(SGF.createBoardFrom(this.board));
-            this.mainBranch.push({ stone: this.current, arrayCoord: { x, y }, cartesianCoord: currentCoord });
+        if (forceMainBranch || this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
+            let isLatestCursor = this.isLatestCursor;
+            this.snapshots.push(SGF.createBoardFrom(currBoard));
+            this.mainBranch.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
             this.history = []; // reset history
-            this.cursor = this.snapshots.length - 1;
+            this.cursor = isLatestCursor ? this.snapshots.length - 1 : this.cursor;
         }
 
         this.turn();
@@ -258,8 +261,8 @@ export default class Go extends EventEmitter {
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 
-    genSgf() {
-        let moves = this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+    genSgf(mainBranch = false) {
+        let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
         return SGF.genSGF(moves);
     }
 }
