@@ -75,9 +75,9 @@ export default class SGF {
         return newBoard;
     }
 
-    static genSGF(moves: { stone: State, arrayCoord: Coordinate }[]) {
+    static genSGF(moves: { stone: State, arrayCoord: Coordinate }[], info = { whitePlayer: '', blackPlayer: '', result: '', size: 19 }) {
 
-        let data: any[] = [{ FF: 4, AP: 'DeepLeela' }];
+        let data: any[] = [{ FF: 4, AP: 'DeepLeela', RE: info.result, PW: info.whitePlayer, PB: info.blackPlayer, DT: (new Date()).toLocaleDateString(), CA: 'UTF-8', SZ: info.size }];
         data = data.concat(moves.map((item, i) => {
             let coor = `${SGF.alphabets[item.arrayCoord.y]}${SGF.alphabets[item.arrayCoord.x]}`;
             return item.stone === State.Black ? { B: coor } : { W: coor };

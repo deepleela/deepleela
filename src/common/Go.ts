@@ -261,8 +261,8 @@ export default class Go extends EventEmitter {
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 
-    genSgf(mainBranch = false) {
+    genSgf(info = { blackPlayer: '', whitePlayer: '', result: '', size: 19 }, mainBranch = false) {
         let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
-        return SGF.genSGF(moves);
+        return SGF.genSGF(moves, info);
     }
 }

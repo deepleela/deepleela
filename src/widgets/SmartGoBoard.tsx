@@ -57,7 +57,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
         this.engine = config.engine;
         this.game.time = config.time;
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
 
         let results = await this.client.requestAI(config.engine || 'leela');
@@ -73,7 +73,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             await this.genmove('B');
         }
 
-        this.forceUpdate();
         this.game.start();
         return results;
     }
@@ -81,7 +80,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
         this.engine = 'leela';
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
 
         let results = await this.client.requestAI('leela');
@@ -244,7 +243,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     exportGame() {
-        return this.game.genSgf(true);
+        let info = { blackPlayer: this.props.blackPlayer || '', whitePlayer: this.props.whitePlayer || '', result: '', size: 19 };
+        return this.game.genSgf(info, true);
     }
 
     async undo() {
