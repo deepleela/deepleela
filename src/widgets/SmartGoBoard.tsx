@@ -57,6 +57,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
         this.engine = config.engine;
         this.game.time = config.time;
+        UserPreferences.whitePlayer = this.userStone === 'W' ? 'Human' : this.engine;
+        UserPreferences.blackPlayer = this.userStone === 'B' ? 'Human' : this.engine;
+
         this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
 
@@ -80,6 +83,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async newSelfGame(): Promise<boolean> {
         this.gameMode = 'self';
         this.engine = 'leela';
+        UserPreferences.whitePlayer = UserPreferences.blackPlayer = 'Human';
+
         this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
 
@@ -190,7 +195,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
-        let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.instance.winrateBlackOnly);
+        let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly);
 
         this.board.setVariations(variations);
         this.setState({ disabled: false, isThinking: false });
@@ -208,7 +213,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
-        let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.instance.winrateBlackOnly);
+        let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly);
         this.board.setVariations(vars);
         if (vars.length === 0) {
             this.setState({ heatmap: await this.client.heatmap() });
@@ -238,6 +243,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let userstone = (localStorage.getItem('userstone') || 'B') as StoneColor;
         this.engine = localStorage.getItem('gamengine') || 'leela';
         this.userStone = userstone;
+        
         if (game.currentColor === userstone) return;
         await this.genmove(userstone === 'B' ? 'W' : 'B');
     }

@@ -20,6 +20,7 @@ import SGF from './common/SGF';
 import ThemeManager from './common/ThemeManager';
 import InfoDialog from './dialogs/InfoDialog';
 import AboutDialog from './dialogs/AboutDialog';
+import UserPreferences from './common/UserPreferences';
 
 interface AppStates {
   whitePlayer?: string;
@@ -35,7 +36,6 @@ interface AppStates {
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
-  showController?: boolean;
 
   sgf?: string;
   info?: { title: string, message: string },
@@ -92,6 +92,7 @@ class App extends React.Component<any, AppStates> {
           let { game } = SGF.import(sgf);
           if (!game) return;
           await this.smartBoard.importGame(game, (localStorage.getItem('gamemode') || undefined) as any);
+          this.setState({ whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         } catch{ }
       }
 
@@ -100,7 +101,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
     let [success, pending] = await this.smartBoard.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -110,7 +111,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewSelfGame() {
-    this.setState({ loadingDialogOpen: true, showController: false, blackPlayer: undefined, whitePlayer: undefined });
+    this.setState({ loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
     if (!await this.smartBoard.newSelfGame()) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false });
   }
@@ -122,8 +123,11 @@ class App extends React.Component<any, AppStates> {
       if (!sgf) return;
 
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
+      game.changeCursor(-9999);
       this.smartBoard.importGame(game, 'review');
-      this.setState({ showController: true, whitePlayer: whitePlayer, blackPlayer: blackPlayer });
+      this.setState({ whitePlayer: whitePlayer, blackPlayer: blackPlayer });
+      UserPreferences.whitePlayer = whitePlayer || '';
+      UserPreferences.blackPlayer = blackPlayer || '';
     } catch {
       UIkit.notification(i18n.notifications.invalidSgf, );
     } finally {

@@ -21,7 +21,7 @@ interface SettingsDialogStates {
 
 export default class SettingsDialog extends React.Component<SettingsDialogProps, SettingsDialogStates>{
 
-    state = { theme: ThemeManager.default.theme, winrateMode: UserPreferences.instance.winrateBlackOnly ? '1' : '' };
+    state = { theme: ThemeManager.default.theme, winrateMode: UserPreferences.winrateBlackOnly ? '1' : '' };
 
     private onThemesChange(value: string) {
         this.setState({ theme: value });
@@ -33,7 +33,7 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
 
     private onWinrateModeChange(value: string) {
         this.setState({ winrateMode: value });
-        UserPreferences.instance.winrateBlackOnly = value ? true : false;
+        UserPreferences.winrateBlackOnly = value ? true : false;
     }
 
     render() {
