@@ -35,6 +35,7 @@ interface BoardStates {
     variationStates: (Variation | undefined)[][];
     branchStates: (BranchState | undefined)[][];
     highlightWinrateVariationOffset?: { x: number, y: number };
+    touchedCoord?: { x: number, y: number };
 }
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
@@ -90,6 +91,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
     private onClick(row: number, col: number) {
         this.clearBranchStates();
+        this.setState({ touchedCoord: { x: row, y: col } });
         if (!this.props.onIntersectionClicked) return;
         this.props.onIntersectionClicked(row, col);
     }
@@ -134,7 +136,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
     clearVariations() {
         if (!this.state.branchStates || this.state.branchStates.length === 0) return;
-        
+
         for (let i = 0; i < this.props.size; i++) {
             for (let j = 0; j < this.props.size; j++) {
                 this.state.variationStates[i][j] = undefined;
@@ -196,7 +198,9 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         leftEdge={j === 0}
                                         rightEdge={j === dimension - 1}
                                         star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
-                                        highlightSize={gridWidth > 25 ? 'large' : 'small'}
+                                        highlightPointSize={gridWidth > 25 ? 'large' : 'small'}
+                                        needTouchConfirmation={gridWidth < 25}
+                                        
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
                                         winrate={this.state.variationStates[i][j] ? {
                                             value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),

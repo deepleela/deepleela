@@ -13,8 +13,8 @@ interface IntersectionProps {
     width: number;
     lineThickness?: number;
     onClick: (row: number, col: number) => void;
-    onMouseEnter?: (row: number, col: number) => void;
-    onMouseLeave?: (row: number, col: number) => void;
+    onTouchEnter?: (row: number, col: number) => void;
+    onTouchLeave?: (row: number, col: number) => void;
     onVariationHover?: (row: number, col: number) => void;
     onVariationHoverLeave?: (row: number, col: number) => void;
     state: State;
@@ -28,15 +28,18 @@ interface IntersectionProps {
     row: number;
     col: number;
     style?: CSSProperties & { whiteStoneColor?: string, blackStoneColor?: string };
-    highlightSize?: 'large' | 'small';
+    highlightPointSize?: 'large' | 'small';
     heatmap?: number;
     winrate?: WinRate;
     moveNumber?: number;
     fontSize?: number;
+    needTouchConfirmation?: boolean;
 }
 
 interface IntersectionStates {
     hover: boolean;
+    touchConfirmed?: boolean;
+    firstTouch?: boolean;
 }
 
 export enum State {
@@ -57,7 +60,6 @@ export default class Intersection extends React.Component<IntersectionProps, Int
 
     private onMouseEnter(e: React.MouseEvent<HTMLDivElement>) {
         if (this.props.disabled) return;
-        if (this.props.onMouseEnter) this.props.onMouseEnter(this.props.row, this.props.col);
         this.setState({ hover: true });
     }
 
@@ -67,14 +69,49 @@ export default class Intersection extends React.Component<IntersectionProps, Int
 
     private onClick(e: React.MouseEvent<HTMLDivElement>) {
         if (this.props.disabled) return;
-        this.props.onClick(this.props.row, this.props.col);
+
+        if (!this.props.needTouchConfirmation) {
+            this.props.onClick(this.props.row, this.props.col);
+            return;
+        }
+
+        if (this.state.touchConfirmed) {
+            this.props.onClick(this.props.row, this.props.col);
+            this.setState({ touchConfirmed: false, firstTouch: false });
+            return;
+        }
+
+        this.setState({ touchConfirmed: true, firstTouch: true });
+    }
+
+    private onTouchStart() {
+        if (this.props.winrate && this.props.onVariationHover)
+            this.props.onVariationHover(this.props.row, this.props.col)
+
+        if (this.props.onTouchEnter)
+            this.props.onTouchEnter(this.props.row, this.props.col);
+    }
+
+    private onTouchLeave() {
+        if (this.props.winrate && this.props.onVariationHoverLeave)
+            this.props.onVariationHoverLeave(this.props.row, this.props.col)
+
+        if (this.props.onTouchLeave)
+            this.props.onTouchLeave(this.props.row, this.props.col);
+    }
+
+    componentDidUpdate() {
+        // if (this.props.state === State.Empty && this.state.touchConfirmed) {
+        //     this.setState({ firstTouch: false, touchConfirmed: false });
+        //     console.log('all unset');
+        // }
     }
 
     render() {
         const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
-        const highlightSize = this.props.highlightSize === 'small' ? 5 : 8;
-        const moveNumberPaddingTop = this.props.highlightSize === 'small' ? 0 : 2;
-        const winrateMargin = this.props.highlightSize === 'small' ? '3%' : '4.3%';
+        const highlightSize = this.props.highlightPointSize === 'small' ? 5 : 8;
+        const moveNumberPaddingTop = this.props.highlightPointSize === 'small' ? 0 : 2;
+        const winrateMargin = this.props.highlightPointSize === 'small' ? '3%' : '4.3%';
         const winrate = (this.props.winrate || {}) as WinRate;
 
         return (
@@ -100,9 +137,9 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 <div uk-tooltip={this.props.winrate ? `${this.props.winrate.visits} Visits` : undefined}
                     style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
                     onMouseEnter={e => this.onMouseEnter(e)} onClick={e => this.onClick(e)}
-                    onTouchStart={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}
-                    onTouchCancel={e => this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined}
-                    onTouchEnd={e => this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined}
+                    onTouchStart={e => this.onTouchStart()}
+                    onTouchCancel={e => this.onTouchLeave()}
+                    onTouchEnd={e => this.onTouchLeave()}
                     onMouseLeave={e => { this.onMouseLeave(e); this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined }}
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
@@ -133,6 +170,12 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 }}>
                     {this.props.moveNumber}
                 </div>
+
+                {
+                    this.state.firstTouch && this.props.needTouchConfirmation && this.props.state === State.Empty ?
+                        <div style={{ borderRadius: '50%', border: '2px solid deepskyblue', pointerEvents: 'none', position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, margin: '2%' }} /> :
+                        undefined
+                }
 
             </div>
         );
