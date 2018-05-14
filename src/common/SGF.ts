@@ -50,8 +50,7 @@ export default class SGF {
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;
 
-            while (game.currentColor !== color) game.pass();
-            
+            while (game.currentColor !== color && pos) game.pass();
             if (!pos) game.pass();
 
             if (pos && pos.length == 2) {

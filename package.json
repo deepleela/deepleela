@@ -12,6 +12,7 @@
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-modal": "^3.4.4",
+    "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.15.1",
     "sgfgrove": "^1.0.8",
     "sgfjs": "Mistereo/sgfjs"
