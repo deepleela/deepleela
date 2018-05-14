@@ -91,7 +91,6 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
     private onClick(row: number, col: number) {
         this.clearBranchStates();
-        this.setState({ touchedCoord: { x: row, y: col } });
         if (!this.props.onIntersectionClicked) return;
         this.props.onIntersectionClicked(row, col);
     }
@@ -186,11 +185,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         onClick={(r, c) => this.onClick(r, c)}
                                         style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
                                         key={j}
-                                        row={19 - i}
+                                        row={this.props.size - i}
                                         col={j + 1}
                                         lineThickness={2}
                                         disabled={this.props.disabled}
-                                        highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         width={size}
                                         state={state === State.Empty ? (this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.state : state) : state}
                                         topEdge={i === 0}
@@ -198,9 +196,11 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         leftEdge={j === 0}
                                         rightEdge={j === dimension - 1}
                                         star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
+                                        highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         highlightPointSize={gridWidth > 25 ? 'large' : 'small'}
-                                        needTouchConfirmation={gridWidth < 25}
-                                        
+                                        needTouchConfirmation={gridWidth < 22}
+                                        onTouch={(x, y) => this.setState({ touchedCoord: { x, y } })}
+                                        showTouchConfirmation={this.state.touchedCoord && i === (this.props.size - this.state.touchedCoord.x) && j === (this.state.touchedCoord.y - 1)}
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
                                         winrate={this.state.variationStates[i][j] ? {
                                             value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),

@@ -243,7 +243,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let userstone = (localStorage.getItem('userstone') || 'B') as StoneColor;
         this.engine = localStorage.getItem('gamengine') || 'leela';
         this.userStone = userstone;
-        
+
         if (game.currentColor === userstone) return;
         await this.genmove(userstone === 'B' ? 'W' : 'B');
     }
@@ -293,6 +293,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return (this.game.currentColor === 'W' ? this.props.whitePlayer : this.props.blackPlayer) || this.game.currentColor;
     }
 
+
+    private onWheelChanged(e: React.WheelEvent<HTMLDivElement>) {
+        if (this.gameMode !== 'review') return;
+        e.preventDefault();
+        this.changeCursor(e.deltaY > 0 ? 1 : -1);
+    }
+
     render() {
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
@@ -306,7 +313,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / 19 / 2 : 0) + 19;
 
         return (
-            <div id={this.props.id} style={{ position: 'relative' }}>
+            <div id={this.props.id} style={{ position: 'relative' }} onWheel={e => this.onWheelChanged(e)}>
                 <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
@@ -330,18 +337,18 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     <div style={{ display: 'flex', width: '100%', margin: 'auto', fontSize: 10, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
                         <div style={{ marginLeft: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
-                                <Stone style={{ color: constants.BlackStoneColor, opacity: 0.7 }} />
+                                <Stone style={{ color: constants.BlackStoneColor }} />
                             </div>
-                            <span>{blackPlayer || '---'}</span>
+                            <span style={{ opacity: 0.75 }}>{blackPlayer || '---'}</span>
                         </div>
 
                         <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11 }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
 
                         <div style={{ marginRight: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
-                                <Stone style={{ color: constants.WhiteStoneColor, opacity: 0.7 }} />
+                                <Stone style={{ color: constants.WhiteStoneColor }} />
                             </div>
-                            <span>{whitePlayer || '---'}</span>
+                            <span style={{ opacity: 0.75 }}>{whitePlayer || '---'}</span>
                         </div>
                     </div>
                 </div>
