@@ -65,7 +65,6 @@ export default class SGF {
         }
 
         while (child && child.length > 0) {
-            if (child[0].props) console.log(child[0].props);
 
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;

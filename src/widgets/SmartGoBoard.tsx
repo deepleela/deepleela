@@ -65,14 +65,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.whitePlayer = this.userStone === 'W' ? 'Human' : this.engine;
         UserPreferences.blackPlayer = this.userStone === 'B' ? 'Human' : this.engine;
 
-        this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
+        this.client.initBoard(config);
+        this.game.clear();
+        this.setState({ heatmap: undefined, disabled: false });
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
 
-        this.client.initBoard(config);
-        this.game.clear();
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.userStone = this.userStone;
         UserPreferences.gameEngine = this.engine;
@@ -80,10 +80,16 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (config.handicap > 1) {
             this.game.setHandicap(config.handicap);
+            await this.client.loadMoves(this.game.genMoves(true));
         }
 
-        if (config.selectedColor === 'W') {
+        if (config.selectedColor === 'W' && config.handicap === 0) {
             await this.genmove('B');
+        }
+
+        if (config.selectedColor === 'B' && config.handicap > 0) {
+            console.log('excuse me');
+            await this.pass();
         }
 
         this.game.start();

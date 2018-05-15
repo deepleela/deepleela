@@ -5,6 +5,7 @@ import { StoneColor } from './Constants';
 import { EventEmitter } from "events";
 import SGF from "./SGF";
 import Board from "../components/Board";
+import { S_IXGRP } from "constants";
 
 export type Coordinate = { x: number, y: number };
 type Moves = { stone: State, arrayCoord: Coordinate, cartesianCoord: Coordinate }[];
@@ -260,6 +261,7 @@ export default class Go extends EventEmitter {
     }
 
     clear(resize?: number) {
+        this.handicap = undefined;
         this.history = [];
         this.historySnapshots = [];
         this.mainBranch = [];
@@ -339,7 +341,19 @@ export default class Go extends EventEmitter {
     }
 
     genMoves(mainBranch = false) {
+        let handicap = this.handicap ? this.handicap.map(i => {
+            let offset = SGF.stringToArrayPosition(i);
+            let move = {
+                stone: State.Black,
+                arrayCoord: offset,
+                cartesianCoord: Board.arrayPositionToCartesianCoord(offset.x, offset.y),
+            }
+            return move;
+        }) : [];
+
         let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+        moves = handicap.concat(moves);
+
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 

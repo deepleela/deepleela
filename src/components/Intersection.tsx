@@ -68,9 +68,6 @@ export default class Intersection extends React.Component<IntersectionProps, Int
     }
 
     private onClick(e: React.MouseEvent<HTMLDivElement>) {
-        console.log(e.button, e.buttons);
-        e.preventDefault();
-        e.stopPropagation();
         if (this.props.disabled) return;
 
         if (this.props.onTouch) {
@@ -128,7 +125,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                 {this.props.star ? <div style={{ pointerEvents: 'none', background: 'lightgrey', borderRadius: '50%', height: 6, width: 6, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', opacity: 0.5 }} /> : null}
 
                 {/* Touch Surface */}
-                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty && !this.state.firstTouch ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} onContextMenu={e => console.log(e)} />
+                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0, 0, 0, 0)', border: this.state.hover && this.props.state === State.Empty && !this.state.firstTouch ? '2px dashed rgba(0, 0, 0, 0.15)' : undefined, }} onMouseEnter={e => this.onMouseEnter(e)} onMouseLeave={e => this.onMouseLeave(e)} onClick={e => this.onClick(e)} />
 
                 {/* Heatmap */}
                 <div className={isSafari ? 'heatmap-safari' : 'heatmap'} style={{ transform: `scale(1.${this.props.heatmap || 0})`, opacity: this.props.heatmap && this.props.heatmap > 0 && !this.props.winrate ? 0.5 + (this.props.heatmap || 0) / 20 : 0, width: '100%', height: '100%', position: 'absolute', zIndex: 1, top: 0, left: 0, pointerEvents: 'none', transition: 'all 0.5s', }} />
