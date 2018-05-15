@@ -78,6 +78,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.gameEngine = this.engine;
         UserPreferences.komi = this.configs.komi;
 
+        if (config.handicap > 1) {
+            this.game.setHandicap(config.handicap);
+        }
+
         if (config.selectedColor === 'W') {
             await this.genmove('B');
         }

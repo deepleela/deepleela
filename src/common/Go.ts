@@ -269,6 +269,45 @@ export default class Go extends EventEmitter {
         this.currentCartesianCoord = { x: -1, y: -1 };
     }
 
+    setHandicap(stones: number) {
+        stones = Math.min(9, stones);
+
+        let five = [[15, 3], [3, 15], [3, 3], [15, 15], [9, 9]];
+        let six = [[15, 3], [3, 15], [3, 3], [15, 15], [9, 3], [9, 15]];
+        let seven = five.concat([[9, 3], [9, 15]]);
+        let eight = six.concat([[3, 9], [15, 9]]);
+        let nine = eight.concat([[9, 9]]);
+
+        let layout: number[][] = [];
+
+        if (stones <= 5) {
+            layout = five;
+        }
+
+        switch (stones) {
+            case 6:
+                layout = six;
+                break;
+            case 7:
+                layout = seven;
+                break;
+            case 8:
+                layout = eight;
+                break;
+            case 9:
+                layout = nine;
+                break;
+            default:
+                layout = five;
+        }
+
+        for (let i = 0; i < stones; i++) {
+            let stone = layout[i];
+            this._board[stone[0]][stone[1]] = State.Black;
+            
+        }
+    }
+
     changeCursor(delta: number) {
         if (this.snapshots.length === 0) return;
 

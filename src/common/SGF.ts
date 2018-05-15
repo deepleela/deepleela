@@ -10,6 +10,14 @@ export default class SGF {
 
     static readonly alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
+    static stringToArrayPosition(offset: string) {
+        let first = offset[0];
+        let second = offset[1];
+        let y = SGF.alphabets.indexOf(first);
+        let x = SGF.alphabets.indexOf(second);
+        return { x, y };
+    }
+
     static parse2Move(sgf: string, steps = Number.MAX_SAFE_INTEGER) {
         let tree = sgfjs.parse(sgf);
         let child = tree.childs;
@@ -46,7 +54,14 @@ export default class SGF {
         let size = Number.parseInt(tree.props.SZ || '19');
         let game = new Go(size);
 
+        if (tree.props.AB) {
+            tree.props.AB.map(v => SGF.stringToArrayPosition(v))
+                .forEach(offset => game.board[offset.x][offset.y] = State.Black);
+        }
+
         while (child && child.length > 0) {
+            if (child[0].props) console.log(child[0].props);
+
             let color: StoneColor | undefined = child[0].props.B ? 'B' : child[0].props.W ? 'W' : undefined;
             let pos = child[0].props.B || child[0].props.W;
 

@@ -5,6 +5,7 @@ import * as constants from '../common/Constants';
 import i18n from '../i18n';
 import * as jQuery from 'jquery';
 import { littleBox } from './Styles';
+import UserPreferences from '../common/UserPreferences';
 
 interface NewGameDialogProps {
     onCancel?: () => void,
@@ -26,7 +27,8 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
         super(props, ctx);
 
         let preferences = localStorage.getItem('newgame');
-        let defaultPreference: any = { selectedColor: "B", komi: 6.5, handicap: 0, time: 120, engine: 'Leela' };
+        let defaultPreference: any = { selectedColor: "B", komi: UserPreferences.komi || 7.5, handicap: 0, time: 120, engine: 'Leela' };
+        
         try {
             this.state = preferences ? JSON.parse(preferences) : defaultPreference;
         } catch (error) {
