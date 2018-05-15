@@ -19,10 +19,13 @@ interface BoardControllerProps {
     onAIThinkingClick?: () => void;
     onAIAutoPlayClick?: (autoplay: boolean) => void;
     onCursorChange?: (delta: number) => void;
+    onExitBranch?: () => void;
 }
+
 interface BoardControllerStates {
     autoplay: boolean;
     expanded?: boolean;
+    branchMode?: boolean;
 }
 
 export default class BoardController extends React.Component<BoardControllerProps, BoardControllerStates> {
@@ -74,7 +77,7 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.expandTimerId = setTimeout(() => {
             this.setState({ expanded: false });
             jQuery('#board-controller').animate({ left: window.innerWidth - 36 });
-        }, 3000);
+        }, (this.props.mode === 'review' ? 60 : 3) * 1000);
     }
 
     componentDidUpdate() {
@@ -84,6 +87,15 @@ export default class BoardController extends React.Component<BoardControllerProp
             this.props.onAIAutoPlayClick(false);
             this.setState({ autoplay: false });
         }
+    }
+
+    enterBranchMode() {
+        this.setState({ branchMode: true });
+    }
+
+    private triggerExitBranchMode() {
+        if (this.state.branchMode && this.props.onExitBranch) this.props.onExitBranch();
+        this.setState({ branchMode: false });
     }
 
     render() {
@@ -112,8 +124,8 @@ export default class BoardController extends React.Component<BoardControllerProp
                     </div>
 
                     {this.props.mode && this.props.mode === 'review' ?
-                        <div className='touch' data-message={i18n.tips.last}>
-                            <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: 'lightgrey' }}></span>
+                        <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerExitBranchMode()}>
+                            <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
                         </div> : undefined
                     }
                 </div>

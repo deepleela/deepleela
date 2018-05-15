@@ -199,12 +199,11 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
+                  <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
 
                   {
                     this.smartBoard && this.smartBoard.gameMode === 'ai' ?
                       <div className='uk-nav uk-dropdown-nav'>
-
-                        <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                         <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
                         <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
                       </div> :
@@ -227,6 +226,7 @@ class App extends React.Component<any, AppStates> {
           <div className='element_to_magnify'>
             <SmartGoBoard id="smartboard"
               ref={e => this.smartBoard = e!}
+              onEnterBranch={() => this.boardController.enterBranchMode()}
               showWinrate={this.state.showWinrate}
               showHeatmap={this.state.showHeatmap}
               whitePlayer={this.state.whitePlayer}
@@ -241,6 +241,7 @@ class App extends React.Component<any, AppStates> {
           onCursorChange={d => this.smartBoard.changeCursor(d)}
           onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
           onAIAutoPlayClick={autoplay => { this.setState({ aiAutoplay: autoplay }); if (autoplay) this.smartBoard.autoGenmove(true); }}
+          onExitBranch={() => this.smartBoard.returnToMainBranch()}
           style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
 
         {/* Footer Aera */}

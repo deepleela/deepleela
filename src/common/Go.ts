@@ -18,9 +18,11 @@ export default class Go extends EventEmitter {
 
     snapshots: State[][][] = [];
     mainBranch: Moves = [];
-    cursor = -1;
-
     history: Moves = [];
+    historySnapshots: State[][][] = [];
+    cursor = -1;
+    historyCursor = -1;
+
     size: number;
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
@@ -107,7 +109,7 @@ export default class Go extends EventEmitter {
 
     set board(value: State[][]) {
         this._board = value;
-        this.history = [];
+        // this.history = [];
     }
 
     get board() { return this._board; }
@@ -181,7 +183,12 @@ export default class Go extends EventEmitter {
             this.koStones = undefined;
         }
 
+        this.historySnapshots.splice(this.historyCursor + 1);
+        this.history.splice(this.historyCursor + 1);
         this.history.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
+        this.historySnapshots.push(SGF.createBoardFrom(currBoard));
+        this.historyCursor = this.history.length - 1;
+
         this.currentCartesianCoord = !this.isLatestCursor && mode === 'force_main' ? this.currentCartesianCoord : currentCoord;
 
         // Just save the latest board on main branch
@@ -190,6 +197,8 @@ export default class Go extends EventEmitter {
             this.snapshots.push(SGF.createBoardFrom(currBoard));
             this.mainBranch.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
             this.history = []; // reset history
+            this.historySnapshots = [];
+            this.historyCursor = -1;
             this.cursor = isLatestCursor ? this.snapshots.length - 1 : this.cursor;
         }
 
@@ -199,6 +208,8 @@ export default class Go extends EventEmitter {
             this.snapshots.push(SGF.createBoardFrom(currBoard));
             this.mainBranch.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
             this.history = [];
+            this.historySnapshots = [];
+            this.historyCursor = -1;
             this.cursor = this.snapshots.length - 1;
         }
 
@@ -248,9 +259,11 @@ export default class Go extends EventEmitter {
 
     clear(resize?: number) {
         this.history = [];
+        this.historySnapshots = [];
         this.mainBranch = [];
         this.snapshots = [];
         this.cursor = -1;
+        this.historyCursor = -1;
         this._board = this.create(resize || (this._board.length || 19));
         this.current = State.Black;
         this.currentCartesianCoord = { x: -1, y: -1 };
@@ -259,12 +272,28 @@ export default class Go extends EventEmitter {
     changeCursor(delta: number) {
         if (this.snapshots.length === 0) return;
 
+        if (this.history.length > 0) {
+            this.historyCursor = Math.max(0, Math.min(this.historyCursor + delta, this.history.length - 1));
+            this.board = SGF.createBoardFrom(this.historySnapshots[this.historyCursor]);
+            let state = this.history[this.historyCursor];
+            this.currentCartesianCoord = state.cartesianCoord;
+            this.current = this.opponentOf(state.stone);
+            return;
+        }
+
         this.cursor = Math.max(0, Math.min(this.cursor + delta, this.snapshots.length - 1));
         this.board = SGF.createBoardFrom(this.snapshots[this.cursor]);
 
         let state = this.mainBranch[this.cursor];
         this.currentCartesianCoord = state.cartesianCoord;
         this.current = this.opponentOf(state.stone);
+    }
+
+    returnToMainBranch() {
+        this.history = [];
+        this.historySnapshots = [];
+        this.historyCursor = -1;
+        this.changeCursor(0);
     }
 
     genMoves(mainBranch = false) {

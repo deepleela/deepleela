@@ -23,6 +23,8 @@ interface SmartGoBoardProps {
     whitePlayer?: string;
     blackPlayer?: string;
     aiAutoPlay?: boolean;
+
+    onEnterBranch?: () => void;
 }
 
 interface SmartGoBoardStates {
@@ -111,10 +113,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined });
     }
 
-    clearBoard() {
-        this.game.clear();
-        this.board.clearVariations();
-        this.setState({ heatmap: undefined });
+    returnToMainBranch() {
+        this.game.returnToMainBranch();
+        this.forceUpdate();
     }
 
     private async checkAIOnline() {
@@ -164,7 +165,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.setState({ heatmap: undefined });
 
-        if (this.gameMode === 'review') return;
+        if (this.gameMode === 'review') {
+            if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
+            return;
+        }
 
         await this.checkAIOnline();
 
