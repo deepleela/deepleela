@@ -115,6 +115,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     returnToMainBranch() {
         this.game.returnToMainBranch();
+        // this.board.clearBranchStates();
         this.forceUpdate();
     }
 
@@ -167,6 +168,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.gameMode === 'review') {
             if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
+            if (this.game.history.length === 0) return;
+
+            // setImmediate(() => {
+            //     let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
+            //     this.board.setMovesNumber(branch);
+            //     this.forceUpdate();
+            // });
+
             return;
         }
 

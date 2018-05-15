@@ -12,6 +12,7 @@ interface BranchState {
     state: State;
     moveNumber: number;
 }
+
 interface BoardProps {
     size: number;
     id?: string;
@@ -131,6 +132,14 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let pos = Board.stringToCartesianCoord(varitations[0].variation[0]);
         let offset = Board.cartesianCoordToArrayPosition(pos.x, pos.y);
         this.setState({ highlightWinrateVariationOffset: offset });
+    }
+
+    setMovesNumber(moves: { coord: { x: number, y: number }, number: number }[]) {
+        moves.forEach(m => {
+            let offset = Board.cartesianCoordToArrayPosition(m.coord.x, m.coord.y);
+            let state = this.props.states[offset.x][offset.y];
+            this.state.branchStates[offset.x][offset.y] = { state: State.Empty, moveNumber: m.number };
+        });
     }
 
     clearVariations() {

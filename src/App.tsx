@@ -54,7 +54,7 @@ class App extends React.Component<any, AppStates> {
   constructor(props: any, ctx) {
     super(props, ctx);
 
-    if (localStorage.getItem('heatmap') === undefined) UserPreferences.heatmap = true;
+    if (localStorage.getItem('heatmap') === null) UserPreferences.heatmap = true;
     this.state = { paddingTop: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
   }
 
@@ -71,11 +71,6 @@ class App extends React.Component<any, AppStates> {
     calcPaddingTop();
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
-
-    setInterval(() => {
-      let sgf = this.smartBoard.exportGame();
-      UserPreferences.kifu = sgf;
-    }, 10 * 1000);
 
     window.onunload = () => {
       let sgf = this.smartBoard.exportGame();
