@@ -44,6 +44,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';
     engine: string;
+    configs: NewGameDialogStates;
 
     componentDidMount() {
         this.game.on('tick', () => {
@@ -58,6 +59,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
         this.engine = config.engine;
         this.game.time = config.time;
+        this.configs = config;
         UserPreferences.whitePlayer = this.userStone === 'W' ? 'Human' : this.engine;
         UserPreferences.blackPlayer = this.userStone === 'B' ? 'Human' : this.engine;
 
@@ -69,9 +71,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.client.initBoard(config);
         this.game.clear();
-        localStorage.setItem('gamemode', this.gameMode);
-        localStorage.setItem('userstone', this.userStone);
-        localStorage.setItem('gamengine', this.engine);
+        UserPreferences.gameMode = this.gameMode;
+        UserPreferences.userStone = this.userStone;
+        UserPreferences.gameEngine = this.engine;
+        UserPreferences.komi = this.configs.komi;
 
         if (config.selectedColor === 'W') {
             await this.genmove('B');
@@ -89,8 +92,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
 
-        let results = await this.client.requestAI('leela');
-        localStorage.setItem('gamemode', this.gameMode);
+        let results = await this.client.requestAI(this.engine);
+        UserPreferences.gameMode = this.gameMode;
+        UserPreferences.gameEngine = this.engine;
 
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
@@ -123,6 +127,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.setState({ disabled: true });
+        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
         await this.client.loadMoves(this.game.genMoves(true));
         this.board.clearVariations();
         this.setState({ heatmap: undefined, disabled: false });
@@ -210,7 +215,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: true, isThinking: true });
 
         // peek winrate
-        await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
+        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
@@ -226,7 +231,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         // recover to main branch if the game mode is not review
         this.setState({ disabled: true });
-        await this.client.initBoard({ komi: 7.5, handicap: 0, time: 0 });
+        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
         let mainMoves = this.game.genMoves(true);
         await this.client.loadMoves(mainMoves);
         this.setState({ disabled: false })
@@ -241,8 +246,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.checkAIOnline();
 
         if (mode !== 'ai') return;
-        let userstone = (localStorage.getItem('userstone') || 'B') as StoneColor;
-        this.engine = localStorage.getItem('gamengine') || 'leela';
+        let userstone = (UserPreferences.userStone) as StoneColor;
+        this.engine = UserPreferences.gameEngine || 'leela';
         this.userStone = userstone;
 
         if (game.currentColor === userstone) return;

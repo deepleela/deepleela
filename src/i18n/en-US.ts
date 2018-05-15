@@ -3,7 +3,7 @@ export const lang = {
     menu: {
 
         newgame_vs_leela: 'Challenge AI',
-        newgame_vs_self: 'Practice',
+        newgame_vs_self: 'Free Practice',
         loadsgf: 'Review SGF',
         exportsgf: 'Export SGF',
 

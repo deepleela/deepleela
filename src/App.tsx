@@ -53,8 +53,8 @@ class App extends React.Component<any, AppStates> {
   constructor(props: any, ctx) {
     super(props, ctx);
 
-    if (localStorage.getItem('heatmap') === null) localStorage.setItem('heatmap', 'true');
-    this.state = { paddingTop: 0, showHeatmap: localStorage.getItem('heatmap') ? true : false, showWinrate: localStorage.getItem('winrate') ? true : false };
+    if (localStorage.getItem('heatmap') === null) UserPreferences.heatmap = true;
+    this.state = { paddingTop: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
   }
 
   componentDidMount() {
@@ -73,12 +73,12 @@ class App extends React.Component<any, AppStates> {
 
     setInterval(() => {
       let sgf = this.smartBoard.exportGame();
-      localStorage.setItem('kifu', sgf);
+      UserPreferences.kifu = sgf;
     }, 10 * 1000);
 
     window.onunload = () => {
       let sgf = this.smartBoard.exportGame();
-      localStorage.setItem('kifu', sgf);
+      UserPreferences.kifu = sgf;
     };
 
     // As default, create a self-playing game
@@ -86,12 +86,12 @@ class App extends React.Component<any, AppStates> {
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
-      let sgf = localStorage.getItem('kifu');
+      let sgf = UserPreferences.kifu;
       if (sgf) {
         try {
           let { game } = SGF.import(sgf);
           if (!game) return;
-          await this.smartBoard.importGame(game, (localStorage.getItem('gamemode') || undefined) as any);
+          await this.smartBoard.importGame(game, UserPreferences.gameMode as any);
           this.setState({ whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         } catch{ }
       }
@@ -193,15 +193,22 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
 
-                  <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => localStorage.setItem('heatmap', this.state.showHeatmap ? 'true' : ''))}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => localStorage.setItem('winrate', this.state.showWinrate ? 'true' : ''))}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
 
                   <li className="uk-nav-divider"></li>
-
-                  <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
-                  <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
-                  <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
+                  
+                  {
+                    this.smartBoard && this.smartBoard.gameMode === 'ai' ?
+                      <div className='uk-nav uk-dropdown-nav'>
+
+                        <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
+                        <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
+                        <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
+                      </div> :
+                      undefined
+                  }
 
                   <li className="uk-nav-divider"></li>
 
@@ -247,7 +254,7 @@ class App extends React.Component<any, AppStates> {
         <LoadingDialog isOpen={this.state.loadingDialogOpen} />
         <InfoDialog isOpen={this.state.infoDialogOpen} onOk={() => this.setState({ infoDialogOpen: false })} title={this.state.info ? this.state.info.title : undefined} message={this.state.info ? this.state.info.message : undefined} />
         <AboutDialog isOpen={this.state.aboutDialogOpen} onOk={() => this.setState({ aboutDialogOpen: false })} />
-      </div>
+      </div >
     );
   }
 }
