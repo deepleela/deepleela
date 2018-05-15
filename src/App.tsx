@@ -230,7 +230,7 @@ class App extends React.Component<any, AppStates> {
           ref={e => this.boardController = e!}
           onCursorChange={d => this.smartBoard.changeCursor(d)}
           onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
-          style={{ position: 'fixed', width: 290, top: window.innerHeight - 52 - 50, left: window.innerWidth - 290 - 15, zIndex: 2, }} />
+          style={{ position: 'fixed', top: window.innerHeight - 52 - 50, left: window.innerWidth - 320 - 15, zIndex: 2, }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>

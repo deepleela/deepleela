@@ -2,8 +2,8 @@
 export const lang = {
     menu: {
 
-        newgame_vs_leela: '新对局 (Leela 对弈)',
-        newgame_vs_self: '新对局 (自我对弈)',
+        newgame_vs_leela: '挑战 AI',
+        newgame_vs_self: '打谱',
         loadsgf: '复盘 SGF',
         exportsgf: '导出 SGF',
 

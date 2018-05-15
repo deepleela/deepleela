@@ -34,7 +34,7 @@ export default class BoardController extends React.Component<BoardControllerProp
         let x = localStorage.getItem(xKey);
         let y = localStorage.getItem(yKey);
         if (x && y) {
-            let fx = Math.min(Math.max(Number.parseFloat(x), 0), window.innerWidth - 290);
+            let fx = Math.min(Math.max(Number.parseFloat(x), 0), window.innerWidth - 345);
             let fy = Math.min(Math.max(Number.parseFloat(y), 0), window.innerHeight - 52);
             jQuery('#board-controller').css('left', fx).css('top', fy);
         }
@@ -83,6 +83,9 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerCursorChange(10)}>
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
+                    </div>
+                    <div className='touch' data-message={i18n.tips.last}>
+                        <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: 'lightgrey' }}></span>
                     </div>
                 </div>
             </div>

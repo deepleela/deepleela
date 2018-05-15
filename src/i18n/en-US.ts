@@ -2,8 +2,8 @@
 export const lang = {
     menu: {
 
-        newgame_vs_leela: 'New Game (vs. Leela)',
-        newgame_vs_self: 'New Game (vs. Self)',
+        newgame_vs_leela: 'Challenge AI',
+        newgame_vs_self: 'Practice',
         loadsgf: 'Review SGF',
         exportsgf: 'Export SGF',
 

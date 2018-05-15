@@ -22,6 +22,7 @@ interface SmartGoBoardProps {
     showWinrate?: boolean;
     whitePlayer?: string;
     blackPlayer?: string;
+    aiAutoPlay?: boolean;
 }
 
 interface SmartGoBoardStates {
