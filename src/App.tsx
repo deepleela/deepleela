@@ -198,7 +198,7 @@ class App extends React.Component<any, AppStates> {
 
                   <li className="uk-nav-divider"></li>
                   <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
-                  
+
                   {
                     this.smartBoard && this.smartBoard.gameMode === 'ai' ?
                       <div className='uk-nav uk-dropdown-nav'>
@@ -235,9 +235,10 @@ class App extends React.Component<any, AppStates> {
 
         <BoardController
           ref={e => this.boardController = e!}
+          mode={this.smartBoard ? this.smartBoard.gameMode : 'self'}
           onCursorChange={d => this.smartBoard.changeCursor(d)}
           onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
-          style={{ position: 'fixed', top: window.innerHeight - 52 - 50, left: window.innerWidth - 320 - 15, zIndex: 2, }} />
+          style={{ position: 'fixed', top: window.innerHeight - 52 - 50, left: window.innerWidth - 42, zIndex: 2, }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>

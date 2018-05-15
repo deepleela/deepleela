@@ -117,15 +117,17 @@ export default class Go extends EventEmitter {
      * @param row cartesian coord x
      * @param col cartesian coord y
      */
-    play(row: number, col: number, forceMainBranch = false) {
+    play(row: number, col: number, mode: 'normal' | 'force_main' | 'cut_current' = 'normal') {
         // Convert cartesian coord to array offset
         let currentCoord = { x: row, y: col };
         let { x, y } = { x: this.size - row, y: col - 1 };
         row = x;
         col = y;
 
-        let currBoard = forceMainBranch && this.snapshots.length > 0 && !this.isLatestCursor ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this._board;
-        let currStone = forceMainBranch && this.mainBranch.length > 0 && !this.isLatestCursor ? this.opponentOf(this.mainBranch[this.mainBranch.length - 1].stone) : this.current;
+        let playToMainBranch = mode === 'force_main' && this.snapshots.length > 0 && !this.isLatestCursor;
+
+        let currBoard = playToMainBranch ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this._board;
+        let currStone = playToMainBranch ? this.opponentOf(this.mainBranch[this.mainBranch.length - 1].stone) : this.current;
 
         if (!Go.isEmpty(row, col, currBoard)) return false;
 
@@ -180,15 +182,24 @@ export default class Go extends EventEmitter {
         }
 
         this.history.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
-        this.currentCartesianCoord = !this.isLatestCursor && forceMainBranch ? this.currentCartesianCoord : currentCoord;
+        this.currentCartesianCoord = !this.isLatestCursor && mode === 'force_main' ? this.currentCartesianCoord : currentCoord;
 
         // Just save the latest board on main branch
-        if (forceMainBranch || this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
+        if (mode === 'force_main' || this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
             let isLatestCursor = this.isLatestCursor;
             this.snapshots.push(SGF.createBoardFrom(currBoard));
             this.mainBranch.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
             this.history = []; // reset history
             this.cursor = isLatestCursor ? this.snapshots.length - 1 : this.cursor;
+        }
+
+        if (mode === 'cut_current' && !this.isLatestCursor && this.cursor > 0) {
+            this.snapshots.splice(this.cursor + 1);
+            this.mainBranch.splice(this.cursor + 1);
+            this.snapshots.push(SGF.createBoardFrom(currBoard));
+            this.mainBranch.push({ stone: currStone, arrayCoord: { x, y }, cartesianCoord: currentCoord });
+            this.history = [];
+            this.cursor = this.snapshots.length - 1;
         }
 
         this.turn();

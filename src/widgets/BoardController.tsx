@@ -11,8 +11,10 @@ import { CSSProperties } from 'react';
 import { StoneColor } from '../common/Constants';
 import GameClient from '../common/GameClient';
 import Board from '../components/Board';
+import { GameMode } from './SmartGoBoard';
 
 interface BoardControllerProps {
+    mode?: GameMode;
     style?: CSSProperties;
     onAIThinkingClick?: () => void;
     onCursorChange?: (delta: number) => void;

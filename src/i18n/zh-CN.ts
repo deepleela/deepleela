@@ -3,7 +3,7 @@ export const lang = {
     menu: {
 
         newgame_vs_leela: '挑战 AI',
-        newgame_vs_self: '打谱',
+        newgame_vs_self: '自由探索',
         loadsgf: '复盘 SGF',
         exportsgf: '导出 SGF',
 

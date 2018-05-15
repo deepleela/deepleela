@@ -32,7 +32,7 @@ interface SmartGoBoardStates {
     isThinking?: boolean;
 }
 
-type GameMode = 'ai' | 'self' | 'guest' | 'review';
+export type GameMode = 'ai' | 'self' | 'guest' | 'review';
 
 export default class SmartGoBoard extends React.Component<SmartGoBoardProps, SmartGoBoardStates> {
 
@@ -126,22 +126,33 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             return false;
         }
 
+        await this.reloadCurrentBoard();
+        return true;
+    }
+
+    private async reloadCurrentBoard(cleanVariations: boolean = true) {
         this.setState({ disabled: true });
         await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
         await this.client.loadMoves(this.game.genMoves(true));
-        this.board.clearVariations();
+        if (cleanVariations) this.board.clearVariations();
         this.setState({ heatmap: undefined, disabled: false });
-        return true;
     }
 
     private async onStonePlaced(x: number, y: number) {
         this.board.clearVariations();
 
         let lastColor = this.game.currentColor;
+        let played = false;
 
-        if (!this.game.play(x, y)) {
-            return;
+        if (this.gameMode === 'self' && !this.game.isLatestCursor) {
+            played = this.game.play(x, y, 'cut_current');
+
+            if (played) await this.reloadCurrentBoard();
+        } else {
+            played = this.game.play(x, y);
         }
+
+        if (!played) return;
 
         this.setState({ heatmap: undefined });
 
@@ -187,7 +198,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
-        this.game.play(coord.x, coord.y, true);
+        this.game.play(coord.x, coord.y, 'force_main');
 
         this.setState({ heatmap: this.props.showHeatmap && this.game.isLatestCursor ? await this.client.heatmap() : undefined });
 
@@ -230,11 +241,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (this.gameMode === 'review') return;
 
         // recover to main branch if the game mode is not review
-        this.setState({ disabled: true });
-        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
-        let mainMoves = this.game.genMoves(true);
-        await this.client.loadMoves(mainMoves);
-        this.setState({ disabled: false })
+        this.reloadCurrentBoard(false);
     }
 
     async importGame(game: Go, mode: GameMode = 'self') {
