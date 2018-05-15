@@ -36,6 +36,7 @@ interface AppStates {
 
   showWinrate?: boolean;
   showHeatmap?: boolean;
+  aiAutoplay?: boolean;
 
   sgf?: string;
   info?: { title: string, message: string },
@@ -53,7 +54,7 @@ class App extends React.Component<any, AppStates> {
   constructor(props: any, ctx) {
     super(props, ctx);
 
-    if (localStorage.getItem('heatmap') === null) UserPreferences.heatmap = true;
+    if (localStorage.getItem('heatmap') === undefined) UserPreferences.heatmap = true;
     this.state = { paddingTop: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
   }
 
@@ -229,7 +230,8 @@ class App extends React.Component<any, AppStates> {
               showWinrate={this.state.showWinrate}
               showHeatmap={this.state.showHeatmap}
               whitePlayer={this.state.whitePlayer}
-              blackPlayer={this.state.blackPlayer} />
+              blackPlayer={this.state.blackPlayer}
+              aiAutoPlay={this.state.aiAutoplay} />
           </div>
         </div>
 
@@ -238,7 +240,8 @@ class App extends React.Component<any, AppStates> {
           mode={this.smartBoard ? this.smartBoard.gameMode : 'self'}
           onCursorChange={d => this.smartBoard.changeCursor(d)}
           onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
-          style={{ position: 'fixed', top: window.innerHeight - 52 - 50, left: window.innerWidth - 42, zIndex: 2, }} />
+          onAIAutoPlayClick={autoplay => { this.setState({ aiAutoplay: autoplay }); if (autoplay) this.smartBoard.autoGenmove(true); }}
+          style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>

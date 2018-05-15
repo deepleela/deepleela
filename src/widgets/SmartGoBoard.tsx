@@ -134,8 +134,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ disabled: true });
         await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
         await this.client.loadMoves(this.game.genMoves(true));
-        if (cleanVariations) this.board.clearVariations();
-        this.setState({ heatmap: undefined, disabled: false });
+        this.setState({ disabled: false });
+
+        if (cleanVariations) {
+            this.board.clearVariations();
+            this.setState({ heatmap: undefined });
+        }
     }
 
     private async onStonePlaced(x: number, y: number) {
@@ -143,11 +147,15 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let lastColor = this.game.currentColor;
         let played = false;
+        let reloaded = false;
 
         if (this.gameMode === 'self' && !this.game.isLatestCursor) {
             played = this.game.play(x, y, 'cut_current');
 
-            if (played) await this.reloadCurrentBoard();
+            if (played) {
+                await this.reloadCurrentBoard();
+                reloaded = true;
+            }
         } else {
             played = this.game.play(x, y);
         }
@@ -160,11 +168,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         await this.checkAIOnline();
 
-        this.setState({ disabled: true });
-        let move = Board.cartesianCoordToString(x, y);
-        await this.client.play(lastColor, move);
-
-        this.setState({ disabled: false });
+        if (!reloaded) {
+            this.setState({ disabled: true });
+            let move = Board.cartesianCoordToString(x, y);
+            await this.client.play(lastColor, move);
+            this.setState({ disabled: false });
+        }
 
         if (this.gameMode === 'self' && this.props.showHeatmap) {
             this.setState({ disabled: true });
@@ -176,17 +185,22 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             await this.peekWinrate();
         }
 
-        if (this.gameMode === 'self') return;
+        if (this.gameMode === 'self' && !this.props.aiAutoPlay) return;
 
+        await this.autoGenmove();
+    }
+
+    async autoGenmove(needReload = false) {
+        if (needReload) await this.reloadCurrentBoard();
         await this.genmove(this.game.currentColor);
     }
 
     private async genmove(color: StoneColor) {
         await this.checkAIOnline();
 
-        this.setState({ isThinking: true });
+        this.setState({ isThinking: true, disabled: true });
         let result = await this.client.genmove(color);
-        this.setState({ isThinking: false });
+        this.setState({ isThinking: false, disabled: false });
 
         if (['pass', 'resign'].includes(result.move)) {
             return;
@@ -249,6 +263,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.gameMode = mode;
         this.board.clearVariations();
         this.setState({ heatmap: undefined });
+        UserPreferences.gameMode = mode;
 
         await this.checkAIOnline();
 

@@ -170,12 +170,12 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: '#cccccc80', }}>{19 - i}</div> : undefined}
+                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: gridLineColor, }}>{19 - i}</div> : undefined}
 
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
                                     {this.props.showCoordinate && i === (this.props.size - 1) ?
-                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: '#cccccc80', top: top + 12 }}>
+                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: gridLineColor, top: top + 12 }}>
                                             {'ABCDEFGHJKLMNOPQRST'[j]}
                                         </div>
                                         : undefined

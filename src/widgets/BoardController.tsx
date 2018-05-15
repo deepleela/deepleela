@@ -17,42 +17,41 @@ interface BoardControllerProps {
     mode?: GameMode;
     style?: CSSProperties;
     onAIThinkingClick?: () => void;
+    onAIAutoPlayClick?: (autoplay: boolean) => void;
     onCursorChange?: (delta: number) => void;
 }
+interface BoardControllerStates {
+    autoplay: boolean;
+    expanded?: boolean;
+}
 
-export default class BoardController extends React.Component<BoardControllerProps, {}> {
+export default class BoardController extends React.Component<BoardControllerProps, BoardControllerStates> {
+
+    state: BoardControllerStates = { autoplay: false };
 
     private sgf: string;
+    private expandTimerId: NodeJS.Timer;
     private boardSize: number;
     private snapshots: State[][][] = [];
     private arrayCoords: { x: number, y: number }[] = [];
     private stonesColor: StoneColor[] = [];
-    currentIndex = 0;
+    private root: HTMLDivElement;
 
     componentDidMount() {
-        const xKey = 'board-controller-x';
-        const yKey = 'board-controller-y';
+        this.root = document.getElementById('board-controller') as HTMLDivElement;
 
-        let x = localStorage.getItem(xKey);
-        let y = localStorage.getItem(yKey);
-        if (x && y) {
-            let fx = Math.min(Math.max(Number.parseFloat(x), 0), window.innerWidth - 345);
-            let fy = Math.min(Math.max(Number.parseFloat(y), 0), window.innerHeight - 52);
-            jQuery('#board-controller').css('left', fx).css('top', fy);
-        }
-
-        interactjs('#draggable-handler').draggable({
-            onmove: e => {
-                jQuery('#board-controller').css('top', Math.max(e.clientY, 0)).css('left', Math.max(e.clientX, 0));
-            },
-            onend: e => {
-                localStorage.setItem(xKey, e.clientX.toString());
-                localStorage.setItem(yKey, e.clientY.toString());
-            },
-        });
+        let fx = Math.max(0, window.innerWidth - 32);
+        let fy = Math.max(0, window.innerHeight - 50 - 52);
+        jQuery('#board-controller').css('left', fx).css('top', fy);
     }
 
-    private triggerAIThinking() {
+    private onAIClick() {
+        if (this.props.mode === 'self') {
+            if (this.props.onAIAutoPlayClick) this.props.onAIAutoPlayClick(!this.state.autoplay);
+            this.setState({ autoplay: !this.state.autoplay });
+            return;
+        }
+
         if (!this.props.onAIThinkingClick) return;
         this.props.onAIThinkingClick();
     }
@@ -62,11 +61,36 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.props.onCursorChange(delta);
     }
 
+    private expandSelf() {
+        if (this.state.expanded) return;
+        this.setState({ expanded: true });
+
+        let rect = this.root.getBoundingClientRect();
+        jQuery('#board-controller').animate({ left: window.innerWidth - rect.width - 12, });
+    }
+
+    private shrinkSelf() {
+        clearTimeout(this.expandTimerId);
+        this.expandTimerId = setTimeout(() => {
+            this.setState({ expanded: false });
+            jQuery('#board-controller').animate({ left: window.innerWidth - 36 });
+        }, 3000);
+    }
+
+    componentDidUpdate() {
+        if (!this.props.onAIAutoPlayClick) return;
+
+        if (this.props.mode !== 'self' && this.state.autoplay) {
+            this.props.onAIAutoPlayClick(false);
+            this.setState({ autoplay: false });
+        }
+    }
+
     render() {
         return (
-            <div id='board-controller' style={this.props.style} className='board-controller'>
+            <div id='board-controller' style={this.props.style} className='board-controller' onMouseLeave={e => this.shrinkSelf()}>
                 <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', }}>
-                    <div id='draggable-handler'>
+                    <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.expandSelf()} style={{ background: 'transparent', height: 52, }}>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
                     <div className='touch' data-message={i18n.tips.first} onClick={e => this.triggerCursorChange(-10)}>
@@ -76,8 +100,8 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerCursorChange(-1)}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.triggerAIThinking()}>
-                        <span style={{ fontWeight: 800, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif', color: constants.BlackStoneColor }}>AI</span>
+                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.onAIClick()}>
+                        <span style={{ fontWeight: 800, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif', color: this.state.autoplay && this.props.mode === 'self' ? 'deepskyblue' : constants.BlackStoneColor, transition: 'all 0.5s' }}>AI</span>
                     </div>
                     <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
@@ -86,9 +110,12 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.last}>
-                        <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: 'lightgrey' }}></span>
-                    </div>
+
+                    {this.props.mode && this.props.mode === 'review' ?
+                        <div className='touch' data-message={i18n.tips.last}>
+                            <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: 'lightgrey' }}></span>
+                        </div> : undefined
+                    }
                 </div>
             </div>
         );
