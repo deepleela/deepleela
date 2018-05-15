@@ -27,6 +27,8 @@ export default class Go extends EventEmitter {
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
 
+    handicap?: string[];
+
     set time(value: number) {
         let ms = value * 60 * 1000;
         this.deadlines = [ms, ms];
@@ -304,8 +306,9 @@ export default class Go extends EventEmitter {
         for (let i = 0; i < stones; i++) {
             let stone = layout[i];
             this._board[stone[0]][stone[1]] = State.Black;
-            
         }
+
+        this.handicap = layout.slice(0, stones).map(v => SGF.arrayPositionToString(v));
     }
 
     changeCursor(delta: number) {
@@ -340,8 +343,9 @@ export default class Go extends EventEmitter {
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 
-    genSgf(info = { blackPlayer: '', whitePlayer: '', result: '', size: 19 }, mainBranch = false) {
+    genSgf(info: { blackPlayer: string, whitePlayer: string, result?: string, size: number, handicap?: string[] }, mainBranch = false) {
         let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
+        info.handicap = this.handicap;
         return SGF.genSGF(moves, info);
     }
 }

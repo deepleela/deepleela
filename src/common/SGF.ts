@@ -18,6 +18,10 @@ export default class SGF {
         return { x, y };
     }
 
+    static arrayPositionToString(offset: number[]) {
+        return `${SGF.alphabets[offset[1]]}${SGF.alphabets[offset[0]]}`;
+    }
+
     static parse2Move(sgf: string, steps = Number.MAX_SAFE_INTEGER) {
         let tree = sgfjs.parse(sgf);
         let child = tree.childs;
@@ -55,6 +59,7 @@ export default class SGF {
         let game = new Go(size);
 
         if (tree.props.AB) {
+            game.handicap = tree.props.AB;
             tree.props.AB.map(v => SGF.stringToArrayPosition(v))
                 .forEach(offset => game.board[offset.x][offset.y] = State.Black);
         }
@@ -91,9 +96,9 @@ export default class SGF {
         return newBoard;
     }
 
-    static genSGF(moves: { stone: State, arrayCoord: Coordinate }[], info = { whitePlayer: '', blackPlayer: '', result: '', size: 19 }) {
+    static genSGF(moves: { stone: State, arrayCoord: Coordinate }[], info: { whitePlayer: string, blackPlayer: string, result?: string, size: number, handicap?: string[] }) {
 
-        let data: any[] = [{ FF: 4, AP: 'DeepLeela', RE: info.result, PW: info.whitePlayer, PB: info.blackPlayer, DT: (new Date()).toLocaleDateString(), CA: 'UTF-8', SZ: info.size }];
+        let data: any[] = [{ FF: 4, AP: 'DeepLeela', RE: info.result, PW: info.whitePlayer, PB: info.blackPlayer, DT: (new Date()).toLocaleDateString(), CA: 'UTF-8', SZ: info.size, AB: info.handicap }];
         data = data.concat(moves.map((item, i) => {
             let coor = `${SGF.alphabets[item.arrayCoord.y]}${SGF.alphabets[item.arrayCoord.x]}`;
             return item.stone === State.Black ? { B: coor } : { W: coor };
