@@ -72,7 +72,7 @@ export default class SGF {
             let pos = child[0].props.B || child[0].props.W;
 
             while (game.currentColor !== color && pos) game.pass();
-            if (!pos) game.pass();
+            if (!pos || pos.toLowerCase() === 'tt') game.pass();
 
             if (pos && pos.length == 2) {
                 let row = SGF.alphabets.indexOf(pos[1]);
