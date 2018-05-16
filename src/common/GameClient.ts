@@ -171,7 +171,7 @@ export default class GameClient extends EventEmitter {
 
                 if (color === 'W' && blackOnly) {
                     variations.forEach(v => {
-                        v.stats.W = Number.parseFloat(((1 - Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1)); // `${((1 - Number.parseFloat(v.stats.W) / 100.0) * 100.0).toFixed(1)}%`;
+                        v.stats.W = Number.parseFloat(((1 - Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1)); 
                     });
                 }
 

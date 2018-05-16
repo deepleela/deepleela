@@ -88,7 +88,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         if (config.selectedColor === 'B' && config.handicap > 0) {
-            console.log('excuse me');
             await this.pass();
         }
 
@@ -227,11 +226,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (['pass', 'resign'].includes(result.move)) {
             return;
-        }
-
-        if (this.props.showWinrate && result.variations.length > 0 && this.game.isLatestCursor) {
-            this.board.setVariations(result.variations);
-            await Utils.sleep(2000);
         }
 
         let coord = Board.stringToCartesianCoord(result.move);
