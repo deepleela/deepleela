@@ -131,7 +131,7 @@ export default class GameClient extends EventEmitter {
 
     initBoard(configs: { komi: number, handicap: number, time: number, size: number }) {
         return new Promise(resolve => {
-            // this.sendGtpCommand(CommandBuilder.boardsize(configs.size || 19, this.msgId++));
+            this.sendGtpCommand(CommandBuilder.boardsize(configs.size || 19, this.msgId++));
             if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
             if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
             if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
@@ -168,6 +168,8 @@ export default class GameClient extends EventEmitter {
 
                 variations.forEach(v => {
                     v.stats.W = Number.parseFloat(((Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
+                    v.stats.U = Number.parseFloat(v.stats.U as any);
+                    v.stats.W = Number.isNaN(v.stats.W) ? v.stats.U : v.stats.W;
                 });
 
                 if (color === 'W' && blackOnly) {

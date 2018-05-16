@@ -5,7 +5,7 @@ import ThemeManager from '../common/ThemeManager';
 
 export interface Variation {
     visits: number;
-    stats: { W: number };
+    stats: { W: number, U: number, };
     variation: string[];
 }
 
