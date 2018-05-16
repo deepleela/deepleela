@@ -16,6 +16,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.uk-tooltip {
-  opacity: 0.6;
+ .uk-tooltip {
+  opacity: 0.7 !important;
 }

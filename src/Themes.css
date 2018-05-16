@@ -1,7 +1,7 @@
 .skyblue {
-  background-color: #1c92d2; /* fallback for old browsers */
-  background-color: -webkit-linear-gradient(to right, #1c92d2, #00dbde); /* Chrome 10-25, Safari 5.1-6 */
-  background-color: linear-gradient(to right, #1c92d2, #00dbde); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-color: #47b2ff; /* fallback for old browsers */
+  background-color: -webkit-linear-gradient(to right, #47b2ff, #00dbde); /* Chrome 10-25, Safari 5.1-6 */
+  background-color: linear-gradient(to right, #47b2ff, #00dbde); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .purpink {

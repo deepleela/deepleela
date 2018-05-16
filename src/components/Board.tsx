@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Intersection, { State, WinRate } from './Intersection';
 import { CSSProperties } from 'react';
+import ThemeManager from '../common/ThemeManager';
 
 export interface Variation {
     visits: number;
@@ -25,7 +26,7 @@ interface BoardProps {
      */
     onIntersectionClicked?: (row: number, col: number) => void;
 
-    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string };
+    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string };
     states: State[][];
     heatmap?: number[][];
     fontSize?: number;
@@ -171,6 +172,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const top = gridWidth / 2 - 6.25;
 
         const gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
+        const coordTextColor = this.props.style ? this.props.style.coordTextColor : gridLineColor;
 
         return (
             <div id={this.props.id} style={this.props.style} draggable={false}>
@@ -179,12 +181,12 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: gridLineColor, }}>{19 - i}</div> : undefined}
+                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: coordTextColor, }}>{19 - i}</div> : undefined}
 
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
                                     {this.props.showCoordinate && i === (this.props.size - 1) ?
-                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: gridLineColor, top: top + 12 }}>
+                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: coordTextColor, top: top + 12 }}>
                                             {'ABCDEFGHJKLMNOPQRST'[j]}
                                         </div>
                                         : undefined
@@ -207,7 +209,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
                                         highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         highlightPointSize={gridWidth > 25 ? 'large' : 'small'}
-                                        needTouchConfirmation={gridWidth < 22}
+                                        needTouchConfirmation={gridWidth < 25}
                                         onTouch={(x, y) => this.setState({ touchedCoord: { x, y } })}
                                         showTouchConfirmation={this.state.touchedCoord && i === (this.props.size - this.state.touchedCoord.x) && j === (this.state.touchedCoord.y - 1)}
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}

@@ -15,6 +15,7 @@ export default class ThemeManager {
     subtextColor: string;
     blackStoneColor: string;
     whiteStoneColor: string;
+    coordTextColor: string;
 
     applyDefault() {
         this.gridLineColor = '#efefef';
@@ -22,6 +23,7 @@ export default class ThemeManager {
         this.subtextColor = this.logoColor;
         this.whiteStoneColor = '#dedede';
         this.blackStoneColor = '#3c3c44';
+        this.coordTextColor = '#ccc';
 
         localStorage.setItem('theme', 'default');
         jQuery('html').removeClass();
@@ -33,6 +35,7 @@ export default class ThemeManager {
         this.subtextColor = this.logoColor;
         this.whiteStoneColor = '#fff';
         this.blackStoneColor = '#3c3c44';
+        this.coordTextColor = '#ffffff80';
 
         jQuery('html').removeClass().addClass(theme);
         localStorage.setItem('theme', theme);

@@ -372,7 +372,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor, coordTextColor: ThemeManager.default.coordTextColor }}
                     size={19}
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}

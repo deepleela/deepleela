@@ -105,27 +105,27 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.expandSelf()} style={{ background: 'transparent', height: 52, }}>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.first} onClick={e => this.triggerCursorChange(-10)}>
+                    <div className='touch' uk-tooltip={i18n.tips.backward} onClick={e => this.triggerCursorChange(-10)}>
                         <span uk-icon='icon:  chevron-left; ratio: 1;'></span>
                         <span uk-icon='icon:  chevron-left; ratio: 1.2' style={{ display: 'inline-block', marginLeft: -16 }}></span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.previous} onClick={e => this.triggerCursorChange(-1)}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.previous} onClick={e => this.triggerCursorChange(-1)}>
                         <span uk-icon='icon: arrow-left; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.aithingking} onClick={e => this.onAIClick()}>
+                    <div className='touch' uk-tooltip={i18n.tips.aithingking} onClick={e => this.onAIClick()}>
                         <span style={{ fontWeight: 800, fontSize: 19, marginTop: 3, display: 'block', fontFamily: 'sans-serif', color: this.state.autoplay && this.props.mode === 'self' ? 'deepskyblue' : constants.BlackStoneColor, transition: 'all 0.5s' }}>AI</span>
                     </div>
-                    <div className='touch' style={{ paddingTop: 2 }} data-message={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
+                    <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerCursorChange(10)}>
+                    <div className='touch' uk-tooltip={i18n.tips.last} onClick={e => this.triggerCursorChange(10)}>
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>
 
                     {this.props.mode && this.props.mode === 'review' ?
-                        <div className='touch' data-message={i18n.tips.last} onClick={e => this.triggerExitBranchMode()}>
-                            <span uk-icon='icon:  move; ratio: 1' style={{ display: 'inline-block', marginLeft: -16, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
+                        <div className='touch' uk-tooltip={i18n.tips.branch} onClick={e => this.triggerExitBranchMode()}>
+                            <span uk-icon='icon: git-branch; ratio: 0.95' style={{ display: 'inline-block', marginLeft: -16, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
                         </div> : undefined
                     }
                 </div>

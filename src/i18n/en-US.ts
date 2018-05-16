@@ -80,8 +80,11 @@ export const lang = {
     tips: {
         first: 'First',
         previous: 'Previous',
+        backward: 'Go Back 10 Moves',
+        forward: 'Go Forward 10 Moves',
         next: 'Next',
         last: 'Last',
-        aithingking: 'AI Thinking'
+        aithingking: 'Call AI',
+        branch: 'Close Branch',
     },
 }

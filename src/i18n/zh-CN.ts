@@ -79,9 +79,12 @@ export const lang = {
 
     tips: {
         first: '开始',
+        backward: '向后 10 步',
+        forward: '向前 10 步',
         previous: '上一步',
         next: '下一步',
         last: '最后',
-        aithingking: 'AI 思考'
+        aithingking: '召唤 AI',
+        branch: '关闭分支',
     },
 }
