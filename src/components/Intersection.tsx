@@ -34,6 +34,7 @@ interface IntersectionProps {
     fontSize?: number;
     needTouchConfirmation?: boolean;
     showTouchConfirmation?: boolean;
+    disableAnimation?: boolean;
 }
 
 interface IntersectionStates {
@@ -146,20 +147,20 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     </div>
                 </div>
 
-                <div className='center-div' style={{ transition: `opacity ${this.props.moveNumber ? 0.5 : 0}s`, opacity: this.props.state !== State.Empty ? 1 : 0, transitionDelay: `${(this.props.moveNumber || 0) / 5}s`, }}>
+                <div className='center-div' style={{ transition: this.props.disableAnimation ? undefined : `opacity ${this.props.moveNumber ? 0.5 : 0}s`, opacity: this.props.state !== State.Empty ? 1 : 0, transitionDelay: this.props.disableAnimation ? undefined : `${(this.props.moveNumber || 0) / 5}s`, }}>
                     {
                         this.props.state === State.Black ?
-                            <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} highlight={this.props.highlight} highlightSize={highlightSize} /> :
+                            <Stone style={{ color: this.props.style ? (this.props.style.blackStoneColor || 'black') : 'black', zIndex: 2 }} highlight={this.props.highlight && !this.props.moveNumber} highlightSize={highlightSize} /> :
                             this.props.state === State.White ?
-                                <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} highlight={this.props.highlight} highlightSize={highlightSize} /> : undefined
+                                <Stone style={{ color: this.props.style ? (this.props.style.whiteStoneColor || 'white') : 'white', zIndex: 2 }} highlight={this.props.highlight && !this.props.moveNumber} highlightSize={highlightSize} /> : undefined
                     }
                 </div>
 
                 {/* Move Number */}
                 <div style={{
                     opacity: this.props.state !== State.Empty ? 1 : 0,
-                    transition: 'opacity 0.8s',
-                    transitionDelay: `${(this.props.moveNumber || 0) / 5}s`,
+                    transition: this.props.disableAnimation ? undefined : 'opacity 0.8s',
+                    transitionDelay: this.props.disableAnimation ? undefined : `${(this.props.moveNumber || 0) / 5}s`,
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop,
                     display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center',
                     verticalAlign: 'middle', textAlign: 'center',
@@ -175,7 +176,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                         undefined
                 }
 
-            </div>
+            </div >
         );
     }
 }

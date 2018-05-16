@@ -25,6 +25,7 @@ export default class Go extends EventEmitter {
     historyCursor = -1;
 
     size: number;
+    komi = 7.5;
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
 
@@ -346,7 +347,7 @@ export default class Go extends EventEmitter {
             let move = {
                 stone: State.Black,
                 arrayCoord: offset,
-                cartesianCoord: Board.arrayPositionToCartesianCoord(offset.x, offset.y),
+                cartesianCoord: Board.arrayPositionToCartesianCoord(offset.x, offset.y, this.size),
             }
             return move;
         }) : [];
@@ -357,9 +358,10 @@ export default class Go extends EventEmitter {
         return moves.map(m => [m.stone, Board.cartesianCoordToString(m.cartesianCoord.x, m.cartesianCoord.y)]) as [string, string][];
     }
 
-    genSgf(info: { blackPlayer: string, whitePlayer: string, result?: string, size: number, handicap?: string[] }, mainBranch = false) {
+    genSgf(info: { blackPlayer: string, whitePlayer: string, result?: string, size?: number, handicap?: string[] }, mainBranch = false) {
         let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
         info.handicap = this.handicap;
+        info.size = this.size;
         return SGF.genSGF(moves, info);
     }
 }

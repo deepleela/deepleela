@@ -38,13 +38,14 @@ interface BoardStates {
     branchStates: (BranchState | undefined)[][];
     highlightWinrateVariationOffset?: { x: number, y: number };
     touchedCoord?: { x: number, y: number };
+    disableAnimation?: boolean;
 }
 
 export default class Board extends React.Component<BoardProps, BoardStates> {
 
     static readonly alphabets = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
 
-    static cartesianCoordToArrayPosition(x: number, y: number, size = 19) {
+    static cartesianCoordToArrayPosition(x: number, y: number, size: number) {
         return { x: size - x, y: y - 1 };
     }
 
@@ -59,12 +60,12 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         return { x, y };
     }
 
-    static stringToArrayPosition(coord: string) {
+    static stringToArrayPosition(coord: string, size: number) {
         let cartesian = Board.stringToCartesianCoord(coord);
-        return Board.cartesianCoordToArrayPosition(cartesian.x, cartesian.y);
+        return Board.cartesianCoordToArrayPosition(cartesian.x, cartesian.y, size);
     }
 
-    static arrayPositionToCartesianCoord(x: number, y: number, size = 19) {
+    static arrayPositionToCartesianCoord(x: number, y: number, size: number) {
         return { x: size - x, y: y + 1 };
     }
 
@@ -98,7 +99,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     private onVariationHover(row: number, col: number) {
-        let { x, y } = Board.cartesianCoordToArrayPosition(row, col);
+        let { x, y } = Board.cartesianCoordToArrayPosition(row, col, this.props.size);
         let branch = this.state.variationStates[x][y];
         if (!branch) return;
         if (!branch.variation || branch.variation.length === 0) return;
@@ -106,7 +107,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         let currColor = this.props.currentColor;
 
         branch.variation.forEach((value, i) => {
-            let { x, y } = Board.stringToArrayPosition(value);
+            let { x, y } = Board.stringToArrayPosition(value, this.props.size);
             let state = currColor === 'B' ? State.Black : State.White;
             currColor = currColor === 'B' ? 'W' : 'B';
             this.state.branchStates[x][y] = { state, moveNumber: i + 1 };
@@ -120,7 +121,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
         varitations.forEach(v => {
             let position = Board.stringToCartesianCoord(v.variation[0]);
-            let arrayOffset = Board.cartesianCoordToArrayPosition(position.x, position.y);
+            let arrayOffset = Board.cartesianCoordToArrayPosition(position.x, position.y, this.props.size);
             this.state.variationStates[arrayOffset.x][arrayOffset.y] = v;
         });
 
@@ -131,13 +132,13 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         }
 
         let pos = Board.stringToCartesianCoord(varitations[0].variation[0]);
-        let offset = Board.cartesianCoordToArrayPosition(pos.x, pos.y);
+        let offset = Board.cartesianCoordToArrayPosition(pos.x, pos.y, this.props.size);
         this.setState({ highlightWinrateVariationOffset: offset });
     }
 
     setMovesNumber(moves: { coord: { x: number, y: number }, number: number }[]) {
         moves.forEach(m => {
-            let offset = Board.cartesianCoordToArrayPosition(m.coord.x, m.coord.y);
+            let offset = Board.cartesianCoordToArrayPosition(m.coord.x, m.coord.y, this.props.size);
             let state = this.props.states[offset.x][offset.y];
             this.state.branchStates[offset.x][offset.y] = { state: State.Empty, moveNumber: m.number };
         });
@@ -163,6 +164,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         this.forceUpdate();
     }
 
+    setAnimation(enable: boolean) {
+        this.setState({ disableAnimation: !enable });
+    }
+
     render() {
         const size = 100.0 / this.props.size;
         const dimension = this.props.size;
@@ -181,7 +186,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                     {this.props.states.map((row, i) => (
                         <div style={{ clear: 'both', height: `${size}%`, position: 'relative' }} key={i} >
-                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: coordTextColor, }}>{19 - i}</div> : undefined}
+                            {this.props.showCoordinate ? <div style={{ position: 'absolute', left: 0, top: top, bottom: 0, fontSize: 8, fontWeight: 100, color: coordTextColor, }}>{this.props.size - i}</div> : undefined}
 
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
@@ -222,6 +227,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         onVariationHover={(row, col) => this.onVariationHover(row, col)}
                                         onVariationHoverLeave={(row, col) => this.clearBranchStates()}
                                         moveNumber={this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.moveNumber : undefined}
+                                        disableAnimation={this.state.disableAnimation}
                                     />
                                 </div>
                             ))}

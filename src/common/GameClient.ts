@@ -129,8 +129,9 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    initBoard(configs: { komi: number, handicap: number, time: number, }) {
+    initBoard(configs: { komi: number, handicap: number, time: number, size: number }) {
         return new Promise(resolve => {
+            // this.sendGtpCommand(CommandBuilder.boardsize(configs.size || 19, this.msgId++));
             if (configs.komi > 0) this.sendGtpCommand(CommandBuilder.komi(configs.komi, this.msgId++));
             if (configs.handicap > 0) this.sendGtpCommand(CommandBuilder.fixed_handicap(configs.handicap, this.msgId++));
             if (configs.time > 0) this.sendGtpCommand(CommandBuilder.time_settings(configs.time * 60, 25 * 60, 25, this.msgId++));
@@ -171,7 +172,7 @@ export default class GameClient extends EventEmitter {
 
                 if (color === 'W' && blackOnly) {
                     variations.forEach(v => {
-                        v.stats.W = Number.parseFloat(((1 - Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1)); 
+                        v.stats.W = Number.parseFloat(((1 - Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
                     });
                 }
 
@@ -225,8 +226,8 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    loadSgf(sgf: string, step: number) {
-        let moves = SGF.parse2Move(sgf, step);
+    loadSgf(sgf: string, step: number, boardSize: number) {
+        let moves = SGF.parse2Move(sgf, step, boardSize);
         return this.loadMoves(moves);
     }
 

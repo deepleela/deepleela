@@ -124,11 +124,7 @@ class App extends React.Component<any, AppStates> {
       this.setState({ whitePlayer: whitePlayer, blackPlayer: blackPlayer });
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
-    }
-    // catch {
-    //   UIkit.notification(i18n.notifications.invalidSgf, );
-    // }
-    finally {
+    } finally {
       this.setState({ loadSgfDialogOpen: false });
     }
   }

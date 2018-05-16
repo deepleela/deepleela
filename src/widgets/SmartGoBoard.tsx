@@ -61,6 +61,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.userStone = config.selectedColor;
         this.engine = config.engine;
         this.game.time = config.time;
+        this.game.komi = config.komi;
         this.configs = config;
         UserPreferences.whitePlayer = this.userStone === 'W' ? 'Human' : this.engine;
         UserPreferences.blackPlayer = this.userStone === 'B' ? 'Human' : this.engine;
@@ -108,7 +109,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.gameEngine = this.engine;
 
         this.game.clear();
-        this.client.initBoard({ handicap: 0, komi: 7.5, time: 60 * 24 });
+        this.client.initBoard({ handicap: 0, komi: this.game.komi, time: 60 * 24, size: 19 });
 
         await this.peekWinrate();
         return results[0];
@@ -143,7 +144,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async reloadCurrentBoard(cleanVariations: boolean = true) {
         this.setState({ disabled: true });
-        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
+        await this.client.initBoard({ komi: this.game.komi, handicap: 0, time: 0, size: this.game.size });
         await this.client.loadMoves(this.game.genMoves(true));
         this.setState({ disabled: false });
 
@@ -179,11 +180,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
             if (this.game.history.length === 0) return;
 
-            // setImmediate(() => {
-            //     let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
-            //     this.board.setMovesNumber(branch);
-            //     this.forceUpdate();
-            // });
+            let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
+            this.board.setMovesNumber(branch);
+            this.board.setAnimation(false);
 
             return;
         }
@@ -241,6 +240,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async peekWinrate() {
         this.board.clearVariations();
+        this.board.setAnimation(true);
+
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
@@ -254,10 +255,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.checkAIOnline();
 
         this.board.clearVariations();
+        this.board.setAnimation(true);
         this.setState({ disabled: true, isThinking: true });
 
         // peek winrate
-        await this.client.initBoard({ komi: UserPreferences.komi || 7.5, handicap: 0, time: 0 });
+        await this.client.initBoard({ komi: this.game.komi, handicap: 0, time: 0, size: this.game.size });
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
@@ -294,7 +296,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     exportGame() {
-        let info = { blackPlayer: this.props.blackPlayer || '', whitePlayer: this.props.whitePlayer || '', result: '', size: 19 };
+        let info = { blackPlayer: this.props.blackPlayer || '', whitePlayer: this.props.whitePlayer || '', result: '', };
         return this.game.genSgf(info, true);
     }
 
@@ -367,7 +369,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     id='board'
                     ref={e => this.board = e!}
                     style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor, coordTextColor: ThemeManager.default.coordTextColor }}
-                    size={19}
+                    size={this.game.size}
                     states={this.game.board}
                     disabled={this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}

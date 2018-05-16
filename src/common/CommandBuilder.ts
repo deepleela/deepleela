@@ -27,7 +27,7 @@ export default class CommandBuilder {
         return { id, name: 'quit' };
     }
 
-    static boardsize(id?: number, size = 19): Command {
+    static boardsize(size = 19, id?: number): Command {
         return { id, name: 'boardsize', args: [size] };
     }
 

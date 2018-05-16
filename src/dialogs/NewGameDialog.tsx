@@ -18,6 +18,7 @@ export interface NewGameDialogStates {
     komi: number,
     handicap: number,
     time: number,
+    size: number,
     engine: string;
 }
 
@@ -28,7 +29,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
 
         let preferences = localStorage.getItem('newgame');
         let defaultPreference: any = { selectedColor: "B", komi: UserPreferences.komi || 7.5, handicap: 0, time: 120, engine: 'Leela' };
-        
+
         try {
             this.state = preferences ? JSON.parse(preferences) : defaultPreference;
         } catch (error) {
