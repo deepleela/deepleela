@@ -17,11 +17,16 @@ interface SettingsDialogProps {
 interface SettingsDialogStates {
     theme?: string;
     winrateMode?: string;
+    winrateBase?: string;
 }
 
 export default class SettingsDialog extends React.Component<SettingsDialogProps, SettingsDialogStates>{
 
-    state = { theme: ThemeManager.default.theme, winrateMode: UserPreferences.winrateBlackOnly ? '1' : '' };
+    state = {
+        theme: ThemeManager.default.theme,
+        winrateMode: UserPreferences.winrateBlackOnly ? '1' : '',
+        winrateBase: UserPreferences.winrate500Base ? '1' : '',
+    };
 
     private onThemesChange(value: string) {
         this.setState({ theme: value });
@@ -34,6 +39,11 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
     private onWinrateModeChange(value: string) {
         this.setState({ winrateMode: value });
         UserPreferences.winrateBlackOnly = value ? true : false;
+    }
+
+    private onWinrateBaseChange(value: string) {
+        this.setState({ winrateBase: value });
+        UserPreferences.winrate500Base = value ? true : false;
     }
 
     render() {
@@ -65,6 +75,19 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
                             <select style={{ width: '100%' }} onChange={e => this.onWinrateModeChange(e.target.value)} defaultValue={this.state.winrateMode}>
                                 <option value={''}>{i18n.dialogs.settings.winrate_both}</option>
                                 <option value={'1'}>{i18n.dialogs.settings.winrate_blackOnly}</option>
+                            </select>
+                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
+                                <span className="selected-text"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="uk-margin">
+                        <label className="uk-form-label">{i18n.dialogs.settings.winrate}:</label>
+                        <div className="full-width" uk-form-custom="target: > * > span.selected-text">
+                            <select style={{ width: '100%' }} onChange={e => this.onWinrateBaseChange(e.target.value)} defaultValue={this.state.winrateBase}>
+                                <option value={''}>{i18n.dialogs.settings.winrateBase_percent}</option>
+                                <option value={'1'}>{i18n.dialogs.settings.winrateBase_500}</option>
                             </select>
                             <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
                                 <span className="selected-text"></span>

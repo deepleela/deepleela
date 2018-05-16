@@ -125,7 +125,7 @@ export default class BoardController extends React.Component<BoardControllerProp
 
                     {this.props.mode && this.props.mode === 'review' ?
                         <div className='touch' uk-tooltip={i18n.tips.branch} onClick={e => this.triggerExitBranchMode()}>
-                            <span uk-icon='icon: git-branch; ratio: 0.95' style={{ display: 'inline-block', marginLeft: -16, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
+                            <span uk-icon='icon: minus-circle; ratio: 0.95' style={{ display: 'inline-block', marginLeft: -16, marginTop: 2, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
                         </div> : undefined
                     }
                 </div>

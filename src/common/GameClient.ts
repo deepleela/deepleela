@@ -157,7 +157,7 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    peekWinrate(color: StoneColor, blackOnly: boolean): Promise<Variation[]> {
+    peekWinrate(color: StoneColor, blackOnly: boolean, fiveBased: boolean): Promise<Variation[]> {
         return new Promise(resolve => {
             let cmd = CommandBuilder.genmove(color, this.msgId++);
 
@@ -165,9 +165,19 @@ export default class GameClient extends EventEmitter {
                 let result = JSON.parse(resultstr);
                 let variations = result.variations as Variation[];
 
+                variations.forEach(v => {
+                    v.stats.W = Number.parseFloat(((Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
+                });
+
                 if (color === 'W' && blackOnly) {
                     variations.forEach(v => {
-                        v.stats.W = `${(1 - Number.parseFloat(v.stats.W) / 100) * 100}%`;
+                        v.stats.W = Number.parseFloat(((1 - Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1)); // `${((1 - Number.parseFloat(v.stats.W) / 100.0) * 100.0).toFixed(1)}%`;
+                    });
+                }
+
+                if (fiveBased) {
+                    variations.forEach(v => {
+                        v.stats.W = Number.parseInt(v.stats.W as any) * 10 - 500;
                     });
                 }
 

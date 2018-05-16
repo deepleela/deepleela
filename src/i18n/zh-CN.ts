@@ -62,6 +62,9 @@ export const lang = {
             winrate: '胜率显示',
             winrate_blackOnly: '仅显示黑棋胜率',
             winrate_both: '显示双方胜率',
+            winrateBase: '胜率基数',
+            winrateBase_percent: '基于百分比显示',
+            winrateBase_500: '基于 500 显示',
         }
     },
 

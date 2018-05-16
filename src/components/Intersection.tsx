@@ -142,7 +142,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
                     <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
-                        {winrate.value ? winrate.value.toFixed(1) : undefined}
+                        {winrate.value ? winrate.value : undefined}
                     </div>
                 </div>
 

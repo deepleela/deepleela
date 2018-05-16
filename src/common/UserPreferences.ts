@@ -13,6 +13,9 @@ export default class UserPreferences {
     static get winrateBlackOnly() { return localStorage.getItem('settings_winrate_blackonly') ? true : false; }
     static set winrateBlackOnly(value: boolean) { localStorage.setItem('settings_winrate_blackonly', value ? '1' : ''); }
 
+    static get winrate500Base() { return localStorage.getItem('settings_winrate_500') ? true : false; }
+    static set winrate500Base(value: boolean) { localStorage.setItem('settings_winrate_500', value ? 'true' : ''); }
+
     static get whitePlayer() { return localStorage.getItem('whiteplayer') || ''; }
     static set whitePlayer(value: string) { localStorage.setItem('whiteplayer', value); }
 

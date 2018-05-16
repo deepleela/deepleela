@@ -5,7 +5,7 @@ import ThemeManager from '../common/ThemeManager';
 
 export interface Variation {
     visits: number;
-    stats: { W: string };
+    stats: { W: number };
     variation: string[];
 }
 
@@ -214,7 +214,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         showTouchConfirmation={this.state.touchedCoord && i === (this.props.size - this.state.touchedCoord.x) && j === (this.state.touchedCoord.y - 1)}
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
                                         winrate={this.state.variationStates[i][j] ? {
-                                            value: Number.parseFloat(this.state.variationStates[i][j]!.stats.W),
+                                            value: this.state.variationStates[i][j]!.stats.W,
                                             visits: this.state.variationStates[i][j]!.visits,
                                             highest: this.state.highlightWinrateVariationOffset ? this.state.highlightWinrateVariationOffset.x === i && this.state.highlightWinrateVariationOffset.y === j : false,
                                         } : undefined}

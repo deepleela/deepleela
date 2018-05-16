@@ -249,7 +249,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
-        let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly);
+        let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
 
         this.board.setVariations(variations);
         this.setState({ disabled: false, isThinking: false });
@@ -267,7 +267,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let moves = this.game.genMoves();
         await this.client.loadMoves(moves);
 
-        let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly);
+        let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
         this.board.setVariations(vars);
         if (vars.length === 0) {
             this.setState({ heatmap: await this.client.heatmap() });
