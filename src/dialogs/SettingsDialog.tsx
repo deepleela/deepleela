@@ -83,7 +83,7 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
                     </div>
 
                     <div className="uk-margin">
-                        <label className="uk-form-label">{i18n.dialogs.settings.winrate}:</label>
+                        <label className="uk-form-label">{i18n.dialogs.settings.winrateBase}:</label>
                         <div className="full-width" uk-form-custom="target: > * > span.selected-text">
                             <select style={{ width: '100%' }} onChange={e => this.onWinrateBaseChange(e.target.value)} defaultValue={this.state.winrateBase}>
                                 <option value={''}>{i18n.dialogs.settings.winrateBase_percent}</option>

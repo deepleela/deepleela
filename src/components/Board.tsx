@@ -179,6 +179,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         const gridLineColor = this.props.style ? this.props.style.gridColor : undefined;
         const coordTextColor = this.props.style ? this.props.style.coordTextColor : gridLineColor;
 
+        const subtleTextCoordLeftMargin = 4.2 * (1 - this.props.size / 19);
+
         return (
             <div id={this.props.id} style={this.props.style} draggable={false}>
 
@@ -191,7 +193,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                             {row.map((state, j) => (
                                 <div key={`${i},${j}`}>
                                     {this.props.showCoordinate && i === (this.props.size - 1) ?
-                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52), fontSize: 8, fontWeight: 100, color: coordTextColor, top: top + 12 }}>
+                                        <div style={{ position: 'absolute', bottom: 0, left: top + 2 + j * (gridWidth - 2.52 - subtleTextCoordLeftMargin), fontSize: 8, fontWeight: 100, color: coordTextColor, top: top + 12 }}>
                                             {'ABCDEFGHJKLMNOPQRST'[j]}
                                         </div>
                                         : undefined
