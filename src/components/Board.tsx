@@ -181,6 +181,8 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
         const subtleTextCoordLeftMargin = 4.2 * (1 - this.props.size / 19);
 
+        const startPoints = [dimension > 9 ? 3 : 2, dimension > 9 ? dimension - 4 : dimension - 3, (dimension - 1) / 2];
+
         return (
             <div id={this.props.id} style={this.props.style} draggable={false}>
 
@@ -213,7 +215,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         bottomEdge={i === dimension - 1}
                                         leftEdge={j === 0}
                                         rightEdge={j === dimension - 1}
-                                        star={[3, dimension - 4, (dimension - 1) / 2].indexOf(i) >= 0 && [3, dimension - 4, (dimension - 1) / 2].indexOf(j) >= 0}
+                                        star={startPoints.indexOf(i) >= 0 && startPoints.indexOf(j) >= 0}
                                         highlight={this.props.hightlightCoord && i === (this.props.size - this.props.hightlightCoord.x) && j === this.props.hightlightCoord.y - 1}
                                         highlightPointSize={gridWidth > 25 ? 'large' : 'small'}
                                         needTouchConfirmation={gridWidth < 25}
