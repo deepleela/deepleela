@@ -29,6 +29,7 @@ export const lang = {
             time: '游戏时间 (分钟)',
             black: '黑子',
             white: '白子',
+            boardSize: '棋盘大小',            
         },
 
         sgf: {

@@ -11,6 +11,9 @@ interface NewGameDialogProps {
     onCancel?: () => void,
     onOk?: (NewGameDialogStates) => void,
     isOpen?: boolean,
+
+    enableSize?: boolean;
+    enableStone?: boolean;
 }
 
 export interface NewGameDialogStates {
@@ -20,6 +23,7 @@ export interface NewGameDialogStates {
     time: number,
     size: number,
     engine: string;
+    boardSize: number;
 }
 
 export default class NewGameDialog extends React.Component<NewGameDialogProps, NewGameDialogStates> {
@@ -50,20 +54,33 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{i18n.dialogs.newgame.title}</legend>
 
-                    <div className="uk-margin">
-                        <label className="uk-form-label">{i18n.dialogs.newgame.yourColor}:</label>
-                        <div className="full-width" uk-form-custom="target: > * > span.selected-text">
-                            <select style={{ width: '100%' }} onChange={e => this.setState({ selectedColor: e.target.value as constants.StoneColor })} defaultValue={this.state.selectedColor}>
-                                <option value="B">{i18n.dialogs.newgame.black}</option>
-                                <option value="W">{i18n.dialogs.newgame.white}</option>
-                            </select>
-                            <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
-                                <Stone className='inline-block' style={{ color: this.state.selectedColor == "B" ? constants.BlackStoneColor : constants.WhiteStoneColor, width: 18, height: 18, top: 0, right: 0, bottom: 0, left: 0, position: 'relative', margin: '0 4px' }} />
-                                <span className="selected-text"></span>
-                                <span uk-icon="icon: chevron-down" className='inline-block'></span>
-                            </button>
+                    {this.props.enableStone ?
+                        <div className="uk-margin">
+                            <label className="uk-form-label">{i18n.dialogs.newgame.yourColor}:</label>
+                            <div className="full-width" uk-form-custom="target: > * > span.selected-text">
+                                <select style={{ width: '100%' }} onChange={e => this.setState({ selectedColor: e.target.value as constants.StoneColor })} defaultValue={this.state.selectedColor}>
+                                    <option value="B">{i18n.dialogs.newgame.black}</option>
+                                    <option value="W">{i18n.dialogs.newgame.white}</option>
+                                </select>
+                                <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
+                                    <Stone className='inline-block' style={{ color: this.state.selectedColor == "B" ? constants.BlackStoneColor : constants.WhiteStoneColor, width: 18, height: 18, top: 0, right: 0, bottom: 0, left: 0, position: 'relative', margin: '0 4px' }} />
+                                    <span className="selected-text"></span>
+                                    <span uk-icon="icon: chevron-down" className='inline-block'></span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                        : undefined
+                    }
+
+                    {this.props.enableSize ?
+                        <div className="uk-margin">
+                            <label className="uk-form-label">{i18n.dialogs.newgame.boardSize}:</label>
+                            <div className="uk-form-controls">
+                                <input className="uk-input" type="number" placeholder="19" defaultValue={(this.state.boardSize || 19).toString()} onChange={e => this.setState({ boardSize: e.target.valueAsNumber || 19 })} />
+                            </div>
+                        </div>
+                        : undefined
+                    }
 
                     <div className="uk-margin">
                         <label className="uk-form-label">{i18n.dialogs.newgame.engine}:</label>

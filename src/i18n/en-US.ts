@@ -29,6 +29,7 @@ export const lang = {
             time: 'Time (minutes)',
             black: 'BLACK',
             white: 'WHITE',
+            boardSize: 'Board Size',
         },
 
         sgf: {

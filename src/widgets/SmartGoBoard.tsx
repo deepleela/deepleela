@@ -60,19 +60,19 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
         this.engine = config.engine;
-        this.game.time = config.time;
-        this.game.komi = config.komi;
         this.configs = config;
         UserPreferences.whitePlayer = this.userStone === 'W' ? 'Human' : this.engine;
         UserPreferences.blackPlayer = this.userStone === 'B' ? 'Human' : this.engine;
 
         this.board.clearVariations();
-        this.client.initBoard(config);
-        this.game.clear();
+        this.game = new Go(19);
+        this.game.time = config.time;
+        this.game.komi = config.komi;
         this.setState({ heatmap: undefined, disabled: false });
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
+        this.client.initBoard(config);
 
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.userStone = this.userStone;
@@ -96,20 +96,21 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         return results;
     }
 
-    async newSelfGame(): Promise<boolean> {
+    async newSelfGame(config: NewGameDialogStates): Promise<boolean> {
         this.gameMode = 'self';
-        this.engine = 'leela';
+        this.engine = config.engine || 'leela';
         UserPreferences.whitePlayer = UserPreferences.blackPlayer = 'Human';
-
-        this.setState({ heatmap: undefined, disabled: false });
-        this.board.clearVariations();
 
         let results = await this.client.requestAI(this.engine);
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.gameEngine = this.engine;
 
+        this.game = new Go(config.boardSize || 19);
         this.game.clear();
-        this.client.initBoard({ handicap: 0, komi: this.game.komi, time: 60 * 24, size: 19 });
+        this.client.initBoard({ handicap: 0, komi: this.game.komi, time: 60 * 24, size: config.boardSize });
+
+        this.setState({ heatmap: undefined, disabled: false });
+        this.board.clearVariations();
 
         await this.peekWinrate();
         return results[0];

@@ -77,7 +77,7 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.expandTimerId = setTimeout(() => {
             this.setState({ expanded: false });
             jQuery('#board-controller').animate({ left: window.innerWidth - 36 });
-        }, (this.props.mode === 'review' ? 60 : 3) * 1000);
+        }, (this.props.mode === 'review' ? 60 : 5) * 1000);
     }
 
     componentDidUpdate() {
