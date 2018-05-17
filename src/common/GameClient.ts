@@ -168,8 +168,7 @@ export default class GameClient extends EventEmitter {
 
                 variations.forEach(v => {
                     v.stats.W = Number.parseFloat(((Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
-                    v.stats.U = Number.parseFloat(v.stats.U as any);
-                    v.stats.W = Number.isNaN(v.stats.W) ? v.stats.U : v.stats.W;
+                    v.stats.U = Number.parseFloat(((Number.parseFloat(v.stats.U as any) / 100.0) * 100.0).toFixed(1));
                 });
 
                 if (color === 'W' && blackOnly) {
@@ -186,9 +185,7 @@ export default class GameClient extends EventEmitter {
 
                 let undo = CommandBuilder.undo(this.msgId++);
 
-                this.pendingCallbacks.set(undo.id!, (resp: Response) => {
-                    resolve(variations);
-                });
+                this.pendingCallbacks.set(undo.id!, (resp: Response) => resolve(variations));
 
                 this.sendGtpCommand(undo);
             });

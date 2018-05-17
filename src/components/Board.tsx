@@ -224,6 +224,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}
                                         winrate={this.state.variationStates[i][j] ? {
                                             value: this.state.variationStates[i][j]!.stats.W,
+                                            uvalue: this.state.variationStates[i][j]!.stats.U,
                                             visits: this.state.variationStates[i][j]!.visits,
                                             highest: this.state.highlightWinrateVariationOffset ? this.state.highlightWinrateVariationOffset.x === i && this.state.highlightWinrateVariationOffset.y === j : false,
                                         } : undefined}

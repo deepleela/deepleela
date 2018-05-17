@@ -5,6 +5,7 @@ import './Styles.css';
 
 export interface WinRate {
     value: number;
+    uvalue: number;
     visits: number;
     highest?: boolean;
 }
@@ -133,7 +134,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
 
                 {/* Winrate */}
                 <div className='uk-tooltip-visits' uk-tooltip={this.props.winrate ? `${this.props.winrate.visits} Visits` : undefined}
-                    style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : winrate.value ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
+                    style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, fontSize: this.props.fontSize || 10, background: 'transparent', opacity: this.props.state !== State.Empty ? 0 : (winrate.value || winrate.uvalue) ? 1 : 0, transition: 'all 0.5s', zIndex: 2 }}
                     onMouseEnter={e => this.onMouseEnter(e)}
                     onClick={e => this.onClick(e)}
                     onTouchStart={e => this.onTouchStart()}
@@ -142,8 +143,8 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     onMouseLeave={e => { this.onMouseLeave(e); this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined }}
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
-                    <div className={this.props.winrate && this.props.winrate.highest ? 'winrate-high' : 'winrate'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
-                        {winrate.value ? winrate.value : undefined}
+                    <div className={this.props.winrate && this.props.winrate.value ? (this.props.winrate.highest ? 'winrate-high' : 'winrate') : 'winrate-grey'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none' }}>
+                        {winrate.value || winrate.uvalue}
                     </div>
                 </div>
 

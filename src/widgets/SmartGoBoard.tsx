@@ -227,6 +227,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         switch (result.move) {
             case 'pass':
                 UIkit.notification({ message: i18n.notifications.pass(this.engine), status: 'primary' });
+                this.game.pass();
                 return;
             case 'resign':
                 UIkit.notification({ message: i18n.notifications.resigns(this.engine), status: 'success' });
