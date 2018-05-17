@@ -33,4 +33,7 @@ export default class UserPreferences {
 
     static get komi() { return Number.parseInt(localStorage.getItem('komi') || '0'); }
     static set komi(value: number) { localStorage.setItem('komi', value.toString()); }
+
+    static get cursor() { return Number.parseInt(localStorage.getItem('cursor') || '-1'); }
+    static set cursor(value: number) { localStorage.setItem('cursor', value.toString()); }
 }

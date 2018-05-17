@@ -121,6 +121,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.board.clearVariations();
         this.game.changeCursor(delta);
+
+        UserPreferences.cursor = this.game.cursor;
         this.setState({ heatmap: undefined });
     }
 

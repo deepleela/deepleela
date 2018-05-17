@@ -88,6 +88,12 @@ class App extends React.Component<any, AppStates> {
         try {
           let { game } = SGF.import(sgf);
           if (!game) return;
+
+          if (UserPreferences.gameMode !== 'ai') {
+            let deltaCursor = UserPreferences.cursor - game.cursor;
+            game.changeCursor(deltaCursor);
+          }
+
           await this.smartBoard.importGame(game, UserPreferences.gameMode as any);
           this.setState({ whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         } catch{ }
