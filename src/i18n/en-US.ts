@@ -74,6 +74,8 @@ export const lang = {
         aiNotAvailable: `You won't get AI's suggestions at this moment.`,
         aiIsThinking: 'AI is Thinking...',
         invalidSgf: 'Invalid SGF format',
+        resigns: (ai: string = 'AI') => `${ai} resigns.`,
+        pass: (ai: string = 'AI') => `${ai} passes`,
     },
 
     button: {

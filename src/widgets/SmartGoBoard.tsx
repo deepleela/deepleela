@@ -224,8 +224,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let result = await this.client.genmove(color);
         this.setState({ isThinking: false, disabled: false });
 
-        if (['pass', 'resign'].includes(result.move)) {
-            return;
+        switch (result.move) {
+            case 'pass':
+                UIkit.notification({ message: i18n.notifications.pass(this.engine), status: 'primary' });
+                return;
+            case 'resign':
+                UIkit.notification({ message: i18n.notifications.resigns(this.engine), status: 'success' });
+                return;
         }
 
         let coord = Board.stringToCartesianCoord(result.move);

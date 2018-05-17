@@ -29,7 +29,7 @@ export const lang = {
             time: '游戏时间 (分钟)',
             black: '黑子',
             white: '白子',
-            boardSize: '棋盘大小',            
+            boardSize: '棋盘大小',
         },
 
         sgf: {
@@ -74,6 +74,8 @@ export const lang = {
         aiNotAvailable: `本局暂时不会得到AI的建议`,
         aiIsThinking: 'AI 正在思考...',
         invalidSgf: '无效SGF，请重新填写',
+        resigns: (ai = 'AI') => `${ai} 认输`,
+        pass: (ai = 'AI') => `${ai} 弃权`,
     },
 
     button: {
