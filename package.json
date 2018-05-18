@@ -5,9 +5,9 @@
   "dependencies": {
     "@sabaki/gtp": "^1.1.0",
     "animejs": "^2.2.0",
-    "deepleela-common": "deepleela/deepleela-common",
+    "deepleela-common": "github:deepleela/deepleela-common",
     "greenlet": "^1.0.1",
-    "interactjs": "^1.3.3",
+    "interactjs": "^1.3.4",
     "jquery": "^3.3.1",
     "moment": "^2.22.1",
     "react": "^16.3.2",
@@ -16,7 +16,7 @@
     "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.15.1",
     "sgfgrove": "^1.0.8",
-    "sgfjs": "Mistereo/sgfjs"
+    "sgfjs": "github:Mistereo/sgfjs"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -26,10 +26,10 @@
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
-    "@types/jquery": "^3.3.1",
+    "@types/jquery": "^3.3.2",
     "@types/moment": "^2.13.0",
-    "@types/node": "^9.6.7",
-    "@types/react": "^16.3.13",
+    "@types/node": "^9.6.17",
+    "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
     "@types/react-router-dom": "^4.2.6",
     "@types/uikit": "^2.27.6",

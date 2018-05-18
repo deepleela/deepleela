@@ -211,7 +211,7 @@ class App extends React.Component<any, AppStates> {
 
           <div style={{ paddingTop: this.state.paddingTop }}>
             <Switch>
-              <Route path='/review/:id' component={OnlineReivew} />
+              <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/' component={LocalGame} />
             </Switch>
           </div>
