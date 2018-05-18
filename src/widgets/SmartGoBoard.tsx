@@ -240,6 +240,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 return;
             case 'resign':
                 UIkit.notification({ message: i18n.notifications.resigns(this.engine), status: 'success' });
+                this.setState({ disabled: true });
                 return;
         }
 
@@ -298,7 +299,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game = game;
         this.gameMode = mode;
         this.board.clearVariations();
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, disabled: false });
         UserPreferences.gameMode = mode;
 
         await this.checkAIOnline();

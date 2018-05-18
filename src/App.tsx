@@ -89,7 +89,7 @@ class App extends React.Component<any, AppStates> {
           let { game } = SGF.import(sgf);
           if (!game) return;
 
-          if (UserPreferences.gameMode !== 'ai') {
+          if (UserPreferences.gameMode === 'review') {
             let deltaCursor = UserPreferences.cursor - game.cursor;
             game.changeCursor(deltaCursor);
           }
