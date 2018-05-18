@@ -11,3 +11,13 @@
 .touch:hover {
     opacity: 0.5;
 }
+
+.active-dot {
+    border-radius: 50%;
+    display: inline-block;
+    background: limegreen;
+    width: 5px;
+    height: 5px;
+    margin-top: -2px;
+    margin-left: 4px;
+}

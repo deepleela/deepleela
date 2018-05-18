@@ -75,7 +75,7 @@ class App extends React.Component<any, AppStates> {
 
     window.onunload = () => {
       let sgf = this.smartBoard.exportGame();
-      UserPreferences.kifu = sgf;      
+      UserPreferences.kifu = sgf;
     };
 
     // As default, create a self-playing game
@@ -187,9 +187,9 @@ class App extends React.Component<any, AppStates> {
               <div className="uk-nav uk-dropdown-nav" >
                 <ul className="uk-nav uk-dropdown-nav">
 
-                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} >{i18n.menu.newgame_vs_leela}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} >{i18n.menu.newgame_vs_self}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}>{i18n.menu.loadsgf}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
                   <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: this.smartBoard.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
                   <li className="uk-nav-divider"></li>
