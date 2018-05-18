@@ -181,7 +181,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
         const subtleTextCoordLeftMargin = 4.2 * (1 - this.props.size / 19);
 
-        const startPoints = [dimension > 9 ? 3 : 2, dimension > 9 ? dimension - 4 : dimension - 3, (dimension - 1) / 2];
+        const startPoints = [dimension > 9 ? 3 : (dimension > 7 ? 2 : 1), dimension > 9 ? dimension - 4 : (dimension > 7 ? dimension - 3 : dimension - 2), (dimension - 1) / 2];
 
         return (
             <div id={this.props.id} style={this.props.style} draggable={false}>
