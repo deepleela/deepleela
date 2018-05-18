@@ -36,4 +36,15 @@ export default class UserPreferences {
 
     static get cursor() { return Number.parseInt(localStorage.getItem('cursor') || '-1'); }
     static set cursor(value: number) { localStorage.setItem('cursor', value.toString()); }
+
+    static get uuid() {
+        let uuid = localStorage.getItem('uuid') || '';
+        if (uuid) return uuid;
+
+        let array = new Uint8Array(8);
+        window.crypto.getRandomValues(array);
+        uuid = Buffer.from(array.buffer as ArrayBuffer).toString('hex');
+        localStorage.setItem('uuid', uuid);
+        return uuid;
+    }
 }

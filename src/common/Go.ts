@@ -113,7 +113,6 @@ export default class Go extends EventEmitter {
 
     set board(value: State[][]) {
         this._board = value;
-        // this.history = [];
     }
 
     get board() { return this._board; }

@@ -382,9 +382,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
-                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, display: this.gameMode === 'review' ? 'block' : 'none' }}>
-                    <span>{this.currentCursor} / {this.game.snapshots.length}</span>
-                </div>
+                
+                {
+                    this.gameMode === 'review' ?
+                        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, }}>
+                            <span>{this.currentCursor} / {this.game.snapshots.length - 1}</span>
+                        </div>
+                        : undefined
+                }
 
                 <Board
                     id='board'

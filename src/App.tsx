@@ -16,6 +16,7 @@ import AboutDialog from './dialogs/AboutDialog';
 import UserPreferences from './common/UserPreferences';
 import LocalGame from './routes/LocalGame';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import OnlineReivew from './routes/OnlineReview';
 
 interface AppStates {
   whitePlayer?: string;
@@ -52,8 +53,6 @@ class App extends React.Component<any, AppStates> {
   }
 
   componentDidMount() {
-    // jQuery('.magnify')['jfMagnify']({ scale: 1.8 });
-
     Modal.setAppElement('#main');
 
     const calcPaddingTop = () => {
@@ -212,6 +211,7 @@ class App extends React.Component<any, AppStates> {
 
           <div style={{ paddingTop: this.state.paddingTop }}>
             <Switch>
+              <Route path='/review/:id' component={OnlineReivew} />
               <Route path='/' component={LocalGame} />
             </Switch>
           </div>
