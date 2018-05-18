@@ -21,6 +21,7 @@ import ThemeManager from './common/ThemeManager';
 import InfoDialog from './dialogs/InfoDialog';
 import AboutDialog from './dialogs/AboutDialog';
 import UserPreferences from './common/UserPreferences';
+import LocalGame from './routes/LocalGame';
 
 interface AppStates {
   whitePlayer?: string;
@@ -40,7 +41,7 @@ interface AppStates {
   aiAutoplay?: boolean;
 
   sgf?: string;
-  info?: { title: string, message: string },
+  info?: { title: string, message: string };
 
   paddingTop: number;
 }
@@ -49,8 +50,8 @@ class App extends React.Component<any, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  private smartBoard: SmartGoBoard;
-  private boardController: BoardController;
+  // private smartBoard: SmartGoBoard;
+  // private boardController: BoardController;
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -73,18 +74,15 @@ class App extends React.Component<any, AppStates> {
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
 
-    window.onunload = () => {
-      let sgf = this.smartBoard.exportGame();
-      UserPreferences.kifu = sgf;
-    };
-
     // As default, create a self-playing game
 
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
       let sgf = UserPreferences.kifu;
-      if (sgf) {
+      let smartBoard = LocalGame.smartBoard;
+
+      if (sgf && smartBoard) {
         try {
           let { game } = SGF.import(sgf);
           if (!game) return;
@@ -94,7 +92,7 @@ class App extends React.Component<any, AppStates> {
             game.changeCursor(deltaCursor);
           }
 
-          await this.smartBoard.importGame(game, UserPreferences.gameMode as any);
+          await smartBoard.importGame(game, UserPreferences.gameMode as any);
           this.setState({ whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         } catch{ }
       }
@@ -105,7 +103,7 @@ class App extends React.Component<any, AppStates> {
 
   async onNewAIGame(config: NewGameDialogStates) {
     this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
-    let [success, pending] = await this.smartBoard.newAIGame(config);
+    let [success, pending] = await LocalGame.smartBoard!.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
       UIkit.notification(i18n.notifications.serversBusy(pending));
@@ -115,7 +113,7 @@ class App extends React.Component<any, AppStates> {
 
   async onNewSelfGame(config: NewGameDialogStates) {
     this.setState({ loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
-    if (!await this.smartBoard.newSelfGame(config)) UIkit.notification(i18n.notifications.aiNotAvailable);
+    if (!await LocalGame.smartBoard!.newSelfGame(config)) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false, newSelfDialogOpen: false });
   }
 
@@ -127,7 +125,7 @@ class App extends React.Component<any, AppStates> {
 
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
       game.changeCursor(-9999);
-      this.smartBoard.importGame(game, 'review');
+      LocalGame.smartBoard!.importGame(game, 'review');
       this.setState({ whitePlayer: whitePlayer, blackPlayer: blackPlayer });
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
@@ -144,7 +142,7 @@ class App extends React.Component<any, AppStates> {
 
   async popResignInfo() {
     this.setState({ loadingDialogOpen: true });
-    let player = await this.smartBoard.resign();
+    let player = await LocalGame.smartBoard!.resign();
     let msg = await GameClient.default.finalScore() || '';
     let info = { title: i18n.dialogs.info.title_score, message: `${i18n.dialogs.info.resigns(player)}, ${msg}` };
     this.setState({ loadingDialogOpen: false, infoDialogOpen: true, info });
@@ -187,10 +185,10 @@ class App extends React.Component<any, AppStates> {
               <div className="uk-nav uk-dropdown-nav" >
                 <ul className="uk-nav uk-dropdown-nav">
 
-                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={this.smartBoard && this.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: this.smartBoard.exportGame() })}>{i18n.menu.exportsgf}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
+                  <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
                   <li className="uk-nav-divider"></li>
 
@@ -198,11 +196,11 @@ class App extends React.Component<any, AppStates> {
                   <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
 
                   <li className="uk-nav-divider"></li>
-                  <li><a href="#" onClick={e => this.smartBoard.pass()}>{i18n.menu.pass}</a></li>
-                  <li><a href="#" onClick={e => this.smartBoard.undo()}>{i18n.menu.undo}</a></li>
+                  <li><a href="#" onClick={e => LocalGame.smartBoard!.pass()}>{i18n.menu.pass}</a></li>
+                  <li><a href="#" onClick={e => LocalGame.smartBoard!.undo()}>{i18n.menu.undo}</a></li>
 
                   {
-                    this.smartBoard && this.smartBoard.gameMode === 'ai' ?
+                    LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ?
                       <div className='uk-nav uk-dropdown-nav'>
                         <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
                         <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
@@ -220,29 +218,11 @@ class App extends React.Component<any, AppStates> {
           </div>
         </div>
 
-        {/* Board Aera */}
-        <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
-          <div className={`magnify_glass hidden`} id='magnifyGlass' />
-          <div className='element_to_magnify'>
-            <SmartGoBoard id="smartboard"
-              ref={e => this.smartBoard = e!}
-              onEnterBranch={() => this.boardController.enterBranchMode()}
-              showWinrate={this.state.showWinrate}
-              showHeatmap={this.state.showHeatmap}
-              whitePlayer={this.state.whitePlayer}
-              blackPlayer={this.state.blackPlayer}
-              aiAutoPlay={this.state.aiAutoplay} />
-          </div>
-        </div>
-
-        <BoardController
-          ref={e => this.boardController = e!}
-          mode={this.smartBoard ? this.smartBoard.gameMode : 'self'}
-          onCursorChange={d => this.smartBoard.changeCursor(d)}
-          onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
-          onAIAutoPlayClick={autoplay => { this.setState({ aiAutoplay: autoplay }); if (autoplay) this.smartBoard.autoGenmove(true); }}
-          onExitBranch={() => this.smartBoard.returnToMainBranch()}
-          style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+        <LocalGame blackPlayer={this.state.blackPlayer}
+          whitePlayer={this.state.whitePlayer}
+          showWinrate={this.state.showWinrate}
+          showHeatmap={this.state.showHeatmap}
+        />
 
         {/* Footer Aera */}
         <div style={{ bottom: 0, width: '100%', }}>
