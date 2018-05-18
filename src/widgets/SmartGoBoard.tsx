@@ -48,6 +48,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     engine: string;
     configs: NewGameDialogStates;
 
+    get currentCursor() { return this.game.cursor; }
+
     componentDidMount() {
         this.game.on('tick', () => {
             let m = moment.duration(this.game.currentColor === 'B' ? this.game.blackTime : this.game.whiteTime);
@@ -55,6 +57,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             this.setState({ remaingTime });
         });
     }
+
+    // componentWillUnmount() {
+    //     let sgf = this.exportGame();
+    //     UserPreferences.kifu = sgf;
+    // }
 
     async newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
@@ -105,7 +112,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.gameEngine = this.engine;
 
-        this.game = new Go(config.boardSize || 19);
+        this.game = new Go(config.boardSize);
         this.game.clear();
         this.client.initBoard({ handicap: 0, komi: this.game.komi, time: 60 * 24, size: config.boardSize });
 
@@ -122,7 +129,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.clearVariations();
         this.game.changeCursor(delta);
 
-        UserPreferences.cursor = this.game.cursor;
+        if (this.gameMode === 'review') UserPreferences.cursor = this.game.cursor;
         this.setState({ heatmap: undefined });
     }
 
@@ -274,7 +281,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let vars = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
         this.board.setVariations(vars);
-        console.log(vars);
+
         if (vars.length === 0) {
             this.setState({ heatmap: await this.client.heatmap() });
         }
@@ -367,12 +374,15 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         let playerMargin = window.innerWidth >= 576 ? 32 : 26;
         let board = document.getElementById('board');
-        let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / 19 / 2 : 0) + 19;
+        let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / this.game.size / 2 : 0) + this.game.size * (this.game.size <= 13 ? (1.5 + 1 - this.game.size / 13) : 1);
 
         return (
             <div id={this.props.id} style={{ position: 'relative' }} onWheel={e => this.onWheelChanged(e)}>
-                <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
                     {i18n.notifications.aiIsThinking}
+                </div>
+                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, display: this.gameMode === 'review' ? 'block' : 'none' }}>
+                    <span>{this.currentCursor} / {this.game.snapshots.length}</span>
                 </div>
 
                 <Board

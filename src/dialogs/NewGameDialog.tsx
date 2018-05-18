@@ -76,7 +76,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                         <div className="uk-margin">
                             <label className="uk-form-label">{i18n.dialogs.newgame.boardSize}:</label>
                             <div className="uk-form-controls">
-                                <input className="uk-input" type="number" placeholder="19" defaultValue={(this.state.boardSize || 19).toString()} onChange={e => this.setState({ boardSize: e.target.valueAsNumber || 19 })} />
+                                <input className="uk-input" type="number" placeholder="19" defaultValue={(this.state.boardSize || 19).toString()} onChange={e => this.setState({ boardSize: Math.min(19, Math.max(e.target.valueAsNumber || 19, 7)) })} />
                             </div>
                         </div>
                         : undefined

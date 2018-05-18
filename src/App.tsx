@@ -75,7 +75,7 @@ class App extends React.Component<any, AppStates> {
 
     window.onunload = () => {
       let sgf = this.smartBoard.exportGame();
-      UserPreferences.kifu = sgf;
+      UserPreferences.kifu = sgf;      
     };
 
     // As default, create a self-playing game
