@@ -11,7 +11,6 @@ interface LocalProps {
 }
 
 interface LocalStates {
-    paddingTop: number;
     aiAutoplay?: boolean;
 }
 
@@ -20,14 +19,13 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
     static smartBoard?: SmartGoBoard;
 
     private _smartboard: SmartGoBoard;
-    get smartBoard() { return this._smartboard }
+    get smartBoard() { return this._smartboard; }
     set smartBoard(value: SmartGoBoard) { this._smartboard = LocalGame.smartBoard = value; }
     private boardController: BoardController;
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
-
-        this.state = { paddingTop: 0 };
+        this.state = {};
     }
 
     componentDidMount() {
@@ -51,18 +49,15 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
 
         return (
             <div style={{ width: '100%', height: '100%', }}>
-                <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 - this.state.paddingTop, paddingTop: this.state.paddingTop }}>
-                    <div className={`magnify_glass hidden`} id='magnifyGlass' />
-                    <div className='element_to_magnify'>
-                        <SmartGoBoard id="smartboard"
-                            ref={e => this.smartBoard = e!}
-                            onEnterBranch={() => this.boardController.enterBranchMode()}
-                            showWinrate={this.props.showWinrate}
-                            showHeatmap={this.props.showHeatmap}
-                            whitePlayer={this.props.whitePlayer}
-                            blackPlayer={this.props.blackPlayer}
-                            aiAutoPlay={this.state.aiAutoplay} />
-                    </div>
+                <div className='magnify' style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 }}>
+                    <SmartGoBoard id="smartboard"
+                        ref={e => this.smartBoard = e!}
+                        onEnterBranch={() => this.boardController.enterBranchMode()}
+                        showWinrate={this.props.showWinrate}
+                        showHeatmap={this.props.showHeatmap}
+                        whitePlayer={this.props.whitePlayer}
+                        blackPlayer={this.props.blackPlayer}
+                        aiAutoPlay={this.state.aiAutoplay} />
                 </div>
 
                 <BoardController

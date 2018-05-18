@@ -3,27 +3,6 @@ html {
 	transition: background 2.5s;
 }
 
-.magnify {
-	z-index: 1;
-	position: relative;
-	overflow: hidden;
-}
-
-.element_to_magnify {
-	position: relative;
-	overflow: hidden;
-}
-
-.magnify_glass {
-	z-index: 300;
-	position: absolute;
-	border: 1px solid #eee;
-	border-radius: 50%;
-	width: 70px;
-	height: 70px;
-  overflow:hidden;
-}
-
 .hidden {
   visibility: hidden;
 }

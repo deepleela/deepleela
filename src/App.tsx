@@ -1,8 +1,6 @@
 import './App.css';
 import * as React from 'react';
 import * as constants from './common/Constants';
-import Board from './components/Board';
-import Stone from './components/Stone';
 import i18n from './i18n';
 import NewGameDialog, { NewGameDialogStates } from './dialogs/NewGameDialog';
 import SGFDialog from './dialogs/SGFDialog';
@@ -11,17 +9,13 @@ import SettingsDialog from './dialogs/SettingsDialog';
 import Modal from 'react-modal';
 import * as jQuery from 'jquery';
 import GameClient from './common/GameClient';
-import { Protocol } from 'deepleela-common';
-import Go from './common/Go';
-import SmartGoBoard from './widgets/SmartGoBoard';
-import BoardController from './widgets/BoardController';
-import CommandBuilder from './common/CommandBuilder';
 import SGF from './common/SGF';
 import ThemeManager from './common/ThemeManager';
 import InfoDialog from './dialogs/InfoDialog';
 import AboutDialog from './dialogs/AboutDialog';
 import UserPreferences from './common/UserPreferences';
 import LocalGame from './routes/LocalGame';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
 interface AppStates {
   whitePlayer?: string;
@@ -49,9 +43,6 @@ interface AppStates {
 class App extends React.Component<any, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-  // private smartBoard: SmartGoBoard;
-  // private boardController: BoardController;
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -167,80 +158,82 @@ class App extends React.Component<any, AppStates> {
     }
 
     return (
-      <div id="main" className="App" style={{ position: 'relative' }} >
+      <Router>
+        <div id="main" className="App" style={{ position: 'relative' }} >
 
-        {/* Head Aera */}
-        <div style={{ position: 'relative' }}>
-          <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
-            <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-            <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
-          </div>
+          {/* Head Aera */}
+          <div style={{ position: 'relative' }}>
+            <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
+              <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
+              <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
+            </div>
 
-          {/* Menu */}
-          <div className='uk-inline' style={{ position: 'absolute', top: 0, left: 0, marginTop: 6, marginLeft: -6 }}>
-            <button className="uk-button uk-button-default no-border">
-              <span id='menu-button' uk-icon="icon: menu" style={{ color: ThemeManager.default.logoColor, display: 'block' }}></span>
-            </button>
-            <div id="menu" uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
-              <div className="uk-nav uk-dropdown-nav" >
-                <ul className="uk-nav uk-dropdown-nav">
+            {/* Menu */}
+            <div className='uk-inline' style={{ position: 'absolute', top: 0, left: 0, marginTop: 6, marginLeft: -6 }}>
+              <button className="uk-button uk-button-default no-border">
+                <span id='menu-button' uk-icon="icon: menu" style={{ color: ThemeManager.default.logoColor, display: 'block' }}></span>
+              </button>
+              <div id="menu" uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
+                <div className="uk-nav uk-dropdown-nav" >
+                  <ul className="uk-nav uk-dropdown-nav">
 
-                  <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
-                  <li className="uk-nav-divider"></li>
+                    <li className="uk-nav-divider"></li>
 
-                  <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
 
-                  <li className="uk-nav-divider"></li>
-                  <li><a href="#" onClick={e => LocalGame.smartBoard!.pass()}>{i18n.menu.pass}</a></li>
-                  <li><a href="#" onClick={e => LocalGame.smartBoard!.undo()}>{i18n.menu.undo}</a></li>
+                    <li className="uk-nav-divider"></li>
+                    <li><a href="#" onClick={e => LocalGame.smartBoard!.pass()}>{i18n.menu.pass}</a></li>
+                    <li><a href="#" onClick={e => LocalGame.smartBoard!.undo()}>{i18n.menu.undo}</a></li>
 
-                  {
-                    LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ?
-                      <div className='uk-nav uk-dropdown-nav'>
-                        <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
-                        <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
-                      </div> :
-                      undefined
-                  }
+                    {
+                      LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ?
+                        <div className='uk-nav uk-dropdown-nav'>
+                          <li><a href="#" onClick={e => this.popResignInfo()}>{i18n.menu.resign}</a></li>
+                          <li><a href="#" onClick={e => this.popScoreInfo()}>{i18n.menu.score}</a></li>
+                        </div> :
+                        undefined
+                    }
 
-                  <li className="uk-nav-divider"></li>
+                    <li className="uk-nav-divider"></li>
 
-                  <li><a href="#" onClick={e => this.setState({ settingsDialogOpen: true })}>{i18n.menu.settings}</a></li>
-                  <li><a href="#" onClick={e => this.setState({ aboutDialogOpen: true })} > {i18n.menu.about}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ settingsDialogOpen: true })}>{i18n.menu.settings}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ aboutDialogOpen: true })} > {i18n.menu.about}</a></li>
 
-                </ul></div>
+                  </ul></div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <LocalGame blackPlayer={this.state.blackPlayer}
-          whitePlayer={this.state.whitePlayer}
-          showWinrate={this.state.showWinrate}
-          showHeatmap={this.state.showHeatmap}
-        />
-
-        {/* Footer Aera */}
-        <div style={{ bottom: 0, width: '100%', }}>
-          <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0' }}>
-            &copy; 2018 DeepLeela
+          <div style={{ paddingTop: this.state.paddingTop }}>
+            <Switch>
+              <Route path='/' component={LocalGame} />
+            </Switch>
           </div>
-        </div>
 
-        {/* Dialogs Aera */}
-        <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} enableStone />
-        <NewGameDialog isOpen={this.state.newSelfDialogOpen} onCancel={() => this.setState({ newSelfDialogOpen: false })} onOk={c => this.onNewSelfGame(c)} enableSize />
-        <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={sgf => this.onLoadSgf(sgf)} />
-        <SGFDialog isOpen={this.state.exportSgfDialogOpen} sgf={this.state.sgf} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
-        <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
-        <LoadingDialog isOpen={this.state.loadingDialogOpen} />
-        <InfoDialog isOpen={this.state.infoDialogOpen} onOk={() => this.setState({ infoDialogOpen: false })} title={this.state.info ? this.state.info.title : undefined} message={this.state.info ? this.state.info.message : undefined} />
-        <AboutDialog isOpen={this.state.aboutDialogOpen} onOk={() => this.setState({ aboutDialogOpen: false })} />
-      </div >
+          {/* Footer Aera */}
+          <div style={{ bottom: 0, width: '100%', }}>
+            <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0' }}>
+              &copy; 2018 DeepLeela
+            </div>
+          </div>
+
+          {/* Dialogs Aera */}
+          <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} enableStone />
+          <NewGameDialog isOpen={this.state.newSelfDialogOpen} onCancel={() => this.setState({ newSelfDialogOpen: false })} onOk={c => this.onNewSelfGame(c)} enableSize />
+          <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={sgf => this.onLoadSgf(sgf)} />
+          <SGFDialog isOpen={this.state.exportSgfDialogOpen} sgf={this.state.sgf} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
+          <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
+          <LoadingDialog isOpen={this.state.loadingDialogOpen} />
+          <InfoDialog isOpen={this.state.infoDialogOpen} onOk={() => this.setState({ infoDialogOpen: false })} title={this.state.info ? this.state.info.title : undefined} message={this.state.info ? this.state.info.message : undefined} />
+          <AboutDialog isOpen={this.state.aboutDialogOpen} onOk={() => this.setState({ aboutDialogOpen: false })} />
+        </div >
+      </Router>
     );
   }
 }
