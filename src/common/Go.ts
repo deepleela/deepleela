@@ -23,6 +23,7 @@ export default class Go extends EventEmitter {
     historySnapshots: State[][][] = [];
     cursor = -1;
     historyCursor = -1;
+    branchCursor?: number;
 
     size: number;
     komi = 7.5;
@@ -216,6 +217,11 @@ export default class Go extends EventEmitter {
             this.cursor = this.snapshots.length - 1;
         }
 
+        if (this.history.length > 0 && this.branchCursor === undefined) {
+            this.branchCursor = this.cursor;
+            // console.log('break cursor', this.cursor);
+        }
+
         this.turn();
 
         return true;
@@ -316,8 +322,11 @@ export default class Go extends EventEmitter {
     changeCursor(delta: number) {
         if (this.snapshots.length === 0) return;
 
-        if (this.history.length > 0) {
-            this.historyCursor = Math.max(0, Math.min(this.historyCursor + delta, this.history.length - 1));
+        // console.log(this.branchCursor, this.cursor, this.historyCursor);
+        
+        if ((this.history.length > 0 && (this.branchCursor && this.cursor >= this.branchCursor)) &&
+            (this.historyCursor = Math.max(-1, Math.min(this.historyCursor + delta, this.history.length - 1))) > -1) {
+            this.cursor = this.branchCursor + 1;
             this.board = SGF.createBoardFrom(this.historySnapshots[this.historyCursor]);
             let state = this.history[this.historyCursor];
             this.currentCartesianCoord = state.cartesianCoord;
@@ -331,12 +340,16 @@ export default class Go extends EventEmitter {
         let state = this.mainBranch[this.cursor];
         this.currentCartesianCoord = state.cartesianCoord;
         this.current = this.opponentOf(state.stone);
+
+        // console.log(this.cursor);
     }
 
     returnToMainBranch() {
         this.history = [];
         this.historySnapshots = [];
         this.historyCursor = -1;
+        this.cursor = this.branchCursor || this.cursor;
+        this.branchCursor = undefined;
         this.changeCursor(0);
     }
 

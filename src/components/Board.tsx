@@ -160,8 +160,6 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                 this.state.branchStates[i][j] = undefined;
             }
         }
-
-        this.forceUpdate();
     }
 
     setAnimation(enable: boolean) {

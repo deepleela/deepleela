@@ -135,7 +135,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     returnToMainBranch() {
         this.game.returnToMainBranch();
-        // this.board.clearBranchStates();
+        this.board.clearBranchStates();
         this.forceUpdate();
     }
 
@@ -382,11 +382,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
-                
+
                 {
                     this.gameMode === 'review' ?
                         <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, }}>
-                            <span>{this.currentCursor} / {this.game.snapshots.length - 1}</span>
+                            <span>{this.currentCursor + 1} / {this.game.snapshots.length}</span>
                         </div>
                         : undefined
                 }
