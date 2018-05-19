@@ -60,11 +60,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         });
     }
 
-    // componentWillUnmount() {
-    //     let sgf = this.exportGame();
-    //     UserPreferences.kifu = sgf;
-    // }
-
     async newAIGame(config: NewGameDialogStates): Promise<[boolean, number]> {
         this.gameMode = 'ai';
         this.userStone = config.selectedColor;
@@ -364,7 +359,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private onWheelChanged(e: React.WheelEvent<HTMLDivElement>) {
         if (this.gameMode !== 'review') return;
         if (this.props.disabled || this.state.disabled) return;
-        
+
         e.preventDefault();
         this.changeCursor(e.deltaY > 0 ? 1 : -1);
     }
@@ -404,7 +399,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     disabled={this.props.disabled || this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                     showCoordinate={window.innerWidth >= 800}
-                    hightlightCoord={this.game.currentCartesianCoord}
+                    highlightCoord={this.game.currentCartesianCoord}
                     heatmap={this.state.heatmap}
                     fontSize={window.innerWidth < 576 ? 6.25 : 10}
                     currentColor={this.game.currentColor}
@@ -419,7 +414,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <span style={{ opacity: 0.75 }}>{blackPlayer || '---'}</span>
                         </div>
 
-                        <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11 }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
+                        <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11, position: 'absolute', left: '50%', transform: 'translate(-50%, -50%)', }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
 
                         <div style={{ marginRight: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>

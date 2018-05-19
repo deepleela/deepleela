@@ -23,6 +23,7 @@ interface States {
 export default class OnlineReivew extends React.Component<Props, States> {
 
     smartBoard: SmartGoBoard;
+    boardController: BoardController;
     state: States = {};
     readonly client = GameClient.default;
     roomId: string;
@@ -70,12 +71,17 @@ export default class OnlineReivew extends React.Component<Props, States> {
         return (
             <div style={{ width: '100%', height: '100%', }}>
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
-                    <SmartGoBoard id='smartboard' ref={e => this.smartBoard = e!} disabled={!this.state.isOwner} />
+                    <SmartGoBoard
+                        id='smartboard' ref={e => this.smartBoard = e!}
+                        disabled={!this.state.isOwner}
+                        onEnterBranch={() => this.boardController && this.boardController.enterBranchMode()}
+                    />
                 </div>
 
                 {
                     this.state.isOwner ?
                         <BoardController
+                            ref={e => this.boardController = e!}
                             mode='review'
                             onCursorChange={d => this.smartBoard.changeCursor(d)}
                             onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
