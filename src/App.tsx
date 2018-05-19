@@ -60,7 +60,7 @@ class App extends React.Component<AppProps, AppStates> {
     Modal.setAppElement('#main');
 
     const calcPaddingTop = () => {
-      let top = (window.innerHeight - 96 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
+      let top = (window.innerHeight - 84 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
       let boardBottomMargin = Math.max(0, window.innerHeight - 96 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
       this.setState({ paddingTop: top, boardBottomMargin });
     };
@@ -125,7 +125,7 @@ class App extends React.Component<AppProps, AppStates> {
         this.setState({ loadingDialogOpen: true });
         let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: options!.reviewRoom, uuid: UserPreferences.uuid, sgf });
         if (!room) return;
-        
+
         location.pathname = `/review/${room.roomId}`;
         return;
       }
@@ -249,7 +249,7 @@ class App extends React.Component<AppProps, AppStates> {
 
           {/* Footer Aera */}
           <div style={{ bottom: 0, width: '100%', marginTop: this.state.boardBottomMargin }}>
-            <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0' }}>
+            <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0', fontFamily: 'Questrial' }}>
               &copy; 2018 DeepLeela
             </div>
           </div>

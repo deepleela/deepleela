@@ -2,6 +2,11 @@ import * as React from 'react';
 import BoardController from '../widgets/BoardController';
 import SmartGoBoard from '../widgets/SmartGoBoard';
 import { RouteComponentProps } from 'react-router-dom';
+import GameClient from '../common/GameClient';
+import UserPreferences from '../common/UserPreferences';
+import Go from '../common/Go';
+import SGF from '../common/SGF';
+
 
 interface RouteParam {
     roomId?: string;
@@ -19,9 +24,43 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
     smartBoard: SmartGoBoard;
     state: States = {};
+    readonly client = GameClient.default;
+    roomId: string;
 
     componentDidMount() {
-        console.log(this.props);
+        let roomId = this.props.match.params.roomId;
+        if (!roomId) {
+            location.pathname = '/';
+            return;
+        }
+
+        this.roomId = roomId;
+        if (!this.client.connected) {
+            this.client.once('connected', () => {
+                this.enterReviewRoom();
+            });
+            return;
+        }
+
+        this.enterReviewRoom();
+    }
+
+    async enterReviewRoom() {
+        let roomInfo = await this.client.enterReviewRoom({
+            roomId: this.roomId,
+            uuid: UserPreferences.uuid,
+            nickname: UserPreferences.nickname
+        });
+
+        if (!roomInfo) {
+            location.pathname = '/';
+            return;
+        }
+
+        this.setState({ isOwner: roomInfo.isOwner, })
+
+        let game = SGF.import(roomInfo.sgf);
+        this.smartBoard.importGame(game, 'review');
     }
 
     render() {
@@ -31,15 +70,19 @@ export default class OnlineReivew extends React.Component<Props, States> {
         return (
             <div style={{ width: '100%', height: '100%', }}>
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
-                    <SmartGoBoard id='smartboard' ref={e => this.smartBoard = e!} />
+                    <SmartGoBoard id='smartboard' ref={e => this.smartBoard = e!} disabled={!this.state.isOwner} />
                 </div>
 
-                <BoardController
-                    mode='review'
-                    onCursorChange={d => this.smartBoard.changeCursor(d)}
-                    onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
-                    onExitBranch={() => this.smartBoard.returnToMainBranch()}
-                    style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+                {
+                    this.state.isOwner ?
+                        <BoardController
+                            mode='review'
+                            onCursorChange={d => this.smartBoard.changeCursor(d)}
+                            onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
+                            onExitBranch={() => this.smartBoard.returnToMainBranch()}
+                            style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+                        : undefined
+                }
             </div>
         );
     }

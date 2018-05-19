@@ -21,6 +21,7 @@ interface SmartGoBoardProps {
     showHeatmap?: boolean;
     showWinrate?: boolean;
     aiAutoPlay?: boolean;
+    disabled?: boolean;
 
     onEnterBranch?: () => void;
 }
@@ -362,6 +363,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private onWheelChanged(e: React.WheelEvent<HTMLDivElement>) {
         if (this.gameMode !== 'review') return;
+        if (this.props.disabled || this.state.disabled) return;
+        
         e.preventDefault();
         this.changeCursor(e.deltaY > 0 ? 1 : -1);
     }
@@ -398,7 +401,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor, coordTextColor: ThemeManager.default.coordTextColor }}
                     size={this.game.size}
                     states={this.game.board}
-                    disabled={this.state.disabled || shouldBeDisabled}
+                    disabled={this.props.disabled || this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                     showCoordinate={window.innerWidth >= 800}
                     hightlightCoord={this.game.currentCartesianCoord}
