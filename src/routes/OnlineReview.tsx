@@ -30,7 +30,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
         return (
             <div style={{ width: '100%', height: '100%', }}>
-                <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 }}>
+                <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
                     <SmartGoBoard id='smartboard' ref={e => this.smartBoard = e!} />
                 </div>
 

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as constants from './common/Constants';
 import i18n from './i18n';
 import NewGameDialog, { NewGameDialogStates } from './dialogs/NewGameDialog';
-import SGFDialog from './dialogs/SGFDialog';
+import SGFDialog, { SGFDialogStates } from './dialogs/SGFDialog';
 import LoadingDialog from './dialogs/LoadingDialog';
 import SettingsDialog from './dialogs/SettingsDialog';
 import Modal from 'react-modal';
@@ -36,6 +36,7 @@ interface AppStates {
   info?: { title: string, message: string };
 
   paddingTop: number;
+  boardBottomMargin: number;
 }
 
 interface AppProps {
@@ -52,7 +53,7 @@ class App extends React.Component<AppProps, AppStates> {
     super(props, ctx);
 
     if (localStorage.getItem('heatmap') === null) UserPreferences.heatmap = true;
-    this.state = { paddingTop: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
+    this.state = { paddingTop: 0, boardBottomMargin: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
   }
 
   componentDidMount() {
@@ -60,7 +61,8 @@ class App extends React.Component<AppProps, AppStates> {
 
     const calcPaddingTop = () => {
       let top = (window.innerHeight - 96 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
-      this.setState({ paddingTop: top });
+      let boardBottomMargin = Math.max(0, window.innerHeight - 96 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
+      this.setState({ paddingTop: top, boardBottomMargin });
     };
 
     calcPaddingTop();
@@ -109,17 +111,26 @@ class App extends React.Component<AppProps, AppStates> {
     this.setState({ loadingDialogOpen: false, newSelfDialogOpen: false });
   }
 
-  onLoadSgf(sgf: string | undefined) {
+  async onLoadSgf(sgf: string | undefined, options?: SGFDialogStates) {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
 
     try {
       if (!sgf) return;
 
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
-      game.changeCursor(-9999);
-      LocalGame.smartBoard!.importGame({ game, whitePlayer, blackPlayer }, 'review');
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
+
+      if (options!.online) {
+        this.setState({ loadingDialogOpen: true });
+        let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: options!.reviewRoom, uuid: UserPreferences.uuid, sgf });
+        if (!room) return;
+        
+        location.pathname = `/review/${room.roomId}`;
+        return;
+      }
+
+      LocalGame.smartBoard!.importGame({ game, whitePlayer, blackPlayer }, 'review');
     } finally {
       this.setState({ loadSgfDialogOpen: false });
     }
@@ -229,7 +240,7 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div style={{ paddingTop: this.state.paddingTop }}>
+          <div id='boardaera' style={{ paddingTop: this.state.paddingTop }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/' component={LocalGame} />
@@ -237,7 +248,7 @@ class App extends React.Component<AppProps, AppStates> {
           </div>
 
           {/* Footer Aera */}
-          <div style={{ bottom: 0, width: '100%', }}>
+          <div style={{ bottom: 0, width: '100%', marginTop: this.state.boardBottomMargin }}>
             <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0' }}>
               &copy; 2018 DeepLeela
             </div>
@@ -246,7 +257,7 @@ class App extends React.Component<AppProps, AppStates> {
           {/* Dialogs Aera */}
           <NewGameDialog isOpen={this.state.newGameDialogOpen} onCancel={() => this.setState({ newGameDialogOpen: false })} onOk={c => this.onNewAIGame(c)} enableStone />
           <NewGameDialog isOpen={this.state.newSelfDialogOpen} onCancel={() => this.setState({ newSelfDialogOpen: false })} onOk={c => this.onNewSelfGame(c)} enableSize />
-          <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={sgf => this.onLoadSgf(sgf)} />
+          <SGFDialog isOpen={this.state.loadSgfDialogOpen} onCancel={() => this.setState({ loadSgfDialogOpen: false })} onOk={(sgf, options) => this.onLoadSgf(sgf, options)} showOnlineMode />
           <SGFDialog isOpen={this.state.exportSgfDialogOpen} sgf={this.state.sgf} readOnly onCancel={() => this.setState({ exportSgfDialogOpen: false })} onOk={() => this.setState({ exportSgfDialogOpen: false })} />
           <SettingsDialog isOpen={this.state.settingsDialogOpen} onOk={() => this.setState({ settingsDialogOpen: false })} />
           <LoadingDialog isOpen={this.state.loadingDialogOpen} />

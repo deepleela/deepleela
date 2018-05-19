@@ -47,7 +47,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
 
         return (
             <div style={{ width: '100%', height: '100%', }}>
-                <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, minHeight: window.innerHeight - 96 }}>
+                <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
                     <SmartGoBoard id="smartboard"
                         ref={e => this.smartBoard = e!}
                         onEnterBranch={() => this.boardController.enterBranchMode()}

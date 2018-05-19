@@ -35,6 +35,7 @@ export const lang = {
         sgf: {
             load: 'Review SGF',
             export: 'Export SGF',
+            onlineMode: 'Online Mode',
         },
 
         info: {

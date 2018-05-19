@@ -84,6 +84,7 @@ export default class SGF {
             child = child[0].childs;
         }
 
+        game.changeCursor(-9999);
         return { whitePlayer, blackPlayer, game };
     }
 

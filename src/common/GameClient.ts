@@ -1,5 +1,5 @@
 import { Command, Response } from "@sabaki/gtp";
-import { Protocol, ProtocolDef } from 'deepleela-common';
+import { Protocol, ProtocolDef, ReviewRoom } from 'deepleela-common';
 import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
@@ -272,7 +272,21 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    createReviewRoom(opts: { nickname: string, name?: string }) {
+    createReviewRoom(opts: { nickname: string, roomName?: string, uuid: string, sgf: string }) {
+        return new Promise<ReviewRoom | undefined>(resolve => {
+            let cmd: Command = { name: Protocol.sys.createReviewRoom, id: this.msgId++, args: [opts.uuid, opts.sgf, opts.nickname, opts.roomName] };
+            this.pendingCallbacks.set(cmd.id!, (result: string) => {
+                let room = JSON.parse(result) as ReviewRoom;
+                resolve(room);
+            });
+
+            if (!this.sendSysMessage(cmd)) {
+                resolve(undefined);
+            }
+        });
+    }
+
+    enterReviewRoom(opts: { roomId: string }) {
 
     }
 }

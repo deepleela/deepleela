@@ -8,11 +8,12 @@ interface SGFDialogProps {
     sgf?: string;
     isOpen?: boolean;
     readOnly?: boolean;
-    onOk?: (sgf?: string) => void;
+    onOk?: (sgf?: string, options?: SGFDialogStates) => void;
     onCancel?: () => void;
+    showOnlineMode?: boolean;
 }
 
-interface SGFDialogStates {
+export interface SGFDialogStates {
     online?: boolean;
     reviewRoom?: string;
 }
@@ -32,25 +33,31 @@ export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialog
                         <textarea ref={e => this.textarea = e!} className="uk-textarea" placeholder="SGF" rows={12} style={{ resize: 'none' }} readOnly={this.props.readOnly} defaultValue={this.props.sgf} />
                     </div>
 
-                    <div className='uk-margin'>
-                        {
-                            this.state.online ?
-                                <div className={`uk-margin uk-animation-slide-top-small`}>
-                                    <input className="uk-input" type="text" maxLength={64} placeholder="My Review Room" value={this.state.reviewRoom} onChange={e => { this.setState({ reviewRoom: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
+                    {
+                        this.props.showOnlineMode ?
+                            <div>
+                                <div className='uk-margin'>
+                                    {
+                                        this.state.online ?
+                                            <div className={`uk-margin uk-animation-slide-top-small`}>
+                                                <input className="uk-input" type="text" maxLength={64} placeholder="My Review Room" value={this.state.reviewRoom} onChange={e => { this.setState({ reviewRoom: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
+                                            </div>
+                                            : undefined
+                                    }
+                                    <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                                        <label><input className="uk-checkbox" type="checkbox" onChange={e => this.setState({ online: e.target.checked })} /> {i18n.dialogs.sgf.onlineMode}</label>
+                                    </div>
                                 </div>
-                                : undefined
-                        }
-                        <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                            <label><input className="uk-checkbox" type="checkbox" onChange={e => this.setState({ online: e.target.checked })} /> Online Mode</label>
-                        </div>
-                    </div>
+                            </div>
+                            : undefined
+                    }
 
                     <div style={{ height: 1, width: '100%', backgroundColor: '#eee', marginBottom: 12 }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <button className="uk-button uk-button-default" type="button" style={{ width: '49%', }} onClick={e => this.props.onCancel ? this.props.onCancel() : undefined}>
                             {i18n.button.cancel}
                         </button>
-                        <button className="uk-button uk-button-primary" type="button" style={{ width: '49%', }} onClick={e => { this.props.onOk ? this.props.onOk(this.textarea.value) : undefined; this.setState({ online: false }) }}>
+                        <button className="uk-button uk-button-primary" type="button" style={{ width: '49%', }} onClick={e => { this.props.onOk ? this.props.onOk(this.textarea.value, this.state) : undefined; this.setState({ online: false }) }}>
                             {i18n.button.ok}
                         </button>
                     </div>
