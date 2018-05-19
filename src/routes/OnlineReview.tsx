@@ -53,6 +53,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             nickname: UserPreferences.nickname
         });
 
+        console.log(roomInfo);
         if (!roomInfo) {
             location.pathname = '/';
             return;

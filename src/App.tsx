@@ -28,10 +28,6 @@ interface AppStates {
   infoDialogOpen?: boolean;
   aboutDialogOpen?: boolean;
 
-  showWinrate?: boolean;
-  showHeatmap?: boolean;
-  aiAutoplay?: boolean;
-
   sgf?: string;
   info?: { title: string, message: string };
 
@@ -53,7 +49,7 @@ class App extends React.Component<AppProps, AppStates> {
     super(props, ctx);
 
     if (localStorage.getItem('heatmap') === null) UserPreferences.heatmap = true;
-    this.state = { paddingTop: 0, boardBottomMargin: 0, showHeatmap: UserPreferences.heatmap, showWinrate: UserPreferences.winrate };
+    this.state = { paddingTop: 0, boardBottomMargin: 0, };
   }
 
   componentDidMount() {
@@ -206,8 +202,8 @@ class App extends React.Component<AppProps, AppStates> {
                         <div className='uk-nav uk-dropdown-nav'>
                           <li className="uk-nav-divider"></li>
 
-                          <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
-                          <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                          <li><a href="#" onClick={e => UserPreferences.heatmap = !UserPreferences.heatmap}><span className={UserPreferences.heatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                          <li><a href="#" onClick={e => UserPreferences.winrate = !UserPreferences.winrate}><span className={UserPreferences.winrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
                         </div>
                     }
 

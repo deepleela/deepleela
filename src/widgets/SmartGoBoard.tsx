@@ -414,7 +414,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <span style={{ opacity: 0.75 }}>{blackPlayer || '---'}</span>
                         </div>
 
-                        <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 7, fontSize: 11, position: 'absolute', left: '50%', transform: 'translate(-50%, -50%)', }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
+                        <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 12, fontSize: 11, position: 'absolute', left: '50%', transform: 'translate(-50%, -50%)', }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
 
                         <div style={{ marginRight: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>

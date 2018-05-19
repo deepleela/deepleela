@@ -4,8 +4,6 @@ import BoardController from '../widgets/BoardController';
 import UserPreferences from '../common/UserPreferences';
 
 interface LocalProps {
-    showWinrate?: boolean;
-    showHeatmap?: boolean;
 }
 
 interface LocalStates {
@@ -15,6 +13,7 @@ interface LocalStates {
 export default class LocalGame extends React.Component<LocalProps, LocalStates> {
 
     static smartBoard?: SmartGoBoard;
+    static forceUpdate = () => LocalGame.smartBoard && LocalGame.forceUpdate();
 
     private _smartboard: SmartGoBoard;
     get smartBoard() { return this._smartboard; }
@@ -51,8 +50,8 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                     <SmartGoBoard id="smartboard"
                         ref={e => this.smartBoard = e!}
                         onEnterBranch={() => this.boardController.enterBranchMode()}
-                        showWinrate={this.props.showWinrate}
-                        showHeatmap={this.props.showHeatmap}
+                        showWinrate={UserPreferences.winrate}
+                        showHeatmap={UserPreferences.heatmap}
                         aiAutoPlay={this.state.aiAutoplay} />
                 </div>
 
