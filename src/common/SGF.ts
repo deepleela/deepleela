@@ -60,7 +60,7 @@ export default class SGF {
         let game = new Go(size);
         game.komi = Number.parseFloat(tree.props.KM || '7.5');
 
-        if (tree.props.AB) {
+        if (tree.props.AB && tree.props.AB.length > 0) {
             game.handicap = tree.props.AB;
             tree.props.AB.map(v => SGF.stringToArrayPosition(v))
                 .forEach(offset => game.board[offset.x][offset.y] = State.Black);

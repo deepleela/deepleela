@@ -228,7 +228,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         } : undefined}
                                         fontSize={this.props.fontSize}
                                         onVariationHover={(row, col) => this.onVariationHover(row, col)}
-                                        onVariationHoverLeave={(row, col) => this.clearBranchStates()}
+                                        onVariationHoverLeave={(row, col) => { this.clearBranchStates(), this.forceUpdate() }}
                                         moveNumber={this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.moveNumber : undefined}
                                         disableAnimation={this.state.disableAnimation}
                                     />

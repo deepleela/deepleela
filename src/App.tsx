@@ -81,6 +81,8 @@ class App extends React.Component<AppProps, AppStates> {
           if (UserPreferences.gameMode === 'review') {
             let deltaCursor = UserPreferences.cursor - game.cursor;
             game.changeCursor(deltaCursor);
+          } else {
+            game.changeCursor(9999);
           }
 
           await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer }, UserPreferences.gameMode as any);
