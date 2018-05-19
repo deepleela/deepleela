@@ -15,7 +15,7 @@ import InfoDialog from './dialogs/InfoDialog';
 import AboutDialog from './dialogs/AboutDialog';
 import UserPreferences from './common/UserPreferences';
 import LocalGame from './routes/LocalGame';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Switch, RouteComponentProps } from 'react-router-dom'
 import OnlineReivew from './routes/OnlineReview';
 
 interface AppStates {
@@ -38,9 +38,15 @@ interface AppStates {
   paddingTop: number;
 }
 
-class App extends React.Component<any, AppStates> {
+interface AppProps {
+
+}
+
+class App extends React.Component<AppProps, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  get isOnlineReview() { return location.pathname.startsWith('/review/'); }
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -171,19 +177,38 @@ class App extends React.Component<any, AppStates> {
                 <div className="uk-nav uk-dropdown-nav" >
                   <ul className="uk-nav uk-dropdown-nav">
 
-                    <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
-                    <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
-                    <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
+                    {
+                      this.isOnlineReview ?
+                        undefined :
+                        <div className='uk-nav uk-dropdown-nav'>
+                          <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
+                          <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
+                          <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
+                        </div>
+                    }
+
                     <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
-                    <li className="uk-nav-divider"></li>
+                    {
+                      this.isOnlineReview ?
+                        undefined :
+                        <div className='uk-nav uk-dropdown-nav'>
+                          <li className="uk-nav-divider"></li>
 
-                    <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
-                    <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                          <li><a href="#" onClick={e => this.setState({ showHeatmap: !this.state.showHeatmap }, () => UserPreferences.heatmap = this.state.showHeatmap || false)}><span className={this.state.showHeatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                          <li><a href="#" onClick={e => this.setState({ showWinrate: !this.state.showWinrate }, () => UserPreferences.winrate = this.state.showWinrate || false)}><span className={this.state.showWinrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                        </div>
+                    }
 
-                    <li className="uk-nav-divider"></li>
-                    <li><a href="#" onClick={e => LocalGame.smartBoard!.pass()}>{i18n.menu.pass}</a></li>
-                    <li><a href="#" onClick={e => LocalGame.smartBoard!.undo()}>{i18n.menu.undo}</a></li>
+                    {
+                      this.isOnlineReview ?
+                        undefined :
+                        <div className='uk-nav uk-dropdown-nav'>
+                          <li className="uk-nav-divider"></li>
+                          <li><a href="#" onClick={e => LocalGame.smartBoard!.pass()}>{i18n.menu.pass}</a></li>
+                          <li><a href="#" onClick={e => LocalGame.smartBoard!.undo()}>{i18n.menu.undo}</a></li>
+                        </div>
+                    }
 
                     {
                       LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ?

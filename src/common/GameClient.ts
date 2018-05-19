@@ -271,4 +271,8 @@ export default class GameClient extends EventEmitter {
             }
         });
     }
+
+    createReviewRoom(opts: { nickname: string, name?: string }) {
+
+    }
 }

@@ -17,8 +17,8 @@ export default class AboutDialog extends React.Component<AboutDialogProps, any> 
     render() {
         return (
             <Modal isOpen={this.props.isOpen} style={largeBox}>
-                <form className="uk-form-stacked" style={{ overflow: 'scroll', maxHeight: '90vh' }}>
-                    <legend className="uk-legend">{i18n.dialogs.about.title} <span style={{ fontFamily: 'Questrial' }}>DeepLeela</span></legend>
+                <form className="uk-form-stacked" style={{ overflow: 'scroll', maxHeight: '90vh', fontFamily: 'Questrial' }}>
+                    <legend className="uk-legend">{i18n.dialogs.about.title} <span>DeepLeela</span></legend>
                     <div className="uk-margin" style={{ fontWeight: 100 }}>
                         <p>{i18n.dialogs.about.text.p1} </p>
                         <p>{i18n.dialogs.about.text.p2} </p>

@@ -47,4 +47,10 @@ export default class UserPreferences {
         localStorage.setItem('uuid', uuid);
         return uuid;
     }
+
+    static get nickname() { return localStorage.getItem('nickname') || ''; }
+    static set nickname(value: string) { localStorage.setItem('nickname', value); }
+
+    static get reviewRoom() { return localStorage.getItem('reviewroom') || ''; }
+    static set reviewRoom(value: string) { localStorage.setItem('reviewroom', value); }
 }
