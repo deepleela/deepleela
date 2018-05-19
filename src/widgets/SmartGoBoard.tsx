@@ -20,8 +20,6 @@ interface SmartGoBoardProps {
     id?: any;
     showHeatmap?: boolean;
     showWinrate?: boolean;
-    whitePlayer?: string;
-    blackPlayer?: string;
     aiAutoPlay?: boolean;
 
     onEnterBranch?: () => void;
@@ -32,6 +30,9 @@ interface SmartGoBoardStates {
     remaingTime?: string;
     heatmap?: number[][];
     isThinking?: boolean;
+
+    whitePlayer?: string;
+    blackPlayer?: string;
 }
 
 export type GameMode = 'ai' | 'self' | 'guest' | 'review';
@@ -295,11 +296,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.reloadCurrentBoard(false);
     }
 
-    async importGame(game: Go, mode: GameMode = 'self') {
-        this.game = game;
+    async importGame(game: { game: Go, whitePlayer?: string, blackPlayer?: string }, mode: GameMode = 'self') {
+        this.game = game.game;
         this.gameMode = mode;
         this.board.clearVariations();
-        this.setState({ heatmap: undefined, disabled: false });
+        this.setState({ heatmap: undefined, disabled: false, whitePlayer: game.whitePlayer, blackPlayer: game.blackPlayer });
         UserPreferences.gameMode = mode;
 
         await this.checkAIOnline();
@@ -309,12 +310,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.engine = UserPreferences.gameEngine || 'leela';
         this.userStone = userstone;
 
-        if (game.currentColor === userstone) return;
+        if (this.game.currentColor === userstone) return;
         await this.genmove(userstone === 'B' ? 'W' : 'B');
     }
 
     exportGame() {
-        let info = { blackPlayer: this.props.blackPlayer || '', whitePlayer: this.props.whitePlayer || '', result: '', };
+        let info = { blackPlayer: this.state.blackPlayer || '', whitePlayer: this.state.whitePlayer || '', result: '', };
         return this.game.genSgf(info, true);
     }
 
@@ -355,7 +356,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     async resign() {
         this.setState({ disabled: true });
         await this.client.resign(this.game.currentColor);
-        return (this.game.currentColor === 'W' ? this.props.whitePlayer : this.props.blackPlayer) || this.game.currentColor;
+        return (this.game.currentColor === 'W' ? this.state.whitePlayer : this.state.blackPlayer) || this.game.currentColor;
     }
 
 
@@ -370,8 +371,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
 
-        let whitePlayer = this.props.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
-        let blackPlayer = this.props.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
+        let whitePlayer = this.state.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
+        let blackPlayer = this.state.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
         let board = document.getElementById('board');
         let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / this.game.size / 2 : 0) + this.game.size * (this.game.size <= 13 ? (1.5 + 1 - this.game.size / 13) : 1);

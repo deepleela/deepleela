@@ -6,8 +6,6 @@ import UserPreferences from '../common/UserPreferences';
 interface LocalProps {
     showWinrate?: boolean;
     showHeatmap?: boolean;
-    whitePlayer?: string;
-    blackPlayer?: string;
 }
 
 interface LocalStates {
@@ -55,8 +53,6 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                         onEnterBranch={() => this.boardController.enterBranchMode()}
                         showWinrate={this.props.showWinrate}
                         showHeatmap={this.props.showHeatmap}
-                        whitePlayer={this.props.whitePlayer}
-                        blackPlayer={this.props.blackPlayer}
                         aiAutoPlay={this.state.aiAutoplay} />
                 </div>
 

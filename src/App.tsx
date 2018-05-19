@@ -19,9 +19,6 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import OnlineReivew from './routes/OnlineReview';
 
 interface AppStates {
-  whitePlayer?: string;
-  blackPlayer?: string;
-
   newGameDialogOpen?: boolean,
   newSelfDialogOpen?: boolean;
   loadSgfDialogOpen?: boolean,
@@ -82,8 +79,7 @@ class App extends React.Component<any, AppStates> {
             game.changeCursor(deltaCursor);
           }
 
-          await smartBoard.importGame(game, UserPreferences.gameMode as any);
-          this.setState({ whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
+          await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer }, UserPreferences.gameMode as any);
         } catch{ }
       }
 
@@ -92,7 +88,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
-    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
+    this.setState({ newGameDialogOpen: false, loadingDialogOpen: true, });
     let [success, pending] = await LocalGame.smartBoard!.newAIGame(config);
     this.setState({ loadingDialogOpen: false });
     if (!success || pending > 0) {
@@ -102,7 +98,7 @@ class App extends React.Component<any, AppStates> {
   }
 
   async onNewSelfGame(config: NewGameDialogStates) {
-    this.setState({ loadingDialogOpen: true, blackPlayer: undefined, whitePlayer: undefined });
+    this.setState({ loadingDialogOpen: true, });
     if (!await LocalGame.smartBoard!.newSelfGame(config)) UIkit.notification(i18n.notifications.aiNotAvailable);
     this.setState({ loadingDialogOpen: false, newSelfDialogOpen: false });
   }
@@ -115,8 +111,7 @@ class App extends React.Component<any, AppStates> {
 
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
       game.changeCursor(-9999);
-      LocalGame.smartBoard!.importGame(game, 'review');
-      this.setState({ whitePlayer: whitePlayer, blackPlayer: blackPlayer });
+      LocalGame.smartBoard!.importGame({ game, whitePlayer, blackPlayer }, 'review');
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
     } finally {
@@ -176,9 +171,9 @@ class App extends React.Component<any, AppStates> {
                 <div className="uk-nav uk-dropdown-nav" >
                   <ul className="uk-nav uk-dropdown-nav">
 
-                    <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'ai' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_leela}</a></li>
-                    <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'self' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.newgame_vs_self}</a></li>
-                    <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })}><span className={LocalGame.smartBoard && LocalGame.smartBoard.gameMode === 'review' ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.loadsgf}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
                     <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
                     <li className="uk-nav-divider"></li>
