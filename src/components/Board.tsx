@@ -166,6 +166,10 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         this.setState({ disableAnimation: !enable });
     }
 
+    clearTouchedCoord() {
+        this.setState({ touchedCoord: { x: -1, y: -1 } });
+    }
+
     render() {
         const size = 100.0 / this.props.size;
         const dimension = this.props.size;

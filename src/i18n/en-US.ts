@@ -67,6 +67,7 @@ export const lang = {
             winrateBase: 'Winrate Base',
             winrateBase_percent: 'Percent-based',
             winrateBase_500: '500-based',
+            nickname: 'Nickname',
         }
     },
 

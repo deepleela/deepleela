@@ -128,6 +128,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.gameMode === 'review') UserPreferences.cursor = this.game.cursor;
         this.setState({ heatmap: undefined });
+        this.board.clearTouchedCoord();
     }
 
     returnToMainBranch() {

@@ -87,6 +87,11 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
     onReviewRoomStateUpdate = (roomState: ReviewRoomState) => {
         let game = this.smartBoard.game;
+        
+        if (game.history.length > 0 && (roomState.history || []).length === 0) {
+            this.smartBoard.returnToMainBranch();
+        }
+
         game.history = roomState.history || [];
         game.historySnapshots = roomState.historySnapshots || [];
         game.historyCursor = roomState.historyCursor === undefined ? -1 : roomState.historyCursor;

@@ -95,6 +95,13 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
                         </div>
                     </div>
 
+                    <div className="uk-margin">
+                        <label className="uk-form-label">{i18n.dialogs.settings.nickname}:</label>
+                        <div className="uk-form-controls">
+                            <input className="uk-input" type="text" maxLength={32} placeholder="Nickname" defaultValue={UserPreferences.nickname} onChange={e => UserPreferences.nickname = e.target.value.substr(0, 32)} />
+                        </div>
+                    </div>
+
                     <div style={{ height: 1, width: '100%', backgroundColor: '#eee', marginBottom: 12 }} />
 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>

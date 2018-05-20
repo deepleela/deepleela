@@ -67,6 +67,7 @@ export const lang = {
             winrateBase: '胜率基数',
             winrateBase_percent: '基于百分比显示',
             winrateBase_500: '基于 500 显示',
+            nickname: '昵称',
         }
     },
 
