@@ -118,6 +118,7 @@ class App extends React.Component<AppProps, AppStates> {
       let { game, whitePlayer, blackPlayer } = SGF.import(sgf);
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
+      UserPreferences.kifu = sgf;
 
       if (options!.online) {
         this.setState({ loadingDialogOpen: true });

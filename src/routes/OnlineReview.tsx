@@ -7,7 +7,8 @@ import UserPreferences from '../common/UserPreferences';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
 import { State } from '../components/Intersection';
-import { ReviewRoomState } from 'deepleela-common';
+import { ReviewRoomState, ReviewRoomInfo } from 'deepleela-common';
+import ThemeManager from '../common/ThemeManager';
 
 
 interface RouteParam {
@@ -21,6 +22,7 @@ interface Props extends RouteComponentProps<RouteParam> {
 interface States {
     isOwner?: boolean;
     netPending?: boolean;
+    roomInfo?: ReviewRoomInfo;
 }
 
 export default class OnlineReivew extends React.Component<Props, States> {
@@ -31,7 +33,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
     get smartBoard() { return this._smartBoard; }
     set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
     boardController: BoardController;
-    state: States = { netPending: true };
+    state: States = { netPending: true, };
     readonly client = GameClient.default;
     roomId: string;
 
@@ -43,11 +45,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         }
 
         this.roomId = roomId;
-        if (!this.client.connected) {
-            this.client.once('connected', () => this.enterReviewRoom());
-            return;
-        }
-
+        this.client.on('connected', () => this.enterReviewRoom());
         this.enterReviewRoom();
     }
 
@@ -56,6 +54,10 @@ export default class OnlineReivew extends React.Component<Props, States> {
     }
 
     async enterReviewRoom() {
+        if (!this.client.connected) return;
+
+        this.setState({ netPending: true });
+
         let roomInfo = await this.client.enterReviewRoom({
             roomId: this.roomId,
             uuid: UserPreferences.uuid,
@@ -67,7 +69,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
-        this.setState({ isOwner: roomInfo.isOwner, netPending: false });
+        this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
 
         let game = SGF.import(roomInfo.sgf);
@@ -110,7 +112,16 @@ export default class OnlineReivew extends React.Component<Props, States> {
         let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
 
         return (
-            <div style={{ width: '100%', height: '100%', }}>
+            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+
+                <div style={{ position: 'absolute', left: 0, top: 0, paddingLeft: 28 }}>
+                    {
+                        this.state.roomInfo && this.state.roomInfo.owner ?
+                            <span style={{ fontSize: 10, color: ThemeManager.default.logoColor }}>By: {this.state.roomInfo.owner}</span>
+                            : undefined
+                    }
+                </div>
+
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
                     <SmartGoBoard
                         id='smartboard' ref={e => this.smartBoard = e!}
