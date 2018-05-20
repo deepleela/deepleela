@@ -193,9 +193,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.gameMode === 'review') {
             if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
-
             this.showBranch();
-
             return;
         }
 
@@ -366,7 +364,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (this.props.disabled || this.state.disabled) return;
 
         e.preventDefault();
-        this.changeCursor(e.deltaY > 0 ? 1 : -1);
+        this.changeCursor(e.deltaY > 0.5 ? 1 : -1);
     }
 
     render() {

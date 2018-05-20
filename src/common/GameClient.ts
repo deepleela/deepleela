@@ -79,7 +79,6 @@ export default class GameClient extends EventEmitter {
                     try {
                         roomState = JSON.parse(payload.args as string) as ReviewRoomState;
                         super.emit('reviewRoomState', roomState);
-                        console.log(roomState);
                     } catch{ }
                     break;
             }
