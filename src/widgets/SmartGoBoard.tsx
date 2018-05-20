@@ -42,8 +42,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private board: Board;
     private readonly client = GameClient.default;
-    private game = new Go(19);
-
+    
+    game = new Go(19);
     gameMode: GameMode = 'self';
     state: SmartGoBoardStates = { remaingTime: '--:--' };
     userStone: StoneColor = 'B';

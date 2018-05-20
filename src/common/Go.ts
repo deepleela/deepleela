@@ -114,6 +114,7 @@ export default class Go extends EventEmitter {
 
     set board(value: State[][]) {
         this._board = value;
+        super.emit('board', this, value);
     }
 
     get board() { return this._board; }
@@ -219,10 +220,10 @@ export default class Go extends EventEmitter {
 
         if (this.history.length > 0 && this.branchCursor === undefined) {
             this.branchCursor = this.cursor;
-            // console.log('break cursor', this.cursor);
         }
 
         this.turn();
+        super.emit('board', this);
 
         return true;
     }
@@ -323,7 +324,7 @@ export default class Go extends EventEmitter {
         if (this.snapshots.length === 0) return;
 
         // console.log(this.branchCursor, this.cursor, this.historyCursor);
-        
+
         if ((this.history.length > 0 && (this.branchCursor && this.cursor >= this.branchCursor)) &&
             (this.historyCursor = Math.max(-1, Math.min(this.historyCursor + delta, this.history.length - 1))) > -1) {
             this.cursor = this.branchCursor + 1;

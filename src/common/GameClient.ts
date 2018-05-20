@@ -1,5 +1,5 @@
 import { Command, Response } from "@sabaki/gtp";
-import { Protocol, ProtocolDef, ReviewRoom, ReviewRoomInfo } from 'deepleela-common';
+import { Protocol, ProtocolDef, ReviewRoom, ReviewRoomInfo, ReviewRoomState } from 'deepleela-common';
 import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
@@ -73,6 +73,15 @@ export default class GameClient extends EventEmitter {
                     callback(data.args);
                     this.pendingCallbacks.delete(data.id);
                     break;
+                case 'sync':
+                    let payload = msg.data as Command;
+                    let roomState: ReviewRoomState;
+                    try {
+                        roomState = JSON.parse(payload.args as string) as ReviewRoomState;
+                        super.emit('reviewRoomState', roomState);
+                        console.log(roomState);
+                    } catch{ }
+                    break;
             }
 
         } catch (error) {
@@ -112,7 +121,17 @@ export default class GameClient extends EventEmitter {
             return false;
         }
 
-        let msg: ProtocolDef = { type: 'sys', data: cmd }
+        let msg: ProtocolDef = { type: 'sys', data: cmd };
+        this.ws.send(JSON.stringify(msg));
+        return true;
+    }
+
+    sendSyncMessage(cmd: Command) {
+        if (!this.connected) {
+            return false;
+        }
+
+        let msg: ProtocolDef = { type: 'sync', data: cmd };
         this.ws.send(JSON.stringify(msg));
         return true;
     }
@@ -298,5 +317,9 @@ export default class GameClient extends EventEmitter {
                 resolve(undefined);
             }
         });
+    }
+
+    updateReviewRoomState(state: ReviewRoomState) {
+        this.sendSysMessage({ name: Protocol.sys.reviewRoomStateUpdate, args: state });
     }
 }

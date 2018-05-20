@@ -118,7 +118,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                     <div className='touch' style={{ paddingTop: 2 }} uk-tooltip={i18n.tips.next} onClick={e => this.triggerCursorChange(1)}>
                         <span uk-icon='icon: arrow-right; ratio: 1.35'></span>
                     </div>
-                    <div className='touch' uk-tooltip={i18n.tips.last} onClick={e => this.triggerCursorChange(10)}>
+                    <div className='touch' uk-tooltip={i18n.tips.forward} onClick={e => this.triggerCursorChange(10)}>
                         <span uk-icon='icon:  chevron-right; ratio: 1.2' style={{ display: 'inline-block', marginRight: -16 }}></span>
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>

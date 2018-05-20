@@ -6,6 +6,8 @@ import GameClient from '../common/GameClient';
 import UserPreferences from '../common/UserPreferences';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
+import { State } from '../components/Intersection';
+import { ReviewRoomState } from 'deepleela-common';
 
 
 interface RouteParam {
@@ -18,13 +20,14 @@ interface Props extends RouteComponentProps<RouteParam> {
 
 interface States {
     isOwner?: boolean;
+    netPending?: boolean;
 }
 
 export default class OnlineReivew extends React.Component<Props, States> {
 
     smartBoard: SmartGoBoard;
     boardController: BoardController;
-    state: States = {};
+    state: States = { netPending: true };
     readonly client = GameClient.default;
     roomId: string;
 
@@ -37,13 +40,15 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
         this.roomId = roomId;
         if (!this.client.connected) {
-            this.client.once('connected', () => {
-                this.enterReviewRoom();
-            });
+            this.client.once('connected', () => this.enterReviewRoom());
             return;
         }
 
         this.enterReviewRoom();
+    }
+
+    componentWillUnmount() {
+        this.smartBoard.game.removeAllListeners();
     }
 
     async enterReviewRoom() {
@@ -53,16 +58,40 @@ export default class OnlineReivew extends React.Component<Props, States> {
             nickname: UserPreferences.nickname
         });
 
-        console.log(roomInfo);
         if (!roomInfo) {
             location.pathname = '/';
             return;
         }
 
-        this.setState({ isOwner: roomInfo.isOwner, })
+        this.setState({ isOwner: roomInfo.isOwner, netPending: false });
+        this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
 
         let game = SGF.import(roomInfo.sgf);
         this.smartBoard.importGame(game, 'review');
+
+        if (!roomInfo.isOwner) return;
+        this.smartBoard.game.on('board', this.onBoardUpdate);
+    }
+
+    onBoardUpdate = (game: Go) => {
+        this.client.updateReviewRoomState({
+            roomId: this.roomId,
+            cursor: game.cursor,
+            branchCursor: game.branchCursor || -1,
+            historyCursor: game.historyCursor,
+            history: game.history,
+            historySnapshots: game.historySnapshots,
+        });
+    }
+
+    onReviewRoomStateUpdate = (roomState: ReviewRoomState) => {
+        let game = this.smartBoard.game;
+        game.history = roomState.history;
+        game.historySnapshots = roomState.historySnapshots;
+        game.historyCursor = roomState.historyCursor;
+        game.cursor = roomState.cursor;
+        game.branchCursor = roomState.branchCursor;
+        this.smartBoard.changeCursor(0);
     }
 
     render() {
@@ -74,7 +103,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
                     <SmartGoBoard
                         id='smartboard' ref={e => this.smartBoard = e!}
-                        disabled={!this.state.isOwner}
+                        disabled={!this.state.isOwner || this.state.netPending}
                         onEnterBranch={() => this.boardController && this.boardController.enterBranchMode()}
                     />
                 </div>
