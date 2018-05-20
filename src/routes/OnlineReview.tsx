@@ -92,6 +92,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         game.cursor = roomState.cursor;
         game.branchCursor = roomState.branchCursor;
         this.smartBoard.changeCursor(0);
+        this.smartBoard.showBranch();
     }
 
     render() {

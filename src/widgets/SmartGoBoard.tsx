@@ -42,7 +42,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private board: Board;
     private readonly client = GameClient.default;
-    
+
     game = new Go(19);
     gameMode: GameMode = 'self';
     state: SmartGoBoardStates = { remaingTime: '--:--' };
@@ -136,6 +136,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.forceUpdate();
     }
 
+    showBranch() {
+        if (this.game.history.length === 0) return;
+
+        let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
+        this.board.setMovesNumber(branch);
+        this.board.setAnimation(false);
+    }
+
     private async checkAIOnline() {
         if (this.client.aiConnected) return true;
 
@@ -185,11 +193,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.gameMode === 'review') {
             if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
-            if (this.game.history.length === 0) return;
 
-            let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
-            this.board.setMovesNumber(branch);
-            this.board.setAnimation(false);
+            this.showBranch();
 
             return;
         }
