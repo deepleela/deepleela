@@ -64,10 +64,11 @@ export default class OnlineReivew extends React.Component<Props, States> {
         }
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false });
-        this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
+        if (!roomInfo.isOwner) this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
 
         let game = SGF.import(roomInfo.sgf);
-        this.smartBoard.importGame(game, 'review');
+        game.game.changeCursor(-999);
+        this.smartBoard.importGame(game, 'review', roomInfo.isOwner);
 
         if (!roomInfo.isOwner) return;
         this.smartBoard.game.on('board', this.onBoardUpdate);
@@ -86,11 +87,11 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
     onReviewRoomStateUpdate = (roomState: ReviewRoomState) => {
         let game = this.smartBoard.game;
-        game.history = roomState.history;
-        game.historySnapshots = roomState.historySnapshots;
-        game.historyCursor = roomState.historyCursor;
-        game.cursor = roomState.cursor;
-        game.branchCursor = roomState.branchCursor;
+        game.history = roomState.history || [];
+        game.historySnapshots = roomState.historySnapshots || [];
+        game.historyCursor = roomState.historyCursor === undefined ? -1 : roomState.historyCursor;
+        game.cursor = roomState.cursor === undefined ? -1 : roomState.cursor;
+        game.branchCursor = roomState.branchCursor === undefined ? -1 : roomState.branchCursor;
         this.smartBoard.changeCursor(0);
         this.smartBoard.showBranch();
     }

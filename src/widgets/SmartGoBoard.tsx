@@ -295,14 +295,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.reloadCurrentBoard(false);
     }
 
-    async importGame(game: { game: Go, whitePlayer?: string, blackPlayer?: string }, mode: GameMode = 'self') {
+    async importGame(game: { game: Go, whitePlayer?: string, blackPlayer?: string }, mode: GameMode = 'self', enableAI = true) {
         this.game = game.game;
         this.gameMode = mode;
         this.board.clearVariations();
         this.setState({ heatmap: undefined, disabled: false, whitePlayer: game.whitePlayer, blackPlayer: game.blackPlayer });
         UserPreferences.gameMode = mode;
 
-        await this.checkAIOnline();
+        if (enableAI) await this.checkAIOnline();
 
         if (mode !== 'ai') return;
         let userstone = (UserPreferences.userStone) as StoneColor;
