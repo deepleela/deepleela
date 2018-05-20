@@ -25,7 +25,11 @@ interface States {
 
 export default class OnlineReivew extends React.Component<Props, States> {
 
-    smartBoard: SmartGoBoard;
+    static smartBoard?: SmartGoBoard;
+
+    private _smartBoard: SmartGoBoard;
+    get smartBoard() { return this._smartBoard; }
+    set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
     boardController: BoardController;
     state: States = { netPending: true };
     readonly client = GameClient.default;
@@ -87,7 +91,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
     onReviewRoomStateUpdate = (roomState: ReviewRoomState) => {
         let game = this.smartBoard.game;
-        
+
         if (game.history.length > 0 && (roomState.history || []).length === 0) {
             this.smartBoard.returnToMainBranch();
         }

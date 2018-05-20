@@ -196,7 +196,7 @@ class App extends React.Component<AppProps, AppStates> {
                         </div>
                     }
 
-                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: LocalGame.smartBoard!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: (this.isOnlineReview ? OnlineReivew.smartBoard! : LocalGame.smartBoard!).exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
                     {
                       this.isOnlineReview ?
