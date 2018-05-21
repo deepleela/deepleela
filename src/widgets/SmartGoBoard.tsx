@@ -42,6 +42,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private board: Board;
     private readonly client = GameClient.default;
+    private wheeling = false;
 
     game = new Go(19);
     gameMode: GameMode = 'self';
@@ -363,9 +364,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private onWheelChanged(e: React.WheelEvent<HTMLDivElement>) {
         if (this.gameMode !== 'review') return;
         if (this.props.disabled || this.state.disabled) return;
-
         e.preventDefault();
-        this.changeCursor(e.deltaY > 0.5 ? 1 : -1);
+
+        if (this.wheeling) return;
+
+        setTimeout(() => this.wheeling = false, 150);
+        this.wheeling = true;
+        this.changeCursor(e.deltaY > 0.5 ? 1 : (e.deltaY < -0.5 ? -1 : 0));
     }
 
     render() {

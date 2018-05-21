@@ -15,13 +15,14 @@ interface SGFDialogProps {
 
 export interface SGFDialogStates {
     online?: boolean;
-    reviewRoom?: string;
+    roomName?: string;
+    chatBroId?: string;
 }
 
 export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialogStates>{
 
     textarea: HTMLTextAreaElement;
-    state: SGFDialogStates = { online: false, reviewRoom: UserPreferences.reviewRoom };
+    state: SGFDialogStates = { online: false, roomName: UserPreferences.reviewRoom, chatBroId: UserPreferences.chatBroId };
 
     render() {
 
@@ -40,7 +41,8 @@ export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialog
                                     {
                                         this.state.online ?
                                             <div className={`uk-margin uk-animation-slide-top-small`}>
-                                                <input className="uk-input" type="text" maxLength={64} placeholder="My Review Room" value={this.state.reviewRoom} onChange={e => { this.setState({ reviewRoom: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
+                                                <div style={{ fontSize: 12, marginBottom: 2 }}>Get <a href="https://chatbro.com">ChatBro</a>!</div>
+                                                <input className="uk-input" type="text" maxLength={64} placeholder="ChatBro ID: 125xm" value={this.state.chatBroId} onChange={e => { this.setState({ chatBroId: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
                                             </div>
                                             : undefined
                                     }

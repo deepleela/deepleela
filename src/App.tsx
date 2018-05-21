@@ -122,7 +122,7 @@ class App extends React.Component<AppProps, AppStates> {
 
       if (options!.online) {
         this.setState({ loadingDialogOpen: true });
-        let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: options!.reviewRoom, uuid: UserPreferences.uuid, sgf });
+        let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, chatBroId: (options!.chatBroId || '') });
         if (!room) return;
 
         location.pathname = `/review/${room.roomId}`;

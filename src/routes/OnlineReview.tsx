@@ -9,6 +9,7 @@ import SGF from '../common/SGF';
 import { State } from '../components/Intersection';
 import { ReviewRoomState, ReviewRoomInfo } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
+import InputBox from '../widgets/InputBox';
 
 interface RouteParam {
     roomId?: string;
@@ -68,8 +69,6 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
-        require('./chatBro.js');
-
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
 
@@ -116,9 +115,9 @@ export default class OnlineReivew extends React.Component<Props, States> {
         return (
             <div id='online-review' style={{ width: '100%', height: '100%', position: 'relative' }}>
 
-                <div style={{ position: 'absolute', left: 0, top: 0, paddingLeft: 28 }}>
+                <div style={{ position: 'absolute', left: 0, top: 4, paddingLeft: 28 }}>
                     {
-                        this.state.roomInfo && this.state.roomInfo.owner ?
+                        (this.smartBoard && this.smartBoard.game.snapshots.length === 19) && this.state.roomInfo && this.state.roomInfo.owner && !(this.state.roomInfo.isOwner) ?
                             <span style={{ fontSize: 10, color: ThemeManager.default.logoColor }}>By: {this.state.roomInfo.owner}</span>
                             : undefined
                     }
@@ -141,6 +140,12 @@ export default class OnlineReivew extends React.Component<Props, States> {
                             onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
                             onExitBranch={() => this.smartBoard.returnToMainBranch()}
                             style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+                        : undefined
+                }
+
+                {
+                    this.state.isOwner && !UserPreferences.chatBroId ?
+                        <InputBox style={{ position: 'fixed', zIndex: 2 }} />
                         : undefined
                 }
 

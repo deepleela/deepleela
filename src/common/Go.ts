@@ -25,7 +25,7 @@ export default class Go extends EventEmitter {
     historyCursor = -1;
     branchCursor?: number;
 
-    size: number;
+    get size() { return this.board.length };
     komi = 7.5;
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
@@ -51,7 +51,6 @@ export default class Go extends EventEmitter {
     }
 
     private create(size: number) {
-        this.size = size >= 7 ? size : 19;
         let states: State[][] = [];
 
         for (let i = 0; i < size; i++) {

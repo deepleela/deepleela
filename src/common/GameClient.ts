@@ -290,9 +290,9 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    createReviewRoom(opts: { nickname: string, roomName?: string, uuid: string, sgf: string }) {
+    createReviewRoom(opts: { nickname: string, roomName: string, uuid: string, sgf: string, chatBroId?: string }) {
         return new Promise<ReviewRoom | undefined>(resolve => {
-            let cmd: Command = { name: Protocol.sys.createReviewRoom, id: this.msgId++, args: [opts.uuid, opts.sgf, opts.nickname, opts.roomName] };
+            let cmd: Command = { name: Protocol.sys.createReviewRoom, id: this.msgId++, args: [opts.uuid, opts.sgf, opts.nickname, opts.roomName, opts.chatBroId] };
             this.pendingCallbacks.set(cmd.id!, (result: string) => {
                 let room = JSON.parse(result) as ReviewRoom;
                 resolve(room);
@@ -320,5 +320,9 @@ export default class GameClient extends EventEmitter {
 
     updateReviewRoomState(state: ReviewRoomState) {
         this.sendSysMessage({ name: Protocol.sys.reviewRoomStateUpdate, args: state });
+    }
+
+    sendTextMessage(text: string) {
+
     }
 }

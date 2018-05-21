@@ -53,4 +53,7 @@ export default class UserPreferences {
 
     static get reviewRoom() { return localStorage.getItem('reviewroom') || ''; }
     static set reviewRoom(value: string) { localStorage.setItem('reviewroom', value); }
+
+    static get chatBroId() { return localStorage.getItem('chatbroId') || ''; }
+    static set chatBroId(value: string) { localStorage.setItem('chatbroId', value); }
 }
