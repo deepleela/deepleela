@@ -27,7 +27,7 @@ export default class InputBox extends React.Component<InputBoxProps, InputBoxSta
     }
 
     onSendClick() {
-        if (!this.props.onSend) return;
+        if (!this.props.onSend || !this.state.text) return;
         this.props.onSend(this.state.text);
         this.setState({ text: '' });
     }

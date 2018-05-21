@@ -74,11 +74,10 @@ export default class GameClient extends EventEmitter {
                     this.pendingCallbacks.delete(data.id);
                     break;
                 case 'sync':
-                    let payload = msg.data as Command;
-                    let roomState: ReviewRoomState;
                     try {
-                        roomState = JSON.parse(payload.args as string) as ReviewRoomState;
-                        super.emit('reviewRoomState', roomState);
+                        let payload = msg.data as Command;
+                        let msgArgs = payload.name === Protocol.sys.reviewRoomStateUpdate ? JSON.parse(payload.args as string) : payload.args as string;
+                        super.emit(payload.name, msgArgs);
                     } catch{ }
                     break;
             }
@@ -322,7 +321,7 @@ export default class GameClient extends EventEmitter {
         this.sendSysMessage({ name: Protocol.sys.reviewRoomStateUpdate, args: state });
     }
 
-    sendTextMessage(text: string) {
-
+    sendRoomTextMessage(text: string) {
+        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: text });
     }
 }

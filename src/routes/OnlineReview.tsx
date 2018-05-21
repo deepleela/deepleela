@@ -7,9 +7,11 @@ import UserPreferences from '../common/UserPreferences';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
 import { State } from '../components/Intersection';
-import { ReviewRoomState, ReviewRoomInfo } from 'deepleela-common';
+import { ReviewRoomState, ReviewRoomInfo, Protocol } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
 import InputBox from '../widgets/InputBox';
+import MessageBar from '../widgets/MessageBar';
+import ChatbroLoader from './ChatBro';
 
 interface RouteParam {
     roomId?: string;
@@ -23,6 +25,7 @@ interface States {
     isOwner?: boolean;
     netPending?: boolean;
     roomInfo?: ReviewRoomInfo;
+    message?: string;
 }
 
 export default class OnlineReivew extends React.Component<Props, States> {
@@ -32,10 +35,14 @@ export default class OnlineReivew extends React.Component<Props, States> {
     private _smartBoard: SmartGoBoard;
     get smartBoard() { return this._smartBoard; }
     set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
-    boardController: BoardController;
+
     state: States = { netPending: true, };
+
+    boardController: BoardController;
     readonly client = GameClient.default;
     roomId: string;
+    pendingMessages: string[] = [];
+    msgFadeOutTimer: NodeJS.Timer;
 
     componentDidMount() {
         let roomId = this.props.match.params.roomId;
@@ -69,8 +76,13 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
+        if (UserPreferences.chatBroId) ChatbroLoader({ encodedChatId: UserPreferences.chatBroId });
+
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
-        if (!roomInfo.isOwner) this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
+        if (!roomInfo.isOwner) {
+            this.client.on(Protocol.sys.reviewRoomStateUpdate, this.onReviewRoomStateUpdate);
+            this.client.on(Protocol.sys.reviewRoomMessage, this.onRoomMessage);
+        }
 
         let game = SGF.import(roomInfo.sgf);
         game.game.changeCursor(-999);
@@ -106,6 +118,21 @@ export default class OnlineReivew extends React.Component<Props, States> {
         game.branchCursor = roomState.branchCursor === undefined ? -1 : roomState.branchCursor;
         this.smartBoard.changeCursor(0);
         this.smartBoard.showBranch();
+    }
+
+    onRoomMessage = (msg: string) => {
+        this.pendingMessages.push(msg);
+
+        this.setState({ message: undefined });
+
+        setImmediate(() => {
+            clearTimeout(this.msgFadeOutTimer);
+
+            let msg = this.pendingMessages.pop();
+            this.setState({ message: msg });
+
+            this.msgFadeOutTimer = setTimeout(() => this.setState({ message: undefined }), 5000);
+        });
     }
 
     render() {
@@ -145,9 +172,13 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
                 {
                     this.state.isOwner && !UserPreferences.chatBroId ?
-                        <InputBox style={{ position: 'fixed', zIndex: 2 }} />
+                        <InputBox style={{ position: 'fixed', zIndex: 2 }} onSend={msg => this.client.sendRoomTextMessage(msg)} />
                         : undefined
                 }
+
+                <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                    <MessageBar style={{ margin: 'auto' }} text={this.state.message} />
+                </div>
 
             </div>
         );
