@@ -110,6 +110,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
         const gridColor = this.props.style ? (this.props.style.color || 'black') : 'black';
         const highlightSize = this.props.highlightPointSize === 'small' ? 5 : 8;
         const moveNumberPaddingTop = this.props.highlightPointSize === 'small' ? 0 : 2;
+        const moveNumberFontSize = this.props.fontSize && this.props.highlightPointSize === 'large' ? this.props.fontSize + 2 : (this.props.fontSize || 10);
         const winrateMargin = this.props.highlightPointSize === 'small' ? '3%' : '4.3%';
         const winrate = (this.props.winrate || {}) as WinRate;
 
@@ -162,10 +163,12 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     opacity: this.props.state !== State.Empty ? 1 : 0,
                     transition: this.props.disableAnimation ? undefined : 'opacity 0.8s',
                     transitionDelay: this.props.disableAnimation ? undefined : `${(this.props.moveNumber || 0) / 5}s`,
-                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, paddingTop: moveNumberPaddingTop,
+                    position: 'absolute',
+                    top: '6%', left: '6%', right: '6%', bottom: '6%',
+                    paddingTop: moveNumberPaddingTop,
                     display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center',
                     verticalAlign: 'middle', textAlign: 'center',
-                    fontSize: this.props.fontSize ? this.props.fontSize + 2 : 10, pointerEvents: 'none',
+                    fontSize: moveNumberFontSize, pointerEvents: 'none',
                     color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600,
                 }}>
                     {this.props.moveNumber}

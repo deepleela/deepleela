@@ -405,7 +405,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     showCoordinate={window.innerWidth >= 800}
                     highlightCoord={this.game.currentCartesianCoord}
                     heatmap={this.state.heatmap}
-                    fontSize={window.innerWidth < 576 ? 6.25 : 10}
+                    fontSize={window.innerWidth < 576 ? 7 : 10}
                     currentColor={this.game.currentColor}
                 />
 

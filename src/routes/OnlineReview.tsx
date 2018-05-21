@@ -10,7 +10,6 @@ import { State } from '../components/Intersection';
 import { ReviewRoomState, ReviewRoomInfo } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
 
-
 interface RouteParam {
     roomId?: string;
 }
@@ -69,6 +68,8 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
+        require('./chatBro.js');
+
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) this.client.on('reviewRoomState', this.onReviewRoomStateUpdate);
 
@@ -78,6 +79,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
         if (!roomInfo.isOwner) return;
         this.smartBoard.game.on('board', this.onBoardUpdate);
+
     }
 
     onBoardUpdate = (game: Go) => {
@@ -112,7 +114,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
 
         return (
-            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <div id='online-review' style={{ width: '100%', height: '100%', position: 'relative' }}>
 
                 <div style={{ position: 'absolute', left: 0, top: 0, paddingLeft: 28 }}>
                     {
@@ -141,6 +143,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
                             style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
                         : undefined
                 }
+
             </div>
         );
     }

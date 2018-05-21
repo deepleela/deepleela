@@ -57,7 +57,7 @@ class App extends React.Component<AppProps, AppStates> {
 
     const calcPaddingTop = () => {
       let top = (window.innerHeight - 84 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
-      let boardBottomMargin = Math.max(12, window.innerHeight - 84 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
+      let boardBottomMargin = Math.max(12, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
       this.setState({ paddingTop: top, boardBottomMargin });
     };
 
