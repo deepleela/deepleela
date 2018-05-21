@@ -11,7 +11,7 @@ import { ReviewRoomState, ReviewRoomInfo, Protocol } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
 import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
-import ChatbroLoader from './ChatBro';
+import ChatBroLogin from './ChatBro';
 
 interface RouteParam {
     roomId?: string;
@@ -76,7 +76,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
-        if (roomInfo.chatBroId) ChatbroLoader({ encodedChatId: roomInfo.chatBroId });
+        if (roomInfo.chatBroId) ChatBroLogin(roomInfo.chatBroId, 'online-review');
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) {
