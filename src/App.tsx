@@ -119,6 +119,8 @@ class App extends React.Component<AppProps, AppStates> {
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
       UserPreferences.kifu = sgf;
+      UserPreferences.chatBroId = options!.chatBroId || '';
+
 
       if (options!.online) {
         this.setState({ loadingDialogOpen: true });

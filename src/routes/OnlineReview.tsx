@@ -76,7 +76,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
-        if (UserPreferences.chatBroId) ChatbroLoader({ encodedChatId: UserPreferences.chatBroId });
+        if (roomInfo.chatBroId) ChatbroLoader({ encodedChatId: roomInfo.chatBroId });
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) {
@@ -138,6 +138,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
     render() {
         let isLandscape = window.innerWidth > window.innerHeight;
         let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
+        let showMessageBox = this.state.roomInfo && this.state.isOwner && (!UserPreferences.chatBroId && !this.state.roomInfo.chatBroId);
 
         return (
             <div id='online-review' style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -171,7 +172,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
                 }
 
                 {
-                    this.state.isOwner && !UserPreferences.chatBroId ?
+                    showMessageBox ?
                         <InputBox style={{ position: 'fixed', zIndex: 2 }} onSend={msg => this.client.sendRoomTextMessage(msg)} />
                         : undefined
                 }
