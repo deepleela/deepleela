@@ -111,8 +111,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.gameEngine = this.engine;
 
         this.game = new Go(config.boardSize);
-        this.game.clear();
         this.client.initBoard({ handicap: 0, komi: this.game.komi, time: 60 * 24, size: config.boardSize });
+        if (config.handicap > 1) {
+            this.game.setHandicap(config.handicap);
+            await this.reloadCurrentBoard();
+        }
 
         this.setState({ heatmap: undefined, disabled: false });
         this.board.clearVariations();
