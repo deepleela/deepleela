@@ -115,6 +115,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (config.handicap > 1) {
             this.game.setHandicap(config.handicap);
             await this.reloadCurrentBoard();
+            this.game.pass();
         }
 
         this.setState({ heatmap: undefined, disabled: false });

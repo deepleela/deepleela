@@ -317,7 +317,6 @@ export default class Go extends EventEmitter {
         }
 
         this.handicap = layout.slice(0, stones).map(v => SGF.arrayPositionToString(v));
-        if (stones > 1) this.pass();
     }
 
     changeCursor(delta: number) {
