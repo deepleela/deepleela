@@ -46,6 +46,10 @@ export default class BoardController extends React.Component<BoardControllerProp
         jQuery('#board-controller').css('left', fx).css('top', fy);
     }
 
+    componentWillUnmount() {
+        clearTimeout(this.expandTimerId);
+    }
+
     private onAIClick() {
         if (this.props.mode === 'self') {
             if (this.props.onAIAutoPlayClick) this.props.onAIAutoPlayClick(!this.state.autoplay);

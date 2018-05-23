@@ -87,7 +87,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
         let game = SGF.import(roomInfo.sgf);
         game.game.changeCursor(-999);
-        this.smartBoard.importGame(game, 'review', roomInfo.isOwner);
+        this.smartBoard.importGame(game, 'review', roomInfo.isOwner,);
 
         if (!roomInfo.isOwner) return;
         this.smartBoard.game.on('board', this.onBoardUpdate);

@@ -302,7 +302,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.reloadCurrentBoard(false);
     }
 
-    async importGame(game: { game: Go, whitePlayer?: string, blackPlayer?: string }, mode: GameMode = 'self', enableAI = true) {
+    async importGame(game: { game: Go, whitePlayer?: string, blackPlayer?: string }, mode: GameMode = (UserPreferences.gameMode as GameMode || 'self'), enableAI = false) {
         this.game = game.game;
         this.gameMode = mode;
         this.board.clearVariations();

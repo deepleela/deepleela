@@ -42,7 +42,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                     game.changeCursor(9999);
                 }
 
-                await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer }, UserPreferences.gameMode as any, false);
+                await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
             } catch{ }
         }
 

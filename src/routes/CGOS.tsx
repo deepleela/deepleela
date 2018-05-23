@@ -15,6 +15,7 @@ export default class CGOS extends React.Component {
     componentDidMount() {
         this.client.init();
         this.client.on('match', (match: Match) => {
+            if (matches.find(m => m.gameId === match.gameId)) return;
             matches.unshift(match);
         });
 
