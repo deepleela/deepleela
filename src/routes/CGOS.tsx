@@ -2,21 +2,27 @@ import * as React from 'react';
 import CGOSClient, { Match } from '../common/CGOSClient';
 import ThemeManager from '../common/ThemeManager';
 import i18n from '../i18n';
+import App from '../App';
+
+let matches: Match[] = [];
 
 export default class CGOS extends React.Component {
 
-    matches: Match[] = [];
     client: CGOSClient;
     table: HTMLTableElement;
 
     componentDidMount() {
         this.client = CGOSClient.default;
         this.client.on('match', (match: Match) => {
-            this.matches.unshift(match);
+            matches.unshift(match);
             this.forceUpdate();
         });
 
         this.table = document.getElementById('cgos-table') as HTMLTableElement;
+    }
+
+    componentWillUnmount() {
+        this.client.removeAllListeners();
     }
 
     render() {
@@ -39,9 +45,9 @@ export default class CGOS extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.matches.map(m => {
+                                {matches.map(m => {
                                     return (
-                                        <tr className='uk-animation-fade' key={m.gameId} style={{ cursor: 'pointer', color: 'grey' }}>
+                                        <tr className='uk-animation-fade' key={m.gameId} style={{ color: 'grey', cursor: 'pointer', }} onClick={e => App.history.push(`/cgos/${m.gameId}`)}>
                                             <td>{m.blackPlayer}</td>
                                             <td>{m.whitePlayer}</td>
                                             <td>{m.date}</td>

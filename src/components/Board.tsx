@@ -55,7 +55,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
     static stringToCartesianCoord(coord: string) {
         let alphabet = coord[0];
-        let y = Board.alphabets.indexOf(alphabet) + 1;
+        let y = Board.alphabets.indexOf(alphabet.toUpperCase()) + 1;
         let x = Number.parseInt(coord.substr(1));
         return { x, y };
     }

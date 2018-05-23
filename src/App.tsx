@@ -18,6 +18,8 @@ import LocalGame from './routes/LocalGame';
 import { BrowserRouter as Router, Route, Link, Switch, RouteComponentProps } from 'react-router-dom'
 import OnlineReivew from './routes/OnlineReview';
 import CGOS from './routes/CGOS';
+import LiveGame from './routes/LiveGame';
+import { History } from 'history';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -53,7 +55,10 @@ class App extends React.Component<AppProps, AppStates> {
     this.state = { paddingTop: 0, boardBottomMargin: 0, };
   }
 
+  static history: History;
+
   componentDidMount() {
+
     Modal.setAppElement('#main');
 
     const calcPaddingTop = () => {
@@ -176,7 +181,7 @@ class App extends React.Component<AppProps, AppStates> {
     }
 
     return (
-      <Router>
+      <Router ref={e => e ? App.history = e!['history'] : undefined}>
         <div id="main" className="App" style={{ position: 'relative' }} >
 
           {/* Head Aera */}
@@ -250,7 +255,8 @@ class App extends React.Component<AppProps, AppStates> {
           <div id='boardaera' style={{ paddingTop: this.state.paddingTop }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
-              <Route path='/cgos' component={CGOS} />
+              <Route path='/cgos' exact component={CGOS} />
+              <Route path='/cgos/:gameId' component={LiveGame} />
               <Route path='/' component={LocalGame} />
             </Switch>
           </div>
