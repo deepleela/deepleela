@@ -74,6 +74,7 @@ export default class LiveGame extends React.Component<Props, States>{
 
     componentWillUnmount() {
         CGOSClient.default.removeAllListeners();
+        LiveGame.smartBoard = undefined;
     }
 
     render() {

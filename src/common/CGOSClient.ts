@@ -133,7 +133,7 @@ export default class CGOSClient extends EventEmitter {
     }
 
     static isIllegalMove(move: string) {
-        return !move || move.includes('+') || ['pass', 'draw'].includes(move.toLowerCase());
+        return !move || move.includes('+') || ['pass', 'draw', 'resign'].includes(move.toLowerCase());
     }
 }
 

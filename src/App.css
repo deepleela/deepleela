@@ -28,7 +28,6 @@ html {
 }
 
 #logo {
-  pointer-events: none;
   user-select: none;
 }
 

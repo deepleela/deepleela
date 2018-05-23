@@ -1,6 +1,7 @@
 
 export const lang = {
     menu: {
+        cgos: '遛狗场',
 
         newgame_vs_leela: '对战 AI',
         newgame_vs_self: '自由探索',
@@ -71,7 +72,7 @@ export const lang = {
             nickname: '昵称',
         }
     },
-    
+
     cgos: {
         black: '黑棋',
         white: '白棋',

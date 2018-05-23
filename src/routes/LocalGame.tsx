@@ -2,6 +2,7 @@ import * as React from 'react';
 import SmartGoBoard from '../widgets/SmartGoBoard';
 import BoardController from '../widgets/BoardController';
 import UserPreferences from '../common/UserPreferences';
+import SGF from '../common/SGF';
 
 interface LocalProps {
 }
@@ -25,18 +26,39 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
         this.state = {};
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        let sgf = UserPreferences.kifu;
+        let smartBoard = LocalGame.smartBoard;
+
+        if (sgf && smartBoard) {
+            try {
+                let { game } = SGF.import(sgf);
+                if (!game) return;
+
+                if (UserPreferences.gameMode === 'review') {
+                    let deltaCursor = UserPreferences.cursor - game.cursor;
+                    game.changeCursor(deltaCursor);
+                } else {
+                    game.changeCursor(9999);
+                }
+
+                await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer }, UserPreferences.gameMode as any, false);
+            } catch{ }
+        }
+
         window.onunload = () => this.saveKifu();
     }
 
     componentWillUnmount() {
         this.saveKifu();
         window.onunload = null;
+        LocalGame.smartBoard = undefined;
     }
 
     private saveKifu() {
         let sgf = this.smartBoard.exportGame();
         UserPreferences.kifu = sgf;
+        UserPreferences.gameMode = this.smartBoard.gameMode;
         LocalGame.smartBoard = undefined;
     }
 

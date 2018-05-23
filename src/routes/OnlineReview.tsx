@@ -58,6 +58,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
 
     componentWillUnmount() {
         this.smartBoard.game.removeAllListeners();
+        OnlineReivew.smartBoard = undefined;
     }
 
     async enterReviewRoom() {

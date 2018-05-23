@@ -46,7 +46,7 @@ class App extends React.Component<AppProps, AppStates> {
 
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  get isOnlineReview() { return location.pathname.startsWith('/review/'); }
+  get isOnlineMode() { return ['review', 'cgos'].some(p => location.pathname.includes(p)) }
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -76,29 +76,10 @@ class App extends React.Component<AppProps, AppStates> {
     window.onresize = (e) => calcPaddingTop();
     window.onorientationchange = (e) => calcPaddingTop();
 
-    // As default, create a self-playing game
 
     this.setState({ loadingDialogOpen: true });
 
     GameClient.default.once('connected', async () => {
-      let sgf = UserPreferences.kifu;
-      let smartBoard = LocalGame.smartBoard;
-
-      if (sgf && smartBoard) {
-        try {
-          let { game } = SGF.import(sgf);
-          if (!game) return;
-
-          if (UserPreferences.gameMode === 'review') {
-            let deltaCursor = UserPreferences.cursor - game.cursor;
-            game.changeCursor(deltaCursor);
-          } else {
-            game.changeCursor(9999);
-          }
-
-          await smartBoard.importGame({ game, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer }, UserPreferences.gameMode as any);
-        } catch{ }
-      }
 
       this.setState({ loadingDialogOpen: false });
     });
@@ -116,7 +97,7 @@ class App extends React.Component<AppProps, AppStates> {
 
   async onNewSelfGame(config: NewGameDialogStates) {
     this.setState({ loadingDialogOpen: true, });
-    if (!await LocalGame.smartBoard!.newSelfGame(config)) UIkit.notification(i18n.notifications.aiNotAvailable);
+    if (!await LocalGame.smartBoard!.newSelfGame(config)) { UIkit.notification(i18n.notifications.aiNotAvailable); }
     this.setState({ loadingDialogOpen: false, newSelfDialogOpen: false });
   }
 
@@ -188,7 +169,9 @@ class App extends React.Component<AppProps, AppStates> {
           <div style={{ position: 'relative' }}>
             <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
               <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-              <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
+              <Link to='/'>
+                <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
+              </Link>
             </div>
 
             {/* Menu */}
@@ -201,7 +184,16 @@ class App extends React.Component<AppProps, AppStates> {
                   <ul className="uk-nav uk-dropdown-nav">
 
                     {
-                      this.isOnlineReview ?
+                      location.pathname.toLowerCase().includes('cgos') ?
+                        undefined :
+                        <div className='uk-nav uk-dropdown-nav'>
+                          <li><a href='#' onClick={e => App.history.push('/cgos')}>CGOS</a></li>
+                          <li className="uk-nav-divider"></li>
+                        </div>
+                    }
+
+                    {
+                      this.isOnlineMode ?
                         undefined :
                         <div className='uk-nav uk-dropdown-nav'>
                           <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
@@ -210,10 +202,10 @@ class App extends React.Component<AppProps, AppStates> {
                         </div>
                     }
 
-                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: (this.isOnlineReview ? OnlineReivew.smartBoard! : LocalGame.smartBoard!).exportGame() })}>{i18n.menu.exportsgf}</a></li>
+                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: [OnlineReivew.smartBoard, LocalGame.smartBoard, LiveGame.smartBoard].filter(b => b)[0]!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
 
                     {
-                      this.isOnlineReview ?
+                      this.isOnlineMode ?
                         undefined :
                         <div className='uk-nav uk-dropdown-nav'>
                           <li className="uk-nav-divider"></li>
@@ -224,7 +216,7 @@ class App extends React.Component<AppProps, AppStates> {
                     }
 
                     {
-                      this.isOnlineReview ?
+                      this.isOnlineMode ?
                         undefined :
                         <div className='uk-nav uk-dropdown-nav'>
                           <li className="uk-nav-divider"></li>

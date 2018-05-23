@@ -1,7 +1,8 @@
 
 export const lang = {
     menu: {
-
+        cgos: 'CGOS',
+        
         newgame_vs_leela: 'Challenge AI',
         newgame_vs_self: 'Free Practice',
         loadsgf: 'Review SGF',
