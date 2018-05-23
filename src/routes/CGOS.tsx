@@ -3,6 +3,7 @@ import CGOSClient, { Match } from '../common/CGOSClient';
 import ThemeManager from '../common/ThemeManager';
 import i18n from '../i18n';
 import App from '../App';
+import './Style.css';
 
 let matches: Match[] = [];
 
@@ -34,7 +35,13 @@ export default class CGOS extends React.Component {
             <div style={{ width: '100%', height: '100%', minHeight: '87vh', overflow: 'hidden', position: 'relative' }}>
 
                 <div style={{ display: 'flex', justifyContent: 'center', }}>
-                    <div className='uk-overflow-auto' style={{ minWidth: '80%' }}>
+                    {
+                        matches.length > 0 ?
+                            undefined :
+                            <div className='cgos-spinner' style={{ margin: 'auto', position: 'absolute', left: '50%', top: '45%', transform: 'translate(-50%, -50%)' }} />
+                    }
+
+                    <div className='uk-overflow-auto' style={{ minWidth: '80%', display: matches.length > 0 ? 'block' : 'none' }}>
                         <table id='cgos-table' className="uk-table uk-table-hover uk-table-divider uk-table-small " style={{ fontSize: 12, marginLeft: 14 }}>
                             <thead>
                                 <tr>
@@ -61,7 +68,7 @@ export default class CGOS extends React.Component {
                         </table>
                     </div>
                 </div>
-                <div style={{ width: '100%', fontSize: 9, color: ThemeManager.default.logoColor, textAlign: 'right', marginTop: 4, }}>
+                <div style={{ width: '100%', fontSize: 9, color: ThemeManager.default.logoColor, textAlign: 'right', marginTop: 4, display: matches.length > 0 ? 'block' : 'none' }}>
                     <span style={{ display: 'inline-block', marginRight: (window.innerWidth - tableWidth) / 2 }}>Data Source: <a href="http://www.yss-aya.com/cgos/" target='_blank'>yss-aya.com/cgos</a></span>
                 </div>
             </div >

@@ -28,6 +28,7 @@ export default class CGOSClient extends EventEmitter {
 
     private ws: WebSocket;
     private msgHandlers = new Map<string, Function>();
+    private observedGames = new Set<string>();
 
     cgosReady = false;
     get connected() { return this.ws && this.ws.readyState === this.ws.OPEN; }
@@ -136,7 +137,9 @@ export default class CGOSClient extends EventEmitter {
 
     observe(gameId: string) {
         if (!this.cgosReady) return;
+        if (this.observedGames.has(gameId)) return;
         this.ws.send(`observe ${gameId}\r\n`);
+        this.observedGames.add(gameId);
     }
 
     static isIllegalMove(move: string) {

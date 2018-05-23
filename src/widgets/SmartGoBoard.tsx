@@ -177,7 +177,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async onStonePlaced(x: number, y: number) {
-        this.board.clearVariations();
 
         let lastColor = this.game.currentColor;
         let played = false;
@@ -196,6 +195,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (!played) return;
 
+        this.board.clearVariations();
+        this.board.clearBranchStates();
         this.setState({ heatmap: undefined });
 
         if (this.gameMode === 'review') {

@@ -93,7 +93,6 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
     }
 
     private onClick(row: number, col: number) {
-        this.clearBranchStates();
         if (!this.props.onIntersectionClicked) return;
         this.props.onIntersectionClicked(row, col);
     }
