@@ -8,11 +8,11 @@ let matches: Match[] = [];
 
 export default class CGOS extends React.Component {
 
-    client: CGOSClient;
+    client: CGOSClient = CGOSClient.default;
     table: HTMLTableElement;
 
     componentDidMount() {
-        this.client = CGOSClient.default;
+        this.client.init();
         this.client.on('match', (match: Match) => {
             matches.unshift(match);
             this.forceUpdate();

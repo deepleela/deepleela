@@ -34,12 +34,14 @@ export default class LiveGame extends React.Component<Props, States>{
     set smartBoard(value: SmartGoBoard) { this._smartBoard = LiveGame.smartBoard = value; }
 
     state: States = { loading: true };
+    client = CGOSClient.default;
 
     componentDidMount() {
         let gid = this.props.match.params.gameId;
         if (!gid) return;
 
-        CGOSClient.default.once('setup', (setup: Setup) => {
+        this.client.init();
+        this.client.once('setup', (setup: Setup) => {
             let finished = setup.result ? true : false;
             let game = new Go(setup.boardSize || 19);
             game.komi = setup.komi;
@@ -54,11 +56,11 @@ export default class LiveGame extends React.Component<Props, States>{
             this.setState({ loading: false });
         });
 
-        CGOSClient.default.on('update', (update: Update) => {
+        this.client.on('update', (update: Update) => {
             if (CGOSClient.isIllegalMove(update.move)) {
                 return;
             }
-            console.log(update.move);
+            
             let coord = Board.stringToCartesianCoord(update.move);
             this.smartBoard.game.play(coord.x, coord.y);
             this.forceUpdate();

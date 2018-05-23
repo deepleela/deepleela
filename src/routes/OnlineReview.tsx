@@ -36,7 +36,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
     get smartBoard() { return this._smartBoard; }
     set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
 
-    state: States = { netPending: true, };
+    state: States = {};
 
     boardController: BoardController;
     readonly client = GameClient.default;
@@ -65,7 +65,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         if (!this.client.connected) return;
 
         this.setState({ netPending: true });
-
+        
         let roomInfo = await this.client.enterReviewRoom({
             roomId: this.roomId,
             uuid: UserPreferences.uuid,
@@ -77,7 +77,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             return;
         }
 
-        if (roomInfo.chatBroId) ChatBroLogin(roomInfo.chatBroId, 'online-review');
+        if (roomInfo.chatBroId) { ChatBroLogin(roomInfo.chatBroId, 'online-review'); }
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
         if (!roomInfo.isOwner) {

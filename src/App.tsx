@@ -113,19 +113,18 @@ class App extends React.Component<AppProps, AppStates> {
       UserPreferences.kifu = sgf;
       UserPreferences.chatBroId = options!.chatBroId || '';
 
-
       if (options!.online) {
         this.setState({ loadingDialogOpen: true });
         let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, chatBroId: (options!.chatBroId || '') });
         if (!room) return;
 
-        location.pathname = `/review/${room.roomId}`;
+        App.history.push(`/review/${room.roomId}`);
         return;
       }
 
       LocalGame.smartBoard!.importGame({ game, whitePlayer, blackPlayer }, 'review');
     } finally {
-      this.setState({ loadSgfDialogOpen: false });
+      this.setState({ loadSgfDialogOpen: false, loadingDialogOpen: false });
     }
   }
 

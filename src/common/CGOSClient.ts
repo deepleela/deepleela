@@ -30,9 +30,15 @@ export default class CGOSClient extends EventEmitter {
     private msgHandlers = new Map<string, Function>();
 
     cgosReady = false;
+    get connected() { return this.ws && this.ws.readyState === this.ws.OPEN; }
 
     constructor() {
         super();
+    }
+
+    init() {
+        if (this.connected) return;
+        
         this.ws = this.createWs();
         this.msgHandlers.set('match', this.handleMatch);
         this.msgHandlers.set('gameover', this.handleGameover);
