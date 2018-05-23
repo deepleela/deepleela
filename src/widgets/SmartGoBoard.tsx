@@ -24,6 +24,7 @@ interface SmartGoBoardProps {
     disabled?: boolean;
 
     onEnterBranch?: () => void;
+    onExitBranch?: () => void;
 }
 
 interface SmartGoBoardStates {
@@ -377,6 +378,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.changeCursor(e.deltaY > 0.5 ? 1 : (e.deltaY < -0.5 ? -1 : 0));
     }
 
+    private onContextMenu(e: React.MouseEvent<HTMLDivElement>) {
+        this.props.onExitBranch && this.props.onExitBranch();
+        this.returnToMainBranch();
+    }
+
     render() {
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
@@ -390,7 +396,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let playerMargin = aiTipsMarginLeft - 4;
 
         return (
-            <div id={this.props.id} style={{ position: 'relative' }} onWheel={e => this.onWheelChanged(e)}>
+            <div id={this.props.id} style={{ position: 'relative' }} onWheel={e => this.onWheelChanged(e)} onContextMenu={e => this.onContextMenu(e)}>
                 <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
                     {i18n.notifications.aiIsThinking}
                 </div>

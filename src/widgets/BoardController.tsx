@@ -91,6 +91,10 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.setState({ branchMode: true });
     }
 
+    exitBranchMode() {
+        this.setState({ branchMode: false });
+    }
+
     private triggerExitBranchMode() {
         if (this.state.branchMode && this.props.onExitBranch) this.props.onExitBranch();
         this.setState({ branchMode: false });

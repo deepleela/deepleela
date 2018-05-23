@@ -50,6 +50,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                     <SmartGoBoard id="smartboard"
                         ref={e => this.smartBoard = e!}
                         onEnterBranch={() => this.boardController.enterBranchMode()}
+                        onExitBranch={() => this.boardController.exitBranchMode()}
                         showWinrate={UserPreferences.winrate}
                         showHeatmap={UserPreferences.heatmap}
                         aiAutoPlay={this.state.aiAutoplay} />
