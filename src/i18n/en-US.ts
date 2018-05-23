@@ -36,6 +36,7 @@ export const lang = {
             load: 'Review SGF',
             export: 'Export SGF',
             onlineMode: 'Online Mode',
+            getChatBro: 'Get a ',
         },
 
         info: {

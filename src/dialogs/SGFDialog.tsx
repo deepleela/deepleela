@@ -41,7 +41,7 @@ export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialog
                                     {
                                         this.state.online ?
                                             <div className={`uk-margin uk-animation-slide-top-small`}>
-                                                <div style={{ fontSize: 12, marginBottom: 2 }}>Get <a href="https://chatbro.com">ChatBro</a>!</div>
+                                                <div style={{ fontSize: 12, marginBottom: 2 }}>{i18n.dialogs.sgf.getChatBro} <a href="https://chatbro.com">ChatBro</a>!</div>
                                                 <input className="uk-input" type="text" maxLength={64} placeholder="ChatBro ID: 125xm" value={this.state.chatBroId} onChange={e => { this.setState({ chatBroId: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
                                             </div>
                                             : undefined

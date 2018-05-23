@@ -36,6 +36,7 @@ export const lang = {
             load: '复盘 SGF',
             export: '导出 SGF',
             onlineMode: '在线模式',
+            getChatBro: '申请',
         },
 
         info: {
