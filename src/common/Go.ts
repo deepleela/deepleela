@@ -30,6 +30,7 @@ export default class Go extends EventEmitter {
     current = State.Black;
     currentCartesianCoord = { x: -1, y: -1 };
 
+    result?: string;
     handicap?: string[];
 
     set time(value: number) {
@@ -322,8 +323,6 @@ export default class Go extends EventEmitter {
     changeCursor(delta: number) {
         if (this.snapshots.length === 0) return;
 
-        // console.log(this.branchCursor, this.cursor, this.historyCursor);
-
         if ((this.history.length > 0 && (this.branchCursor && this.cursor >= this.branchCursor)) &&
             (this.historyCursor = Math.max(-1, Math.min(this.historyCursor + delta, this.history.length - 1))) > -1) {
             this.cursor = this.branchCursor + 1;
@@ -340,8 +339,6 @@ export default class Go extends EventEmitter {
         let state = this.mainBranch[this.cursor];
         this.currentCartesianCoord = state.cartesianCoord;
         this.current = this.opponentOf(state.stone);
-
-        // console.log(this.cursor);
     }
 
     returnToMainBranch() {
@@ -374,6 +371,7 @@ export default class Go extends EventEmitter {
         let moves = mainBranch ? this.mainBranch : this.mainBranch.slice(0, this.cursor + 1).concat(this.history);
         info.handicap = this.handicap;
         info.size = this.size;
+        info.result = this.result;
         return SGF.genSGF(moves, info);
     }
 }

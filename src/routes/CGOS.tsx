@@ -10,28 +10,28 @@ export default class CGOS extends React.Component {
 
     client: CGOSClient = CGOSClient.default;
     table: HTMLTableElement;
+    refreshTimer: NodeJS.Timer;
 
     componentDidMount() {
         this.client.init();
         this.client.on('match', (match: Match) => {
             matches.unshift(match);
-            this.forceUpdate();
         });
 
         this.table = document.getElementById('cgos-table') as HTMLTableElement;
+
+        this.refreshTimer = setInterval(() => this.forceUpdate(), 3000);
     }
 
     componentWillUnmount() {
-        this.client.removeAllListeners();
+        clearInterval(this.refreshTimer);
     }
 
     render() {
-        let dataSourceMarginLeft = this.table ? this.table.getBoundingClientRect().left + 12 : 25;
+        let tableWidth = this.table ? this.table.getBoundingClientRect().width : 0;
         return (
-            <div style={{ width: '100%', height: '100%', minHeight: '87vh', overflow: 'hidden' }}>
-                <div style={{ marginLeft: dataSourceMarginLeft, width: '100%', fontSize: 9, color: ThemeManager.default.logoColor }}>
-                    Data Source: <a href="http://www.yss-aya.com/cgos/" target='_blank'>yss-aya.com/cgos</a>
-                </div>
+            <div style={{ width: '100%', height: '100%', minHeight: '87vh', overflow: 'hidden', position: 'relative' }}>
+
                 <div style={{ display: 'flex', justifyContent: 'center', }}>
                     <div className='uk-overflow-auto' style={{ minWidth: '80%' }}>
                         <table id='cgos-table' className="uk-table uk-table-hover uk-table-divider uk-table-small " style={{ fontSize: 12, marginLeft: 14 }}>
@@ -60,7 +60,10 @@ export default class CGOS extends React.Component {
                         </table>
                     </div>
                 </div>
-            </div>
+                <div style={{ width: '100%', fontSize: 9, color: ThemeManager.default.logoColor, textAlign: 'right', marginTop: 4, }}>
+                    <span style={{ display: 'inline-block', marginRight: (window.innerWidth - tableWidth) / 2 }}>Data Source: <a href="http://www.yss-aya.com/cgos/" target='_blank'>yss-aya.com/cgos</a></span>
+                </div>
+            </div >
         );
     }
 }

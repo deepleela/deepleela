@@ -59,6 +59,7 @@ export default class SGF {
 
         let game = new Go(size);
         game.komi = Number.parseFloat(tree.props.KM || '7.5');
+        game.result = tree.props.RE;
 
         if (tree.props.AB && tree.props.AB.length > 0) {
             game.handicap = tree.props.AB;

@@ -23,6 +23,7 @@ interface Props extends RouteComponentProps<RouteParam> {
 
 interface States {
     loading: boolean;
+    finished?: boolean;
 }
 
 export default class LiveGame extends React.Component<Props, States>{
@@ -42,9 +43,11 @@ export default class LiveGame extends React.Component<Props, States>{
 
         this.client.init();
         this.client.once('setup', (setup: Setup) => {
-            let finished = setup.result ? true : false;
+            let finished = [setup.date, setup.time].every(i => i !== '-') ? true : false;
+
             let game = new Go(setup.boardSize || 19);
             game.komi = setup.komi;
+            game.result = setup.result;
 
             let moves = setup.moves.map(ap => Board.stringToCartesianCoord(ap));
             moves.forEach(m => game.play(m.x, m.y));
@@ -53,29 +56,33 @@ export default class LiveGame extends React.Component<Props, States>{
 
             this.smartBoard.importGame({ game, whitePlayer: setup.whitePlayer, blackPlayer: setup.blackPlayer });
 
-            this.setState({ loading: false });
+            this.setState({ loading: false, finished });
         });
 
-        this.client.on('update', (update: Update) => {
-            if (CGOSClient.isIllegalMove(update.move)) {
-                return;
-            }
-            
-            let coord = Board.stringToCartesianCoord(update.move);
-            this.smartBoard.game.play(coord.x, coord.y);
-            this.forceUpdate();
-        });
+        this.client.on('update', this.handleUpdate);
 
         let cgosChecker = setInterval(() => {
             if (!CGOSClient.default.cgosReady) return;
 
             clearInterval(cgosChecker);
             CGOSClient.default.observe(gid!);
-        }, 2000);
+        }, 1000);
+    }
+
+    handleUpdate = (update: Update) => {
+        if (CGOSClient.isIllegalMove(update.move)) {
+            this.setState({ finished: true });
+            this.smartBoard.game.result = update.move;
+            return;
+        }
+
+        let coord = Board.stringToCartesianCoord(update.move);
+        this.smartBoard.game.play(coord.x, coord.y);
+        this.forceUpdate();
     }
 
     componentWillUnmount() {
-        CGOSClient.default.removeAllListeners();
+        CGOSClient.default.removeListener('update', this.handleUpdate);
         LiveGame.smartBoard = undefined;
     }
 
@@ -91,6 +98,16 @@ export default class LiveGame extends React.Component<Props, States>{
                         id='smartboard' ref={e => this.smartBoard = e!}
                         disabled={true} />
                 </div>
+
+                {
+                    this.state.finished ?
+                        <BoardController
+                            mode='review'
+                            onCursorChange={d => this.smartBoard.changeCursor(d)}
+                            onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
+                            style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+                        : undefined
+                }
 
                 <LoadingDialog isOpen={this.state.loading} />
             </div>

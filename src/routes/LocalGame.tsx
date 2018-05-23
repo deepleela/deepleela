@@ -14,7 +14,7 @@ interface LocalStates {
 export default class LocalGame extends React.Component<LocalProps, LocalStates> {
 
     static smartBoard?: SmartGoBoard;
-    static forceUpdate = () => LocalGame.smartBoard && LocalGame.forceUpdate();
+    static forceUpdate = () => LocalGame.smartBoard && LocalGame.smartBoard.forceUpdate();
 
     private _smartboard: SmartGoBoard;
     get smartBoard() { return this._smartboard; }

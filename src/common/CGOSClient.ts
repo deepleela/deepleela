@@ -38,7 +38,7 @@ export default class CGOSClient extends EventEmitter {
 
     init() {
         if (this.connected) return;
-        
+
         this.ws = this.createWs();
         this.msgHandlers.set('match', this.handleMatch);
         this.msgHandlers.set('gameover', this.handleGameover);
@@ -117,12 +117,13 @@ export default class CGOSClient extends EventEmitter {
             if (!move) break;
 
             if (CGOSClient.isIllegalMove(move)) {
-                result = move;
                 break;
             }
 
             moves.push(move);
         }
+
+        setup.result = data[data.length - 1] && CGOSClient.isIllegalMove(data[data.length - 1]) ? result = data[data.length - 1] : result;
 
         super.emit('setup', setup);
     }
