@@ -72,6 +72,14 @@ export const lang = {
         }
     },
 
+    cgos: {
+        black: 'Black',
+        white: 'White',
+        date: 'Date',
+        time: 'Time',
+        result: 'Result',
+    },
+
     notifications: {
         serversBusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
         aiNotAvailable: `You won't get AI's suggestions at this moment.`,

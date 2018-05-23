@@ -17,6 +17,7 @@ import UserPreferences from './common/UserPreferences';
 import LocalGame from './routes/LocalGame';
 import { BrowserRouter as Router, Route, Link, Switch, RouteComponentProps } from 'react-router-dom'
 import OnlineReivew from './routes/OnlineReview';
+import CGOS from './routes/CGOS';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -56,7 +57,12 @@ class App extends React.Component<AppProps, AppStates> {
     Modal.setAppElement('#main');
 
     const calcPaddingTop = () => {
-      let top = (window.innerHeight - 84 - document.getElementById('smartboard')!.getBoundingClientRect().height) / 2;
+      let smartboard = document.getElementById('smartboard');
+      if (!smartboard) {
+        return;
+      }
+
+      let top = (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2;
       let boardBottomMargin = Math.max(12, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
       this.setState({ paddingTop: top, boardBottomMargin });
     };
@@ -244,6 +250,7 @@ class App extends React.Component<AppProps, AppStates> {
           <div id='boardaera' style={{ paddingTop: this.state.paddingTop }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
+              <Route path='/cgos' component={CGOS} />
               <Route path='/' component={LocalGame} />
             </Switch>
           </div>

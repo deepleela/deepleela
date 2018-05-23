@@ -71,6 +71,14 @@ export const lang = {
             nickname: '昵称',
         }
     },
+    
+    cgos: {
+        black: '黑棋',
+        white: '白棋',
+        date: '日期',
+        time: '时间',
+        result: '比赛结果',
+    },
 
     notifications: {
         serversBusy: (number) => `服务器繁忙，请稍后再试. 等待服务用户: ${number}`,
