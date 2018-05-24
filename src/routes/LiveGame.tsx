@@ -38,10 +38,11 @@ export default class LiveGame extends React.Component<Props, States>{
 
     state: States = { loading: true };
     client = CGOSClient.default;
+    gid: string;
 
     componentDidMount() {
-        let gid = this.props.match.params.gameId;
-        if (!gid) return;
+        this.gid = this.props.match.params.gameId || '';
+        if (!this.gid) return;
 
         this.client.init();
         this.client.once('setup', (setup: Setup) => {
@@ -63,23 +64,25 @@ export default class LiveGame extends React.Component<Props, States>{
 
         this.client.on('update', this.handleUpdate);
 
+        this.client.on('gameover', this.handleGameover);
+
         let cgosChecker = setInterval(() => {
-            if (!CGOSClient.default.cgosReady) return;
+            if (!CGOSClient.default.cgosReady || !this.gid) return;
 
             clearInterval(cgosChecker);
-            CGOSClient.default.observe(gid!);
+            CGOSClient.default.observe(this.gid);
         }, 1000);
     }
 
     handleUpdate = (update: Update) => {
-        if (CGOSClient.isIllegalMove(update.move)) {
-            this.setState({ finished: true, showResult: update.move && update.move.length > 0 ? true : false });
-            this.smartBoard.game.result = update.move;
-            return;
-        }
+        if (update.gameId !== this.gid) return;
 
         if (update.move.toLowerCase() === 'pass') {
             this.smartBoard.game.pass();
+            return;
+        }
+
+        if (CGOSClient.isIllegalMove(update.move)) {
             return;
         }
 
@@ -88,8 +91,16 @@ export default class LiveGame extends React.Component<Props, States>{
         this.forceUpdate();
     }
 
+    handleGameover = (over: { gameId: string, result: string }) => {
+        if (over.gameId !== this.gid) return;
+        this.smartBoard.game.result = over.result;
+        console.log(over.result);
+        this.setState({ finished: true, showResult: true });
+    }
+
     componentWillUnmount() {
         CGOSClient.default.removeListener('update', this.handleUpdate);
+        CGOSClient.default.removeListener('gameover', this.handleGameover);
         LiveGame.smartBoard = undefined;
     }
 
@@ -117,7 +128,7 @@ export default class LiveGame extends React.Component<Props, States>{
                 }
 
                 <div className={this.state.showResult ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
-                    <MessageBar style={{ margin: 'auto' }} text={this.smartBoard && this.smartBoard.game.result} />
+                    <MessageBar style={{ margin: 'auto' }} text={this.smartBoard ? this.smartBoard.game.result : ''} />
                 </div>
 
                 <LoadingDialog isOpen={this.state.loading} />

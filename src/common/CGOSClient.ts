@@ -118,7 +118,7 @@ export default class CGOSClient extends EventEmitter {
             if (!move) break;
 
             if (CGOSClient.isIllegalMove(move)) {
-                break;
+                continue;
             }
 
             moves.push(move);
@@ -143,7 +143,7 @@ export default class CGOSClient extends EventEmitter {
     }
 
     static isIllegalMove(move: string) {
-        return !move || move.includes('+') || ['draw', 'resign'].includes(move.toLowerCase());
+        return !move || move.includes('+') || ['draw', 'resign', 'pass'].includes(move.toLowerCase());
     }
 }
 
