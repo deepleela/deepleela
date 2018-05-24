@@ -13,6 +13,7 @@ import CGOSClient, { Setup, Update } from '../common/CGOSClient';
 import Board from '../components/Board';
 import LoadingDialog from '../dialogs/LoadingDialog';
 import MessageBar from '../widgets/MessageBar';
+import * as jQuery from 'jquery';
 
 interface RouteParam {
     gameId?: string
@@ -41,6 +42,8 @@ export default class LiveGame extends React.Component<Props, States>{
     gid: string;
 
     componentDidMount() {
+        jQuery(window).trigger('resize');
+
         this.gid = this.props.match.params.gameId || '';
         if (!this.gid) return;
 
@@ -94,7 +97,7 @@ export default class LiveGame extends React.Component<Props, States>{
     handleGameover = (over: { gameId: string, result: string }) => {
         if (over.gameId !== this.gid) return;
         this.smartBoard.game.result = over.result;
-        console.log(over.result);
+
         this.setState({ finished: true, showResult: true });
     }
 
