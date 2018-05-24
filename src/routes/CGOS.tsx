@@ -16,8 +16,20 @@ export default class CGOS extends React.Component {
     componentDidMount() {
         this.client.init();
         this.client.on('match', (match: Match) => {
-            if (matches.find(m => m.gameId === match.gameId)) return;
+            if (matches.find(m => m.gameId === match.gameId)) {
+                matches.splice(matches.findIndex(m => m.gameId === match.gameId), 1);
+            }
             matches.unshift(match);
+        });
+
+        this.client.on('gameover', (gameover: { gameId: string, result: string }) => {
+            let match = matches.find(m => m.gameId === gameover.gameId);
+            if (!match) return;
+
+            let now = new Date();
+            match.date = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDay().toString().padStart(2, '0')}`;
+            match.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            match.result = gameover.result;
         });
 
         this.table = document.getElementById('cgos-table') as HTMLTableElement;
