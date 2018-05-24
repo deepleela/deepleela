@@ -12,6 +12,7 @@ import ThemeManager from '../common/ThemeManager';
 import CGOSClient, { Setup, Update } from '../common/CGOSClient';
 import Board from '../components/Board';
 import LoadingDialog from '../dialogs/LoadingDialog';
+import MessageBar from '../widgets/MessageBar';
 
 interface RouteParam {
     gameId?: string
@@ -24,6 +25,7 @@ interface Props extends RouteComponentProps<RouteParam> {
 interface States {
     loading: boolean;
     finished?: boolean;
+    showResult?: boolean;
 }
 
 export default class LiveGame extends React.Component<Props, States>{
@@ -71,8 +73,13 @@ export default class LiveGame extends React.Component<Props, States>{
 
     handleUpdate = (update: Update) => {
         if (CGOSClient.isIllegalMove(update.move)) {
-            this.setState({ finished: true });
+            this.setState({ finished: true, showResult: update.move && update.move.length > 0 ? true : false });
             this.smartBoard.game.result = update.move;
+            return;
+        }
+
+        if (update.move.toLowerCase() === 'pass') {
+            this.smartBoard.game.pass();
             return;
         }
 
@@ -108,6 +115,10 @@ export default class LiveGame extends React.Component<Props, States>{
                             style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
                         : undefined
                 }
+
+                <div className={this.state.showResult ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                    <MessageBar style={{ margin: 'auto' }} text={this.smartBoard && this.smartBoard.game.result} />
+                </div>
 
                 <LoadingDialog isOpen={this.state.loading} />
             </div>
