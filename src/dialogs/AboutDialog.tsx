@@ -23,6 +23,7 @@ export default class AboutDialog extends React.Component<AboutDialogProps, any> 
                         <p>{i18n.dialogs.about.text.p1} </p>
                         <p>{i18n.dialogs.about.text.p2} </p>
                         <p>{i18n.dialogs.about.text.p3} </p>
+                        <p><a href="mailto:leelazero@protonmail.com">{i18n.dialogs.about.text.p4}</a></p>
                     </div>
 
                     <div className="uk-margin">

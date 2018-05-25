@@ -51,6 +51,7 @@ export const lang = {
                 p1: 'DeepLeela 是一个开源的围棋学习辅助工具，其基于开源的围棋软件 Leela —— 开源版的AlphaGo。',
                 p2: '通过使用 DeepLeela，您可以在线与 Leela/LeelaZero 对局、将 SGF 导入进行自我复盘，让 Leela 进行胜率分析。 从此您可以在任何时间、任何地点学习围棋。',
                 p3: '如果您喜欢该项目，欢迎对该项目进行赞助。',
+                p4: 'leelazero@protonmail.com',
             },
         },
 

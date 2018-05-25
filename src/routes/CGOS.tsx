@@ -53,7 +53,7 @@ export default class CGOS extends React.Component {
                     {
                         matches.length > 0 ?
                             undefined :
-                            <div className='cgos-spinner' style={{ margin: 'auto', position: 'absolute', left: '45%', top: '40%', transform: 'translate(-50%, -50%)' }} />
+                            <div className='cgos-spinner' style={{ margin: 'auto', position: 'absolute', left: App.isMobile ? '45%' : '48%', top: '40%', transform: 'translate(-50%, -50%)' }} />
                     }
 
                     <div className='uk-overflow-auto' style={{ minWidth: '80%', display: matches.length > 0 ? 'block' : 'none' }}>

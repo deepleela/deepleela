@@ -51,6 +51,7 @@ export const lang = {
                 p1: 'DeepLeela is an open-source Go Learning Helper with Leela, which is an open-source go engine according to the AlphaGo paper.',
                 p2: 'With DeepLeela, you can fight against Leela/LeelaZero, review your SGF, and get winrate information on your PC or your phone anywhere, anytime.',
                 p3: 'If you like this project, you are welcome to sponsor us.',
+                p4: 'leelazero@protonmail.com',
             },
         },
 
