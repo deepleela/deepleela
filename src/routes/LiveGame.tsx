@@ -40,6 +40,7 @@ export default class LiveGame extends React.Component<Props, States>{
     state: States = { loading: true };
     client = CGOSClient.default;
     gid: string;
+    cgosTimer?: NodeJS.Timer;
 
     componentDidMount() {
         jQuery(window).trigger('resize');
@@ -69,10 +70,19 @@ export default class LiveGame extends React.Component<Props, States>{
 
         this.client.on('gameover', this.handleGameover);
 
-        let cgosChecker = setInterval(() => {
+        this.client.on('connected', () => this.observeGame());
+
+        this.observeGame();
+    }
+
+    observeGame() {
+        if (this.cgosTimer) return;
+        
+        this.cgosTimer = setInterval(() => {
             if (!CGOSClient.default.cgosReady || !this.gid) return;
 
-            clearInterval(cgosChecker);
+            clearInterval(this.cgosTimer!);
+            this.cgosTimer = undefined;
             CGOSClient.default.observe(this.gid);
         }, 1000);
     }

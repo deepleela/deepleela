@@ -49,6 +49,7 @@ export default class CGOSClient extends EventEmitter {
 
     private createWs() {
         let ws = new WebSocket(CGOSClient.url);
+        ws.onopen = () => super.emit('connected');
         ws.onclose = this.handleClose;
         ws.onerror = this.handleError;
         ws.onmessage = this.handleMessage;
@@ -77,6 +78,8 @@ export default class CGOSClient extends EventEmitter {
         this.ws.onclose = null;
         this.ws.onerror = null;
         this.ws.onmessage = null;
+        this.cgosReady = false;
+        this.observedGames.clear();
 
         setTimeout(() => this.ws = this.createWs(), 3000);
     }
