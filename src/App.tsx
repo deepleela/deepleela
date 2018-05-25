@@ -47,6 +47,7 @@ class App extends React.Component<AppProps, AppStates> {
   static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   get isOnlineMode() { return ['review', 'cgos'].some(p => location.pathname.includes(p)) }
+  get isCGOS() { return location.pathname === '/cgos'; }
 
   constructor(props: any, ctx) {
     super(props, ctx);
@@ -61,28 +62,22 @@ class App extends React.Component<AppProps, AppStates> {
 
     Modal.setAppElement('#main');
 
-    const calcPaddingTop = () => {
+    const calcPadding = () => {
       let smartboard = document.getElementById('smartboard');
       if (!smartboard) {
+        this.forceUpdate();
         return;
       }
 
-      let top = (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2;
-      let boardBottomMargin = Math.max(12, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24);
+      let top = Math.max(40, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
+      let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 40 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
       this.setState({ paddingTop: top, boardBottomMargin });
     };
 
-    calcPaddingTop();
-    window.onresize = (e) => calcPaddingTop();
-    window.onorientationchange = (e) => calcPaddingTop();
+    window.onresize = (e) => calcPadding();
+    window.onorientationchange = (e) => calcPadding();
 
-
-    this.setState({ loadingDialogOpen: true });
-
-    GameClient.default.once('connected', async () => {
-
-      this.setState({ loadingDialogOpen: false });
-    });
+    setImmediate(() => jQuery(window).trigger('resize'));
   }
 
   async onNewAIGame(config: NewGameDialogStates) {
@@ -168,7 +163,7 @@ class App extends React.Component<AppProps, AppStates> {
           <div style={{ position: 'relative' }}>
             <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
               <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-              <Link to='/'>
+              <Link to='/' onClick={e => this.forceUpdate()}>
                 <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
               </Link>
             </div>
@@ -182,14 +177,10 @@ class App extends React.Component<AppProps, AppStates> {
                 <div className="uk-nav uk-dropdown-nav" >
                   <ul className="uk-nav uk-dropdown-nav">
 
-                    {
-                      location.pathname.toLowerCase().includes('cgos') ?
-                        undefined :
-                        <div className='uk-nav uk-dropdown-nav'>
-                          <li><a href='#' onClick={e => App.history.push('/cgos')}>CGOS</a></li>
-                          <li className="uk-nav-divider"></li>
-                        </div>
-                    }
+                    <div className='uk-nav uk-dropdown-nav'>
+                      <li><a href='#' onClick={e => App.history.push('/cgos')}>CGOS</a></li>
+                      <li className="uk-nav-divider"></li>
+                    </div>
 
                     {
                       this.isOnlineMode ?
@@ -243,7 +234,7 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div id='boardaera' style={{ paddingTop: this.state.paddingTop }}>
+          <div id='boardaera' style={{ paddingTop: this.isCGOS ? 0 : (this.state.paddingTop || 90) }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/cgos' exact component={CGOS} />
@@ -253,7 +244,7 @@ class App extends React.Component<AppProps, AppStates> {
           </div>
 
           {/* Footer Aera */}
-          <div style={{ bottom: 0, width: '100%', marginTop: this.state.boardBottomMargin }}>
+          <div style={{ bottom: 0, width: '100%', marginTop: this.isCGOS ? 0 : (this.state.boardBottomMargin || 90) }}>
             <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0', fontFamily: 'Questrial' }}>
               &copy; 2018 DeepLeela
             </div>

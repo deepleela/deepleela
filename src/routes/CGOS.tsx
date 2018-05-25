@@ -1,6 +1,7 @@
 import * as React from 'react';
 import CGOSClient, { Match } from '../common/CGOSClient';
 import ThemeManager from '../common/ThemeManager';
+import * as jQuery from 'jquery';
 import i18n from '../i18n';
 import App from '../App';
 import './Style.css';
@@ -14,6 +15,8 @@ export default class CGOS extends React.Component {
     refreshTimer: NodeJS.Timer;
 
     componentDidMount() {
+        setImmediate(() => jQuery(window).trigger('resize'));
+
         this.client.init();
         this.client.on('match', (match: Match) => {
             if (matches.find(m => m.gameId === match.gameId)) {
@@ -44,7 +47,7 @@ export default class CGOS extends React.Component {
     render() {
         let tableWidth = this.table ? this.table.getBoundingClientRect().width : 0;
         return (
-            <div style={{ width: '100%', height: '100%', minHeight: '87vh', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ width: '100%', height: '100%', minHeight: '87vh', overflow: 'hidden', position: 'relative', }}>
 
                 <div style={{ display: 'flex', justifyContent: 'center', }}>
                     {
