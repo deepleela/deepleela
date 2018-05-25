@@ -65,7 +65,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         if (!this.client.connected) return;
 
         this.setState({ netPending: true });
-        
+
         let roomInfo = await this.client.enterReviewRoom({
             roomId: this.roomId,
             uuid: UserPreferences.uuid,
@@ -85,9 +85,24 @@ export default class OnlineReivew extends React.Component<Props, States> {
             this.client.on(Protocol.sys.reviewRoomMessage, this.onRoomMessage);
         }
 
+
         let game = SGF.import(roomInfo.sgf);
-        game.game.changeCursor(-999);
-        this.smartBoard.importGame(game, 'review', roomInfo.isOwner,);
+
+        // Restore last state
+        if (this.smartBoard && this.smartBoard.game.history.length > 0) {
+            let lastGame = this.smartBoard.game;
+            game.game.history = lastGame.history;
+            game.game.historyCursor = lastGame.historyCursor;
+            game.game.historySnapshots = lastGame.historySnapshots;
+            game.game.cursor = lastGame.cursor;
+            game.game.branchCursor = lastGame.branchCursor;
+        } else {
+            game.game.changeCursor(-999);
+        }
+
+        this.smartBoard.importGame(game, 'review', roomInfo.isOwner, );
+        this.smartBoard.changeCursor(0);
+        this.smartBoard.showBranch();
 
         if (!roomInfo.isOwner) return;
         this.smartBoard.game.on('board', this.onBoardUpdate);
