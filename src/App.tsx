@@ -69,8 +69,8 @@ class App extends React.Component<AppProps, AppStates> {
         return;
       }
 
-      let top = Math.max(40, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
-      let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 40 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
+      let top = Math.max(0, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
+      let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
       this.setState({ paddingTop: top, boardBottomMargin });
     };
 
@@ -244,7 +244,7 @@ class App extends React.Component<AppProps, AppStates> {
           </div>
 
           {/* Footer Aera */}
-          <div style={{ bottom: 0, width: '100%', marginTop: this.isCGOS ? 0 : (this.state.boardBottomMargin || 90) }}>
+          <div style={{ bottom: 0, width: '100%', marginTop: this.isCGOS ? 0 : Math.max((this.state.boardBottomMargin || (App.isMobile ? 48 : 0))) }}>
             <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0', fontFamily: 'Questrial' }}>
               &copy; 2018 DeepLeela
             </div>

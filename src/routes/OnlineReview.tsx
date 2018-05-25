@@ -192,9 +192,12 @@ export default class OnlineReivew extends React.Component<Props, States> {
                         : undefined
                 }
 
-                <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
-                    <MessageBar style={{ margin: 'auto' }} text={this.state.message} />
-                </div>
+                {this.state.message ?
+                    <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                        <MessageBar style={{ margin: 'auto' }} text={this.state.message} />
+                    </div>
+                    : undefined
+                }
 
             </div>
         );

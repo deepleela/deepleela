@@ -52,6 +52,7 @@ export enum State {
 
 // http://www.surfingsuccess.com/javascript/javascript-browser-detection.html#.WurdwdOFO34
 const isSafari = navigator.userAgent.lastIndexOf('Safari/') > 0 && navigator.userAgent.lastIndexOf('Chrome/') < 0;
+const iPhone = navigator.userAgent.includes('iPhone');
 
 export default class Intersection extends React.Component<IntersectionProps, IntersectionStates> {
 
@@ -170,7 +171,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     fontSize: moveNumberFontSize, pointerEvents: 'none',
                     color: this.props.state === State.Black ? 'white' : 'black', zIndex: 3, fontWeight: 600,
                 }}>
-                    <span style={{ display: 'flex', alignContent: 'end', paddingTop: isSafari ? 0 : 2 }}>{this.props.moveNumber}</span>
+                    <span style={{ display: 'flex', alignContent: 'end', paddingTop: iPhone ? 0 : (isSafari ? 1 : 2) }}>{this.props.moveNumber}</span>
                 </div>
 
                 {
