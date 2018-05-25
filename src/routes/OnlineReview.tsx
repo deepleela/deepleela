@@ -85,7 +85,6 @@ export default class OnlineReivew extends React.Component<Props, States> {
             this.client.on(Protocol.sys.reviewRoomMessage, this.onRoomMessage);
         }
 
-
         let game = SGF.import(roomInfo.sgf);
 
         // Restore last state

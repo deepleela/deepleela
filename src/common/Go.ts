@@ -8,7 +8,8 @@ import Board from "../components/Board";
 import { S_IXGRP } from "constants";
 
 export type Coordinate = { x: number, y: number };
-type Moves = { stone: State, arrayCoord: Coordinate, cartesianCoord: Coordinate }[];
+export type Move = { stone: State, arrayCoord: Coordinate, cartesianCoord: Coordinate, comment?: string };
+type Moves = Move[];
 
 export default class Go extends EventEmitter {
 

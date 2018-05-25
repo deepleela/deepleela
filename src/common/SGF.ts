@@ -101,7 +101,7 @@ export default class SGF {
 
     static genSGF(moves: { stone: State, arrayCoord: Coordinate }[], info: { whitePlayer: string, blackPlayer: string, result?: string, size?: number, handicap?: string[] }) {
 
-        let data: any[] = [{ FF: 4, AP: 'DeepLeela', RE: info.result, PW: info.whitePlayer, PB: info.blackPlayer, DT: (new Date()).toLocaleDateString(), CA: 'UTF-8', SZ: info.size, AB: info.handicap }];
+        let data: any[] = [{ FF: 4, AP: ['DeepLeela', '1.0'], RE: info.result, PW: info.whitePlayer, PB: info.blackPlayer, DT: (new Date()).toLocaleDateString(), CA: 'UTF-8', SZ: info.size, AB: info.handicap }];
         data = data.concat(moves.map((item, i) => {
             let coor = `${SGF.alphabets[item.arrayCoord.y]}${SGF.alphabets[item.arrayCoord.x]}`;
             return item.stone === State.Black ? { B: coor } : { W: coor };
