@@ -197,7 +197,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
                         : undefined
                 }
 
-                <IM style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }}
+                <IM style={{ position: 'fixed', zIndex: 3, transition: 'all 1s' }}
                     people={this.state.people} />
 
                 {this.state.message ?

@@ -106,7 +106,7 @@ export default class BoardController extends React.Component<BoardControllerProp
 
     render() {
         return (
-            <div id='board-controller' style={this.props.style} className='shadow-controller' onMouseLeave={e => this.shrinkSelf()} onMouseEnter={e => clearTimeout(this.expandTimerId)}>
+            <div id='board-controller' style={this.props.style} className='shadow-controller blur' onMouseLeave={e => this.shrinkSelf()} onMouseEnter={e => clearTimeout(this.expandTimerId)}>
                 <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', }}>
                     <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.expandSelf()} style={{ background: 'transparent', height: 52, }}>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>

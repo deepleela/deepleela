@@ -5,6 +5,7 @@
   "dependencies": {
     "@sabaki/gtp": "^1.1.0",
     "animejs": "^2.2.0",
+    "clipboard": "^2.0.1",
     "deepleela-common": "github:deepleela/deepleela-common",
     "greenlet": "^1.0.1",
     "history": "^4.7.2",
