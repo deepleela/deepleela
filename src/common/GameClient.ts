@@ -1,5 +1,5 @@
 import { Command, Response } from "@sabaki/gtp";
-import { Protocol, ProtocolDef, ReviewRoom, ReviewRoomInfo, ReviewRoomState } from 'deepleela-common';
+import { Protocol, ProtocolDef, } from 'deepleela-common';
 import { EventEmitter } from "events";
 import CommandBuilder from "./CommandBuilder";
 import { StoneColor } from './Constants';
@@ -289,39 +289,4 @@ export default class GameClient extends EventEmitter {
         });
     }
 
-    createReviewRoom(opts: { nickname: string, roomName: string, uuid: string, sgf: string, chatBroId?: string }) {
-        return new Promise<ReviewRoom | undefined>(resolve => {
-            let cmd: Command = { name: Protocol.sys.createReviewRoom, id: this.msgId++, args: [opts.uuid, opts.sgf, opts.nickname, opts.roomName, opts.chatBroId] };
-            this.pendingCallbacks.set(cmd.id!, (result: string) => {
-                let room = JSON.parse(result) as ReviewRoom;
-                resolve(room);
-            });
-
-            if (!this.sendSysMessage(cmd)) {
-                resolve(undefined);
-            }
-        });
-    }
-
-    enterReviewRoom(opts: { roomId: string, uuid: string, nickname: string }) {
-        return new Promise<ReviewRoomInfo | undefined>(resolve => {
-            let cmd: Command = { name: Protocol.sys.enterReviewRoom, id: this.msgId++, args: [opts.roomId, opts.uuid, opts.nickname] };
-            this.pendingCallbacks.set(cmd.id!, (result: string) => {
-                let roomInfo = JSON.parse(result) as ReviewRoomInfo;
-                resolve(roomInfo);
-            });
-
-            if (!this.sendSysMessage(cmd)) {
-                resolve(undefined);
-            }
-        });
-    }
-
-    updateReviewRoomState(state: ReviewRoomState) {
-        this.sendSysMessage({ name: Protocol.sys.reviewRoomStateUpdate, args: state });
-    }
-
-    sendRoomTextMessage(text: string) {
-        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: text });
-    }
 }

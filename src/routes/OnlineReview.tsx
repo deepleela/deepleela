@@ -12,6 +12,7 @@ import ThemeManager from '../common/ThemeManager';
 import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
 import ChatBroLogin from './ChatBro';
+import ReviewClient from '../common/ReviewClient';
 
 interface RouteParam {
     roomId?: string;
@@ -39,7 +40,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
     state: States = {};
 
     boardController: BoardController;
-    readonly client = GameClient.default;
+    readonly client = ReviewClient.default;
     roomId: string;
     pendingMessages: string[] = [];
     msgFadeOutTimer: NodeJS.Timer;
@@ -120,8 +121,9 @@ export default class OnlineReivew extends React.Component<Props, States> {
     }
 
     onReviewRoomStateUpdate = (roomState: ReviewRoomState) => {
-        let game = this.smartBoard.game;
+        if (this.state.isOwner) return;
 
+        let game = this.smartBoard.game;
         if (game.history.length > 0 && (roomState.history || []).length === 0) {
             this.smartBoard.returnToMainBranch();
         }

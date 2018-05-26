@@ -20,6 +20,7 @@ import OnlineReivew from './routes/OnlineReview';
 import CGOS from './routes/CGOS';
 import LiveGame from './routes/LiveGame';
 import { History } from 'history';
+import ReviewClient from './common/ReviewClient';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -110,7 +111,7 @@ class App extends React.Component<AppProps, AppStates> {
 
       if (options!.online) {
         this.setState({ loadingDialogOpen: true });
-        let room = await GameClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, chatBroId: (options!.chatBroId || '') });
+        let room = await ReviewClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, chatBroId: (options!.chatBroId || '') });
         if (!room) return;
 
         App.history.push(`/review/${room.roomId}`);

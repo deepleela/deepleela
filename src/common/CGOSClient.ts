@@ -149,18 +149,3 @@ export default class CGOSClient extends EventEmitter {
         return !move || move.includes('+') || ['draw', 'resign', 'pass'].includes(move.toLowerCase());
     }
 }
-
-// const setup = `setup 480935 2018-05-23 05:20 9 7.0 LZ20-128_300po(2903) Aya799_p1v1_10k(2794) 300000 D5 300000 F5 297687 E7 295785 E3 294922 D3 295785 D2 292871 E4 295785 C3 290935 D4 295785 E6 288799 D6 290413 F7 286763 E2 286088 D7 284324 E8 280738 C7 282153 F8 277509 G7 279703 G8 274843 H8 277324 D8 271335 C8 275344 B6 269028 F3 273052 C2 262141 B7 270720 C6 255109 D9 268260 F4 249596 G4 265650 G5 242205 H6 263417 G3 233406 H4 261333 H3 226497 J4 259601 B9 217776 C9 257701 H7 210108 J7 255321 A6 203113 A8 253757 F2 196563 J3 252071 J2 188983 G6 250111 A7 183177 E9 248174 H2 178717 F6 246878 E5 172027 G9 245397 B8 166984 A9 243875 B8 161792 B9 242348 H5 157301 J5 240884 H9 151473 F9 239669 D1 146670 J9 238346 W+Resign`;
-
-// let data = setup.split(' ');
-// data.splice(0, 1);
-// let [gameId, date, time, boardSize, version, whitePlayer, blackPlayer,] = data;
-// let setupObj = { gameId, date, time, boardSize, version, blackPlayer, whitePlayer };
-// let moves = data.splice(0, 7);
-// console.log(data);
-// for (let i = 0; i < data.length; i += 2) {
-//     let [timestamp, move] = data.slice(i, i + 2);
-//     console.log(timestamp, move);
-// }
-
-// console.log(setupObj)
