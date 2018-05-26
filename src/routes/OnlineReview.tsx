@@ -7,12 +7,13 @@ import UserPreferences from '../common/UserPreferences';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
 import { State } from '../components/Intersection';
-import { ReviewRoomState, ReviewRoomInfo, Protocol } from 'deepleela-common';
+import { ReviewRoomState, ReviewRoomInfo, JoinReviewRoom, Protocol } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
 import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
 import ChatBroLogin from './ChatBro';
 import ReviewClient from '../common/ReviewClient';
+import IM from '../widgets/IM';
 
 interface RouteParam {
     roomId?: string;
@@ -27,6 +28,7 @@ interface States {
     netPending?: boolean;
     roomInfo?: ReviewRoomInfo;
     message?: string;
+    people: number;
 }
 
 export default class OnlineReivew extends React.Component<Props, States> {
@@ -37,7 +39,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
     get smartBoard() { return this._smartBoard; }
     set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
 
-    state: States = {};
+    state: States = { people: 0 };
 
     boardController: BoardController;
     readonly client = ReviewClient.default;
@@ -59,7 +61,9 @@ export default class OnlineReivew extends React.Component<Props, States> {
     }
 
     componentWillUnmount() {
+        this.client.disconnect();
         this.smartBoard.game.removeAllListeners();
+        this.client.removeAllListeners();
         OnlineReivew.smartBoard = undefined;
     }
 
@@ -74,7 +78,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
             nickname: UserPreferences.nickname
         });
 
-        if (!roomInfo) {
+        if (!roomInfo || !roomInfo.sgf) {
             location.pathname = '/';
             return;
         }
@@ -82,10 +86,14 @@ export default class OnlineReivew extends React.Component<Props, States> {
         if (roomInfo.chatBroId) { ChatBroLogin(roomInfo.chatBroId, 'online-review'); }
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
+
         if (!roomInfo.isOwner) {
             this.client.on(Protocol.sys.reviewRoomStateUpdate, this.onReviewRoomStateUpdate);
-            this.client.on(Protocol.sys.reviewRoomMessage, this.onRoomMessage);
         }
+
+        this.client.on(Protocol.sys.reviewRoomMessage, this.onRoomMessage);
+        this.client.on(Protocol.sys.joinReviewRoom, (room: JoinReviewRoom) => this.setState({ people: room.count }));
+        this.client.on(Protocol.sys.leaveReviewRoom, (room: JoinReviewRoom) => this.setState({ people: room.count }));
 
         let game = SGF.import(roomInfo.sgf);
 
@@ -189,11 +197,8 @@ export default class OnlineReivew extends React.Component<Props, States> {
                         : undefined
                 }
 
-                {
-                    showMessageBox ?
-                        <InputBox style={{ position: 'fixed', zIndex: 2 }} onSend={msg => this.client.sendRoomTextMessage(msg)} />
-                        : undefined
-                }
+                <IM style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }}
+                    people={this.state.people} />
 
                 {this.state.message ?
                     <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>

@@ -3,6 +3,7 @@ import { Protocol, ProtocolDef, ReviewRoom, ReviewRoomInfo, ReviewRoomState } fr
 import CommandBuilder from "./CommandBuilder";
 import { Command, Response } from "@sabaki/gtp";
 import SGF from "./SGF";
+import UserPreferences from "./UserPreferences";
 
 export default class ReviewClient extends EventEmitter {
     static readonly url = process.env.NODE_ENV === 'production' ? `ws${location.protocol === 'https:' ? 's' : ''}://review.deepleela.com` : 'ws://192.168.31.54:3303';
@@ -11,6 +12,7 @@ export default class ReviewClient extends EventEmitter {
     private ws: WebSocket;
     private msgId = 2000000;
     private pendingCallbacks = new Map<number, Function>();
+    private syncHandler = new Map<string, Function>();
 
     constructor() {
         super();
@@ -22,6 +24,10 @@ export default class ReviewClient extends EventEmitter {
             this.once('connected', () => resolve());
             this.ws = this.createWs();
         });
+    }
+
+    disconnect() {
+        this.ws && this.ws.close();
     }
 
     private createWs() {
@@ -141,6 +147,10 @@ export default class ReviewClient extends EventEmitter {
     }
 
     sendRoomTextMessage(text: string) {
-        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: text });
+        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: { nickname: UserPreferences.nickname, msg: text } });
+    }
+
+    leaveReviewRoom() {
+        this.sendSysMessage({ name: Protocol.sys.leaveReviewRoom, });
     }
 }
