@@ -53,6 +53,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
         }
 
         this.roomId = roomId;
+        this.client.init();
         this.client.on('connected', () => this.enterReviewRoom());
         this.enterReviewRoom();
     }

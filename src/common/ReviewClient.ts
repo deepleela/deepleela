@@ -14,12 +14,18 @@ export default class ReviewClient extends EventEmitter {
 
     constructor() {
         super();
-        this.ws = this.createWs();
+    }
+
+    async init() {
+        if (this.connected) return;
+        return new Promise(resolve => {
+            this.once('connected', () => resolve());
+            this.ws = this.createWs();
+        });
     }
 
     private createWs() {
         let ws = new WebSocket(ReviewClient.url);
-        console.log(ws.url);
         ws.onopen = this.onopen;
         ws.onclose = this.onclose;
         ws.onerror = this.onerror;
@@ -28,7 +34,6 @@ export default class ReviewClient extends EventEmitter {
     }
 
     private onopen = (ev: Event) => {
-        console.log('review connected');
         super.emit('connected');
     }
 
@@ -39,7 +44,6 @@ export default class ReviewClient extends EventEmitter {
     private onerror = (ev: Event) => {
 
     }
-
 
     private onmessage = (ev: MessageEvent) => {
         try {
@@ -81,7 +85,7 @@ export default class ReviewClient extends EventEmitter {
         this.ws = this.createWs();
     }
 
-    get connected() { return this.ws.readyState === WebSocket.OPEN }
+    get connected() { return this.ws && this.ws.readyState === WebSocket.OPEN }
 
     sendSysMessage(cmd: Command) {
         if (!this.connected) {
