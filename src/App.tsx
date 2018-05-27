@@ -107,12 +107,11 @@ class App extends React.Component<AppProps, AppStates> {
       UserPreferences.whitePlayer = whitePlayer || '';
       UserPreferences.blackPlayer = blackPlayer || '';
       UserPreferences.kifu = sgf;
-      UserPreferences.chatBroId = options!.chatBroId || '';
 
       if (options!.online) {
         await ReviewClient.default.init();
         this.setState({ loadingDialogOpen: true });
-        let room = await ReviewClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, chatBroId: (options!.chatBroId || '') });
+        let room = await ReviewClient.default.createReviewRoom({ nickname: UserPreferences.nickname, roomName: (options!.roomName || ''), uuid: UserPreferences.uuid, sgf, });
         if (!room) return;
 
         App.history.push(`/review/${room.roomId}`);

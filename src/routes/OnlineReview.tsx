@@ -175,7 +175,6 @@ export default class OnlineReivew extends React.Component<Props, States> {
     render() {
         let isLandscape = window.innerWidth > window.innerHeight;
         let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
-        let showMessageBox = this.state.roomInfo && this.state.isOwner && (!UserPreferences.chatBroId && !this.state.roomInfo.chatBroId);
 
         return (
             <div id='online-review' style={{ width: '100%', height: '100%', position: 'relative' }}>

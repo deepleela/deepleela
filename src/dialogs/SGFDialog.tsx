@@ -16,13 +16,12 @@ interface SGFDialogProps {
 export interface SGFDialogStates {
     online?: boolean;
     roomName?: string;
-    chatBroId?: string;
 }
 
 export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialogStates>{
 
     textarea: HTMLTextAreaElement;
-    state: SGFDialogStates = { online: false, roomName: UserPreferences.reviewRoom, chatBroId: UserPreferences.chatBroId };
+    state: SGFDialogStates = { online: false, roomName: UserPreferences.reviewRoom, };
 
     render() {
 
@@ -38,14 +37,6 @@ export default class SGFDialog extends React.Component<SGFDialogProps, SGFDialog
                         this.props.showOnlineMode ?
                             <div>
                                 <div className='uk-margin'>
-                                    {
-                                        this.state.online ?
-                                            <div className={`uk-margin uk-animation-slide-top-small`}>
-                                                <div style={{ fontSize: 12, marginBottom: 2 }}>{i18n.dialogs.sgf.getChatBro} <a href="https://chatbro.com">ChatBro</a>!</div>
-                                                <input className="uk-input" type="text" maxLength={64} placeholder="ChatBro ID: 125xm" value={this.state.chatBroId} onChange={e => { this.setState({ chatBroId: e.target.value }); UserPreferences.reviewRoom = e.target.value; }} />
-                                            </div>
-                                            : undefined
-                                    }
                                     <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                                         <label><input className="uk-checkbox" type="checkbox" onChange={e => this.setState({ online: e.target.checked })} /> {i18n.dialogs.sgf.onlineMode}</label>
                                     </div>
