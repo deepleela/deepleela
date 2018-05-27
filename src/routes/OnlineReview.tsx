@@ -11,7 +11,6 @@ import { ReviewRoomState, ReviewRoomInfo, JoinReviewRoom, Protocol } from 'deepl
 import ThemeManager from '../common/ThemeManager';
 import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
-import ChatBroLogin from './ChatBro';
 import ReviewClient from '../common/ReviewClient';
 import IM, { Message } from '../widgets/IM';
 
@@ -84,8 +83,6 @@ export default class OnlineReivew extends React.Component<Props, States> {
             location.pathname = '/';
             return;
         }
-
-        if (roomInfo.chatBroId) { ChatBroLogin(roomInfo.chatBroId, 'online-review'); }
 
         this.setState({ isOwner: roomInfo.isOwner, netPending: false, roomInfo });
 

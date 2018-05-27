@@ -76,8 +76,8 @@ export default class IM extends React.Component<Props, States> {
         return (
             <div id='room-messenger' style={this.props.style} onMouseEnter={e => this.expandSelf()} onClick={e => this.expanded ? this.shrinkSelf : this.expandSelf()} onMouseLeave={e => this.shrinkSelf()} >
 
-                <div id='chat-box' className={`blur shadow-controller`} style={{ position: 'absolute', marginBottom: 12, height: 0, width: '100%', top: -370, background: 'rgba(255, 255, 255, 0.25)', fontSize: 14, }}>
-                    <div id='chat-messages' style={{ margin: 12, opacity: 0, overflow: 'auto', height: 310 }}>
+                <div id='chat-box' className={`blur shadow-controller`} style={{ position: 'absolute', marginBottom: 12, height: 0, width: '100%', top: -370, background: 'rgba(255, 255, 255, 0.25)', fontSize: 14, pointerEvents: this.state.showChat ? undefined : 'none' }}>
+                    <div id='chat-messages' style={{ margin: 12, opacity: 0, overflow: 'auto', height: 310, background: isChrome ? 'rgba(255, 255, 255, 0.5' : undefined }}>
                         {this.state.showChat && this.props.messages ?
                             this.props.messages.map((m, i) => {
                                 return <div key={i}>
@@ -94,7 +94,7 @@ export default class IM extends React.Component<Props, States> {
                     }} />
                 </div>
 
-                <div className='blur shadow-controller' style={{ display: 'flex', justifyContent: 'space-around', padding: 1, paddingTop: 2, marginBottom: -1 }}>
+                <div className='blur shadow-controller' style={{ display: 'flex', justifyContent: 'space-around', padding: 1, paddingTop: 2, paddingBottom: 0, marginBottom: -1, background: 'rgba(255, 255, 255, 0.25)' }}>
 
                     <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, color: this.state.showChat ? 'deepskyblue' : undefined }} onClick={e => this.toggleChatBox()}>
                         <span uk-icon='icon: comment'></span>
