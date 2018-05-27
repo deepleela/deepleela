@@ -32,10 +32,12 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
         super(props, ctx);
 
         let preferences = localStorage.getItem('newgame');
-        let defaultPreference: any = { selectedColor: "B", komi: UserPreferences.komi || 7.5, handicap: 0, time: 120, engine: 'Leela' };
+        let defaultPreference: any = { selectedColor: "B", komi: UserPreferences.komi || 7.5, handicap: 0, time: 120, engine: 'Leela', boardSize: 19 };
 
         try {
-            this.state = preferences ? JSON.parse(preferences) : defaultPreference;
+            let pref = preferences ? JSON.parse(preferences) : defaultPreference;
+            pref.boardSize = pref.boardSize || 19;
+            this.state = pref;
         } catch (error) {
             this.state = defaultPreference;
         }

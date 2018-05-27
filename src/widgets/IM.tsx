@@ -104,7 +104,7 @@ export default class IM extends React.Component<Props, States> {
                         <span uk-icon='icon: receiver'></span>
                     </div>
 
-                    <div className='touch share' data-clipboard-text={location.href} uk-tooltip='Copy Link!' >
+                    <div className='touch share' data-clipboard-text={location.href} onClick={e => UIkit.notification('Link copied!')} >
                         <span uk-icon='icon: social; ratio: 1.02'></span>
                     </div>
 

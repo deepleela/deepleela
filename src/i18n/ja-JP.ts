@@ -85,7 +85,7 @@ export const lang = {
     notifications: {
         serversBusy: (number) => `Service is busy, try it later. Pending users: ${number}`,
         aiNotAvailable: `今 AI はしようできません`,
-        aiIsThinking: 'AI は考え中...',
+        aiIsThinking: 'AI が考え中...',
         invalidSgf: '無効な SGF',
         resigns: (ai: string = 'AI') => `${ai} 敗北`,
         pass: (ai: string = 'AI') => `${ai} パス`,
