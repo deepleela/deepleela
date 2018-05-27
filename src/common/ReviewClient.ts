@@ -3,7 +3,6 @@ import { Protocol, ProtocolDef, ReviewRoom, ReviewRoomInfo, ReviewRoomState } fr
 import CommandBuilder from "./CommandBuilder";
 import { Command, Response } from "@sabaki/gtp";
 import SGF from "./SGF";
-import UserPreferences from "./UserPreferences";
 
 export default class ReviewClient extends EventEmitter {
     static readonly url = process.env.NODE_ENV === 'production' ? `ws${location.protocol === 'https:' ? 's' : ''}://review.deepleela.com` : 'ws://192.168.31.54:3303';
@@ -67,8 +66,7 @@ export default class ReviewClient extends EventEmitter {
                 case 'sync':
                     try {
                         let payload = msg.data as Command;
-                        let msgArgs = payload.name === Protocol.sys.reviewRoomStateUpdate ? JSON.parse(payload.args as string) : payload.args as string;
-                        super.emit(payload.name, msgArgs);
+                        super.emit(payload.name, (typeof payload.args === 'string') ? JSON.parse(payload.args as string) : payload.args);
                     } catch{ }
                     break;
             }
@@ -146,8 +144,8 @@ export default class ReviewClient extends EventEmitter {
         this.sendSysMessage({ name: Protocol.sys.reviewRoomStateUpdate, args: state });
     }
 
-    sendRoomTextMessage(text: string) {
-        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: { nickname: UserPreferences.nickname, msg: text } });
+    sendRoomTextMessage(msg: any) {
+        this.sendSysMessage({ name: Protocol.sys.reviewRoomMessage, args: JSON.stringify(msg) });
     }
 
     leaveReviewRoom() {

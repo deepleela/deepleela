@@ -14,7 +14,7 @@ export default class MessageBar extends React.Component<Props, any> {
         this.lastText = this.props.text || this.lastText;
 
         return (
-            <div style={Object.assign({ padding: 12, position: 'relative' }, this.props.style)} className='shadow-controller' >
+            <div style={Object.assign({ padding: 12, position: 'relative' }, this.props.style)} className='shadow-controller blur' >
                 {this.lastText}
             </div>
         );

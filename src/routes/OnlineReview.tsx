@@ -13,7 +13,7 @@ import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
 import ChatBroLogin from './ChatBro';
 import ReviewClient from '../common/ReviewClient';
-import IM from '../widgets/IM';
+import IM, { Message } from '../widgets/IM';
 
 interface RouteParam {
     roomId?: string;
@@ -29,6 +29,7 @@ interface States {
     roomInfo?: ReviewRoomInfo;
     message?: string;
     people: number;
+    messages: Message[];
 }
 
 export default class OnlineReivew extends React.Component<Props, States> {
@@ -38,8 +39,9 @@ export default class OnlineReivew extends React.Component<Props, States> {
     private _smartBoard: SmartGoBoard;
     get smartBoard() { return this._smartBoard; }
     set smartBoard(value: SmartGoBoard) { this._smartBoard = OnlineReivew.smartBoard = value; }
+    private imBar: IM;
 
-    state: States = { people: 0 };
+    state: States = { people: 0, messages: [] };
 
     boardController: BoardController;
     readonly client = ReviewClient.default;
@@ -146,11 +148,20 @@ export default class OnlineReivew extends React.Component<Props, States> {
         this.smartBoard.showBranch();
     }
 
-    onRoomMessage = (msg: string) => {
-        this.pendingMessages.push(msg);
+    onRoomMessage = (msg: Message) => {
+        this.state.messages.push(msg);
 
         this.setState({ message: undefined });
+        setImmediate(() => this.imBar.scrollMessages());
 
+        if (this.state.isOwner && !this.imBar.expanded) {
+            this.imBar.shake();
+        }
+
+        if (!msg.isRoomOwner) return;
+        if (this.state.isOwner) return;
+
+        this.pendingMessages.push(msg.message!);
         setImmediate(() => {
             clearTimeout(this.msgFadeOutTimer);
 
@@ -197,8 +208,11 @@ export default class OnlineReivew extends React.Component<Props, States> {
                         : undefined
                 }
 
-                <IM style={{ position: 'fixed', zIndex: 3, transition: 'all 1s' }}
-                    people={this.state.people} />
+                <IM ref={e => this.imBar = e!}
+                    style={{ position: 'fixed', zIndex: 3, transition: 'all 1s' }}
+                    people={this.state.people}
+                    messages={this.state.messages}
+                    onMessage={m => this.client.sendRoomTextMessage({ nickname: UserPreferences.nickname || UserPreferences.uuid.substr(0, 4), message: m, isRoomOwner: this.state.isOwner })} />
 
                 {this.state.message ?
                     <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
