@@ -1,6 +1,8 @@
 declare class RTCEvent extends Event {
     isAudioMuted: boolean;
     mediaElement: HTMLMediaElement;
+    userid?: number;
+    streamid: string;
 }
 
 declare class RTCMultiConnection {
@@ -23,12 +25,14 @@ declare class RTCMultiConnection {
     mediaConstraints: {
         video?: boolean;
         audio?: boolean;
-    }
+    };
+    audiosContainer?: any;
 
     openOrJoin(id: string);
     open(id: string);
     join(id: string);
     send(data: any);
+    close();
     getAllParticipants();
     token(): string;
     getUserMediaHandler(options: { localMediaConstraints?: { video: boolean, audio: boolean } });

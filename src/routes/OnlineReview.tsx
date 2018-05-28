@@ -205,6 +205,7 @@ export default class OnlineReivew extends React.Component<Props, States> {
                 }
 
                 <IM ref={e => this.imBar = e!}
+                    roomId={this.roomId}
                     style={{ position: 'fixed', zIndex: 3, transition: 'all 1s' }}
                     people={this.state.people}
                     messages={this.state.messages}

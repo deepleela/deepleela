@@ -2,10 +2,12 @@ import * as React from 'react';
 import { CSSProperties } from 'react';
 import * as jQuery from 'jquery';
 import * as clipboard from 'clipboard';
+import 'rtcmulticonnection-v3';
 
 export interface Message { isRoomOwner?: string, nickname?: string, message?: string }
 
 interface Props {
+    roomId: string;
     style?: CSSProperties;
     people?: number;
     onShareClick?: () => void;
@@ -15,6 +17,7 @@ interface Props {
 
 interface States {
     showChat?: boolean;
+    enableAudio?: boolean;
 }
 
 const isChrome = navigator.userAgent.lastIndexOf('Chrome/') > 0;
@@ -72,6 +75,69 @@ export default class IM extends React.Component<Props, States> {
         setTimeout(() => this.root.className = '', 1000);
     }
 
+    audioConnection?: RTCMultiConnection;
+
+    toggleAudio() {
+        this.setState({ enableAudio: !this.state.enableAudio }, () => {
+            if (this.state.enableAudio) return;
+            if (!this.audioConnection) return;
+            this.audioConnection.close();
+            this.audioConnection = undefined;
+        });
+        
+        if (this.audioConnection) return;
+
+        let connection = this.audioConnection = new RTCMultiConnection();
+        connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+        connection.socketMessageEvent = 'deepleela-review';
+
+        connection.session = {
+            audio: true,
+            video: false
+        };
+
+        connection.mediaConstraints = {
+            audio: true,
+            video: false
+        };
+
+        connection.sdpConstraints.mandatory = {
+            OfferToReceiveAudio: true,
+            OfferToReceiveVideo: false
+        };
+
+        connection.audiosContainer = document.getElementById('audios-container');
+
+        connection.onstream = function (event) {
+            var width = (connection.audiosContainer.clientWidth / 2) - 20;
+            // var mediaElement = getHTMLMediaElement(event.mediaElement, {
+            //     title: event.userid,
+            //     buttons: ['full-screen'],
+            //     width: width,
+            //     showOnMouseEnter: false
+            // });
+
+            console.log(event.type);
+            if (event.type === 'remote') connection.audiosContainer.appendChild(event.mediaElement);
+            event.mediaElement.hidden = true;
+            event.mediaElement.volume = 0.5;
+            // event.mediaElement.muted = false;
+
+            setTimeout(function () {
+                event.mediaElement.play();
+            }, 3000);
+
+            event.mediaElement.id = event.streamid;
+        };
+
+        connection.onstreamended = function (event) {
+            connection.audiosContainer.removeChild(event.mediaElement);
+        };
+
+        connection.openOrJoin(this.props.roomId);
+        console.log(connection);
+    }
+
     render() {
         return (
             <div id='room-messenger' style={this.props.style} onMouseEnter={e => this.expandSelf()} onClick={e => this.expanded ? this.shrinkSelf : this.expandSelf()} onMouseLeave={e => this.shrinkSelf()} >
@@ -94,13 +160,15 @@ export default class IM extends React.Component<Props, States> {
                     }} />
                 </div>
 
+                <div id='audios-container' style={{ marginBottom: 8 }}></div>
+
                 <div className='blur shadow-controller' style={{ display: 'flex', justifyContent: 'space-around', padding: 1, paddingTop: 2, paddingBottom: 0, marginBottom: -1, background: 'rgba(255, 255, 255, 0.25)' }}>
 
                     <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, color: this.state.showChat ? 'deepskyblue' : undefined }} onClick={e => this.toggleChatBox()}>
                         <span uk-icon='icon: comment'></span>
                     </div>
 
-                    <div className='touch'>
+                    <div className='touch' onClick={e => this.toggleAudio()} style={{ color: this.state.enableAudio ? 'deepskyblue' : undefined }}>
                         <span uk-icon='icon: receiver'></span>
                     </div>
 

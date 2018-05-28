@@ -164,7 +164,7 @@ class App extends React.Component<AppProps, AppStates> {
           <div style={{ position: 'relative' }}>
             <div id='logo' style={{ margin: 0, marginTop: 22, fontWeight: 100, fontSize: 22, display: 'flex', justifyContent: 'center', }}>
               <img src='/favicon.ico' style={{ width: 36, height: 36 }} alt='DeepLeela' />
-              <Link to='/' onClick={e => this.forceUpdate()}>
+              <Link to={location.pathname.startsWith('/cgos/') ? '/cgos' : '/'} onClick={e => this.forceUpdate()}>
                 <span style={{ display: 'inline-block', marginLeft: 8, verticalAlign: 'middle', lineHeight: '38px', fontFamily: 'Questrial', fontWeight: 100, opacity: 0.7, color: ThemeManager.default.logoColor }}>DeepLeela</span>
               </Link>
             </div>

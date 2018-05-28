@@ -55,7 +55,7 @@ export default class SGF {
         let blackPlayer = tree.props.PB;
         let whitePlayer = tree.props.PW;
 
-        let size = Number.parseInt(tree.props.SZ || '19');
+        let size = Number.parseInt(tree.props.SZ || '19') || 19;
 
         let game = new Go(size);
         game.komi = Number.parseFloat(tree.props.KM || '7.5');
