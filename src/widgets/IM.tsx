@@ -100,7 +100,7 @@ export default class IM extends React.Component<Props, States> {
                         <span uk-icon='icon: comment'></span>
                     </div>
 
-                    <div className='touch' >
+                    <div className='touch'>
                         <span uk-icon='icon: receiver'></span>
                     </div>
 

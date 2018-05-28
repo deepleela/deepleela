@@ -393,7 +393,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let blackPlayer = this.state.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
         let board = document.getElementById('board');
-        let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / this.game.size / 2 : 0) + this.game.size * (this.game.size <= 13 ? (1.5 + 1 - this.game.size / 13) : 1);
+        let size = this.game.size || 19;
+        let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / size / 2 : 0) + size * (size <= 13 ? (1.5 + 1 - size / 13) : 1);
         let playerMargin = (aiTipsMarginLeft || 0) - 4;
 
         return (
