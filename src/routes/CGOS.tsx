@@ -34,6 +34,8 @@ export default class CGOS extends React.Component {
             match.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             match.result = gameover.result;
         });
+        
+        if (matches.length === 0) this.client.initMatches();
 
         this.table = document.getElementById('cgos-table') as HTMLTableElement;
 

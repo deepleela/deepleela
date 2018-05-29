@@ -30,6 +30,8 @@ export default class IM extends React.Component<Props, States> {
 
     state: States = {};
 
+    get isAudioAvailable() { return navigator.getUserMedia !== undefined; }
+
     componentDidMount() {
         this.root = document.getElementById('room-messenger') as HTMLDivElement;
         let fx = - this.root.getBoundingClientRect().width + 68;
@@ -84,7 +86,7 @@ export default class IM extends React.Component<Props, States> {
             this.audioConnection.close();
             this.audioConnection = undefined;
         });
-        
+
         if (this.audioConnection) return;
 
         let connection = this.audioConnection = new RTCMultiConnection();
@@ -110,18 +112,11 @@ export default class IM extends React.Component<Props, States> {
 
         connection.onstream = function (event) {
             var width = (connection.audiosContainer.clientWidth / 2) - 20;
-            // var mediaElement = getHTMLMediaElement(event.mediaElement, {
-            //     title: event.userid,
-            //     buttons: ['full-screen'],
-            //     width: width,
-            //     showOnMouseEnter: false
-            // });
 
-            console.log(event.type);
             if (event.type === 'remote') connection.audiosContainer.appendChild(event.mediaElement);
             event.mediaElement.hidden = true;
-            event.mediaElement.volume = 0.5;
-            // event.mediaElement.muted = false;
+            event.mediaElement.volume = event.type === 'local' ? 0 : 0.75;
+            event.mediaElement.muted = event.type === 'local' ? true : false;
 
             setTimeout(function () {
                 event.mediaElement.play();
@@ -135,7 +130,6 @@ export default class IM extends React.Component<Props, States> {
         };
 
         connection.openOrJoin(this.props.roomId);
-        console.log(connection);
     }
 
     render() {
@@ -160,11 +154,11 @@ export default class IM extends React.Component<Props, States> {
                     }} />
                 </div>
 
-                <div id='audios-container' style={{ marginBottom: 8 }}></div>
+                <div id='audios-container' style={{ marginBottom: 0 }}></div>
 
                 <div className='blur shadow-controller' style={{ display: 'flex', justifyContent: 'space-around', padding: 1, paddingTop: 2, paddingBottom: 0, marginBottom: -1, background: 'rgba(255, 255, 255, 0.25)' }}>
 
-                    <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, color: this.state.showChat ? 'deepskyblue' : undefined }} onClick={e => this.toggleChatBox()}>
+                    <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, color: this.isAudioAvailable ? (this.state.showChat ? 'deepskyblue' : undefined) : 'lightgrey', pointerEvents: this.isAudioAvailable ? undefined : 'none' }} onClick={e => this.toggleChatBox()}>
                         <span uk-icon='icon: comment'></span>
                     </div>
 

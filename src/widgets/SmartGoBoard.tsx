@@ -432,7 +432,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
                                 <Stone style={{ color: constants.BlackStoneColor }} />
                             </div>
-                            <span style={{ opacity: 0.75 }}>{blackPlayer || '---'}</span>
+                            <span style={{ opacity: 0.75, maxWidth: 150, textOverflow: 'ellipsis' }}>{blackPlayer || '---'}</span>
                         </div>
 
                         <div style={{ color: this.game.currentColor === 'B' ? constants.BlackStoneColor : 'lightgrey', marginTop: 12, fontSize: 11, position: 'absolute', left: '50%', transform: 'translate(-50%, -50%)', }}>{this.gameMode === 'self' ? '--:--' : this.state.remaingTime}</div>
@@ -441,7 +441,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
                                 <Stone style={{ color: constants.WhiteStoneColor }} />
                             </div>
-                            <span style={{ opacity: 0.75 }}>{whitePlayer || '---'}</span>
+                            <span style={{ opacity: 0.75, maxWidth: 150, textOverflow: 'ellipsis' }}>{whitePlayer || '---'}</span>
                         </div>
                     </div>
                 </div>
