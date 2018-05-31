@@ -74,7 +74,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game = new Go(19);
         this.game.time = config.time;
         this.game.komi = config.komi;
-        this.setState({ heatmap: undefined, disabled: false });
+        this.setState({ heatmap: undefined, disabled: false, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
 
         let results = await this.client.requestAI(config.engine || 'leela');
         if (!results[0]) return results;
@@ -119,7 +119,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             this.game.pass();
         }
 
-        this.setState({ heatmap: undefined, disabled: false });
+        this.setState({ heatmap: undefined, disabled: false, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         this.board.clearVariations();
 
         await this.peekWinrate();
