@@ -64,6 +64,7 @@ export const lang = {
             theme_sublime_vivid: '鮮やかな色',
             theme_timber: '木材',
             theme_simple_yellow: 'イエロー',
+            theme_dark: '黑',
             winrate: '勝率 カスタム',
             winrate_blackOnly: '黒番',
             winrate_both: '両方も表示する',

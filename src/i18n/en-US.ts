@@ -64,6 +64,7 @@ export const lang = {
             theme_sublime_vivid: 'Sublime Vivid',
             theme_timber: 'Timber',
             theme_simple_yellow: 'Simple Yellow',
+            theme_dark: 'Dark',
             winrate: 'Custom Winrate',
             winrate_blackOnly: 'Black only',
             winrate_both: 'Show both winrates',
