@@ -15,6 +15,8 @@ interface IntersectionProps {
     lineThickness?: number;
     onTouch?: (x: number, y: number) => void;
     onClick: (row: number, col: number) => void;
+    onMouseEnter?: (x: number, y: number) => void;
+    onMouseLeave?: (x: number, y: number) => void;
     onVariationHover?: (row: number, col: number) => void;
     onVariationHoverLeave?: (row: number, col: number) => void;
     state: State;
@@ -62,12 +64,14 @@ export default class Intersection extends React.Component<IntersectionProps, Int
     }
 
     private onMouseEnter(e: React.MouseEvent<HTMLDivElement>) {
+        this.props.onMouseEnter ? this.props.onMouseEnter(this.props.row, this.props.col) : undefined;
         if (this.props.disabled) return;
         this.setState({ hover: true });
     }
 
     private onMouseLeave(e: React.MouseEvent<HTMLDivElement>) {
         this.setState({ hover: false });
+        this.props.onMouseLeave ? this.props.onMouseLeave(this.props.row, this.props.col) : undefined;
     }
 
     private onClick(e: React.MouseEvent<HTMLDivElement>) {

@@ -25,6 +25,8 @@ interface BoardProps {
      * Calls when users click a position on board, cartesian coordinate
      */
     onIntersectionClicked?: (row: number, col: number) => void;
+    onIntersectionHover?: (x: number, y: number) => void;
+    onIntersectionLeave?: (x: number, y: number) => void;
 
     style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string };
     states: State[][];

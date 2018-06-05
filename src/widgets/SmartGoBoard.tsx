@@ -152,6 +152,14 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async checkAIOnline() {
+        if (!this.client.connected) {
+            return new Promise<boolean>(resolve => {
+                this.client.once('connected', () => {
+                    resolve(this.checkAIOnline());
+                });
+            });
+        }
+
         if (this.client.aiConnected) return true;
 
         let [success, pending] = await this.client.requestAI(this.engine || 'leela');
@@ -177,6 +185,10 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private async onStonePlaced(x: number, y: number) {
+
+        if (this.gameMode === 'ai' || this.props.aiAutoPlay) {
+            await this.checkAIOnline();
+        }
 
         let lastColor = this.game.currentColor;
         let played = false;
@@ -205,7 +217,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             return;
         }
 
-        await this.checkAIOnline();
 
         if (!reloaded) {
             this.setState({ disabled: true });
@@ -313,6 +324,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (enableAI) await this.checkAIOnline();
 
         if (mode !== 'ai') return;
+
         let userstone = (UserPreferences.userStone) as StoneColor;
         this.engine = UserPreferences.gameEngine || 'leela';
         this.userStone = userstone;

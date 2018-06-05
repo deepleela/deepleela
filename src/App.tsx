@@ -201,8 +201,8 @@ class App extends React.Component<AppProps, AppStates> {
                         <div className='uk-nav uk-dropdown-nav'>
                           <li className="uk-nav-divider"></li>
 
-                          <li><a href="#" onClick={e => UserPreferences.heatmap = !UserPreferences.heatmap}><span className={UserPreferences.heatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
-                          <li><a href="#" onClick={e => UserPreferences.winrate = !UserPreferences.winrate}><span className={UserPreferences.winrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
+                          <li><a href="#" onClick={e => { UserPreferences.heatmap = !UserPreferences.heatmap; this.forceUpdate(); }}><span className={UserPreferences.heatmap ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showHeatmap}</a></li>
+                          <li><a href="#" onClick={e => { UserPreferences.winrate = !UserPreferences.winrate; this.forceUpdate(); }}><span className={UserPreferences.winrate ? '' : 'display-none'} uk-icon="check"></span> {i18n.menu.showWinrate}</a></li>
                         </div>
                     }
 
