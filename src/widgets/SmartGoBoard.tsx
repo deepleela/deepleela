@@ -154,9 +154,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     private async checkAIOnline() {
         if (!this.client.connected) {
             return new Promise<boolean>(resolve => {
-                this.client.once('connected', () => {
-                    resolve(this.checkAIOnline());
-                });
+                this.client.once('connected', async () => resolve(await this.checkAIOnline()));
             });
         }
 
@@ -408,16 +406,17 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let size = this.game.size || 19;
         let aiTipsMarginLeft = (board ? board.getBoundingClientRect().width / size / 2 : 0) + size * (size <= 13 ? (1.5 + 1 - size / 13) : 1);
         let playerMargin = (aiTipsMarginLeft || 0) - 4;
+        let tm = ThemeManager.default;
 
         return (
             <div id={this.props.id} style={{ position: 'relative' }} onWheel={e => this.onWheelChanged(e)} onContextMenu={e => this.onContextMenu(e)}>
-                <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, fontSize: 10, color: tm.logoColor, marginLeft: aiTipsMarginLeft, marginTop: 12, opacity: this.state.isThinking ? 1 : 0, transition: 'all 0.5s', }}>
                     {i18n.notifications.aiIsThinking}
                 </div>
 
                 {
                     this.gameMode === 'review' ?
-                        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: ThemeManager.default.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, }}>
+                        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: tm.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, }}>
                             <span>{this.currentCursor + 1} / {this.game.snapshots.length}</span>
                         </div>
                         : undefined
@@ -426,7 +425,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: ThemeManager.default.gridLineColor, blackStoneColor: ThemeManager.default.blackStoneColor, whiteStoneColor: ThemeManager.default.whiteStoneColor, coordTextColor: ThemeManager.default.coordTextColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor }}
                     size={this.game.size}
                     states={this.game.board}
                     disabled={this.props.disabled || this.state.disabled || shouldBeDisabled}

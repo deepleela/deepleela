@@ -65,6 +65,7 @@ export const lang = {
             theme_timber: '朝霞',
             theme_simple_yellow: '极简黄',
             theme_dark: '黑暗',
+            theme_metal: '金属',
             winrate: '胜率显示',
             winrate_blackOnly: '仅显示黑棋胜率',
             winrate_both: '显示双方胜率',

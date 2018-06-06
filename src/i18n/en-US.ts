@@ -2,7 +2,7 @@
 export const lang = {
     menu: {
         cgos: 'CGOS',
-        
+
         newgame_vs_leela: 'Challenge AI',
         newgame_vs_self: 'Free Practice',
         loadsgf: 'Review SGF',
@@ -65,6 +65,7 @@ export const lang = {
             theme_timber: 'Timber',
             theme_simple_yellow: 'Simple Yellow',
             theme_dark: 'Dark',
+            theme_metal: 'Metal',
             winrate: 'Custom Winrate',
             winrate_blackOnly: 'Black only',
             winrate_both: 'Show both winrates',

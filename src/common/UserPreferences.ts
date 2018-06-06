@@ -1,6 +1,9 @@
 
 export default class UserPreferences {
 
+    static get theme() { return localStorage.getItem('theme') || ''; }
+    static set theme(value: string) { localStorage.setItem('theme', value); }
+
     static get kifu() { return localStorage.getItem('kifu') || ''; }
     static set kifu(value: string) { localStorage.setItem('kifu', value); }
 

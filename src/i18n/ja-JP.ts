@@ -65,6 +65,7 @@ export const lang = {
             theme_timber: '木材',
             theme_simple_yellow: 'イエロー',
             theme_dark: '黑',
+            theme_the_ancients: 'メタル',
             winrate: '勝率 カスタム',
             winrate_blackOnly: '黒番',
             winrate_both: '両方も表示する',

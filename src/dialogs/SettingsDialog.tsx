@@ -63,6 +63,7 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
                                 <option value="purpink">{i18n.dialogs.settings.theme_purpink}</option>
                                 <option value="simple-yellow">{i18n.dialogs.settings.theme_simple_yellow}</option>
                                 <option value="dark">{i18n.dialogs.settings.theme_dark}</option>
+                                <option value="metal">{i18n.dialogs.settings.theme_metal}</option>
                             </select>
                             <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
                                 <span className="selected-text"></span>

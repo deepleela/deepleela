@@ -28,7 +28,7 @@ interface BoardProps {
     onIntersectionHover?: (x: number, y: number) => void;
     onIntersectionLeave?: (x: number, y: number) => void;
 
-    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string };
+    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string, starPointColor?: string };
     states: State[][];
     heatmap?: number[][];
     fontSize?: number;
@@ -207,7 +207,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                                     <Intersection
                                         onClick={(r, c) => this.onClick(r, c)}
-                                        style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black' }}
+                                        style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black', startPointColor: this.props.style ? this.props.style.starPointColor : undefined }}
                                         key={j}
                                         row={this.props.size - i}
                                         col={j + 1}
