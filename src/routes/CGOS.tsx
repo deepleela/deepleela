@@ -5,6 +5,7 @@ import * as jQuery from 'jquery';
 import i18n from '../i18n';
 import App from '../App';
 import './Style.css';
+import BrowserHelper from '../components/BrowserHelper';
 
 let matches: Match[] = [];
 
@@ -55,7 +56,7 @@ export default class CGOS extends React.Component {
                     {
                         matches.length > 0 ?
                             undefined :
-                            <div className='cgos-spinner' style={{ margin: 'auto', position: 'absolute', left: App.isMobile ? '45%' : '48%', top: '40%', transform: 'translate(-50%, -50%)' }} />
+                            <div className='cgos-spinner' style={{ margin: 'auto', position: 'absolute', left: BrowserHelper.isMobile ? '45%' : '48%', top: '40%', transform: 'translate(-50%, -50%)' }} />
                     }
 
                     <div className='uk-overflow-auto' style={{ minWidth: '80%', display: matches.length > 0 ? 'block' : 'none' }}>

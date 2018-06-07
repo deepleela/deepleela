@@ -3,6 +3,7 @@ import { CSSProperties } from 'react';
 import * as jQuery from 'jquery';
 import * as clipboard from 'clipboard';
 import 'rtcmulticonnection-v3';
+import BrowserHelper from '../components/BrowserHelper';
 
 export interface Message { isRoomOwner?: string, nickname?: string, message?: string }
 
@@ -19,8 +20,6 @@ interface States {
     showChat?: boolean;
     enableAudio?: boolean;
 }
-
-const isChrome = navigator.userAgent.lastIndexOf('Chrome/') > 0;
 
 export default class IM extends React.Component<Props, States> {
 
@@ -147,7 +146,7 @@ export default class IM extends React.Component<Props, States> {
                             })
                             : undefined}
                     </div>
-                    <input id='chat-input' type="text" style={{ position: 'absolute', opacity: 0, bottom: 6, left: 6, right: 6, fontSize: 14, outline: 'none', borderRadius: 0, boxShadow: 'none', width: isChrome ? 207 : undefined }} onKeyDown={e => {
+                    <input id='chat-input' type="text" style={{ position: 'absolute', opacity: 0, bottom: 6, left: 6, right: 6, fontSize: 14, outline: 'none', borderRadius: 0, boxShadow: 'none', width: BrowserHelper.isChrome ? 207 : undefined }} onKeyDown={e => {
                         if (e.keyCode !== 13 || !this.props.onMessage) return;
                         this.props.onMessage(e.currentTarget.value);
                         e.currentTarget.value = '';

@@ -21,6 +21,7 @@ import CGOS from './routes/CGOS';
 import LiveGame from './routes/LiveGame';
 import { History } from 'history';
 import ReviewClient from './common/ReviewClient';
+import BrowserHelper from './components/BrowserHelper';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -45,8 +46,6 @@ interface AppProps {
 
 class App extends React.Component<AppProps, AppStates> {
 
-  static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
   get isOnlineMode() { return ['review', 'cgos'].some(p => location.pathname.includes(p)) }
   get isCGOS() { return location.pathname === '/cgos'; }
 
@@ -69,7 +68,7 @@ class App extends React.Component<AppProps, AppStates> {
         this.forceUpdate();
         return;
       }
-      console.log(window.innerHeight - 84 - smartboard.getBoundingClientRect().height);
+      
       let top = Math.max(0.01, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
       let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
       this.setState({ paddingTop: top, boardBottomMargin });
@@ -245,7 +244,7 @@ class App extends React.Component<AppProps, AppStates> {
           </div>
 
           {/* Footer Aera */}
-          <div style={{ bottom: 0, width: '100%', marginTop: this.isCGOS ? 0 : Math.max(this.state.boardBottomMargin, App.isMobile ? 58 : 0) }}>
+          <div style={{ bottom: 0, width: '100%', marginTop: this.isCGOS ? 0 : Math.max(this.state.boardBottomMargin, BrowserHelper.isMobile ? 58 : 0) }}>
             <div style={{ fontSize: 10, color: ThemeManager.default.subtextColor, textAlign: 'center', margin: ' 8px 0', fontFamily: 'Questrial' }}>
               &copy; 2018 DeepLeela
             </div>
