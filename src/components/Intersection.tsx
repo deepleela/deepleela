@@ -173,7 +173,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     color: this.props.state === State.Black ? 'white' : 'black',
                     zIndex: 2, fontWeight: 600,
                 }}>
-                    <span style={{ display: 'flex', alignContent: 'end', paddingTop: BrowserHelper.iPhone ? 0 : (BrowserHelper.isSafari ? 1 : (BrowserHelper.isChrome && !BrowserHelper.isMobile ? 1.5 : 2)) }}>{this.props.moveNumber}</span>
+                    <span style={{ display: 'flex', alignContent: 'end', paddingTop: BrowserHelper.iPhone || (BrowserHelper.isFirefox && BrowserHelper.isMobile) ? 0 : (BrowserHelper.isSafari ? 1 : (BrowserHelper.isChrome && !BrowserHelper.isMobile ? 1.5 : 2)) }}>{this.props.moveNumber}</span>
                 </div>
 
                 {
