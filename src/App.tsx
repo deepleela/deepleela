@@ -69,8 +69,8 @@ class App extends React.Component<AppProps, AppStates> {
         this.forceUpdate();
         return;
       }
-
-      let top = Math.max(0, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
+      console.log(window.innerHeight - 84 - smartboard.getBoundingClientRect().height);
+      let top = Math.max(0.01, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
       let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
       this.setState({ paddingTop: top, boardBottomMargin });
     };

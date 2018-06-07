@@ -137,7 +137,7 @@ export default class IM extends React.Component<Props, States> {
             <div id='room-messenger' style={this.props.style} onMouseEnter={e => this.expandSelf()} onClick={e => this.expanded ? this.shrinkSelf : this.expandSelf()} onMouseLeave={e => this.shrinkSelf()} >
 
                 <div id='chat-box' className={`blur shadow-controller`} style={{ position: 'absolute', marginBottom: 12, height: 0, width: '100%', top: -370, background: 'rgba(255, 255, 255, 0.25)', fontSize: 14, pointerEvents: this.state.showChat ? undefined : 'none' }}>
-                    <div id='chat-messages' style={{ margin: 12, opacity: 0, overflow: 'auto', height: 310, background: isChrome ? 'rgba(255, 255, 255, 0.5' : undefined }}>
+                    <div id='chat-messages' style={{ margin: 12, opacity: 0, overflow: 'auto', height: 310, background: undefined }}>
                         {this.state.showChat && this.props.messages ?
                             this.props.messages.map((m, i) => {
                                 return <div key={i}>
