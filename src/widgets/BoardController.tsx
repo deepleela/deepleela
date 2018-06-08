@@ -40,14 +40,19 @@ export default class BoardController extends React.Component<BoardControllerProp
 
     componentDidMount() {
         this.root = document.getElementById('board-controller') as HTMLDivElement;
-
-        let fx = Math.max(0, window.innerWidth - 32);
-        let fy = Math.max(0, window.innerHeight - 50 - 52);
-        jQuery('#board-controller').css('left', fx).css('top', fy);
+        this.calcPos();
+        jQuery(window).on('resize', this.calcPos);
     }
 
     componentWillUnmount() {
         clearTimeout(this.expandTimerId);
+        jQuery(window).off('resize', this.calcPos);
+    }
+
+    calcPos = () => {
+        let fx = Math.max(0, window.innerWidth - 32);
+        let fy = Math.max(0, window.innerHeight - 50 - 52);
+        jQuery('#board-controller').css('left', fx).css('top', fy);
     }
 
     private onAIClick() {
@@ -67,11 +72,14 @@ export default class BoardController extends React.Component<BoardControllerProp
     }
 
     private expandSelf() {
+        clearTimeout(this.expandTimerId);
         if (this.state.expanded) return;
+
         this.setState({ expanded: true });
 
         let rect = this.root.getBoundingClientRect();
         jQuery('#board-controller').animate({ left: window.innerWidth - rect.width - 12, });
+        jQuery(window).off('resize', this.calcPos);
     }
 
     private shrinkSelf() {
@@ -79,6 +87,7 @@ export default class BoardController extends React.Component<BoardControllerProp
         this.expandTimerId = setTimeout(() => {
             this.setState({ expanded: false });
             jQuery('#board-controller').animate({ left: window.innerWidth - 36 });
+            jQuery(window).on('resize', this.calcPos);
         }, (this.props.mode === 'review' ? 60 : 5) * 1000);
     }
 

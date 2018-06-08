@@ -33,10 +33,20 @@ export default class IM extends React.Component<Props, States> {
 
     componentDidMount() {
         this.root = document.getElementById('room-messenger') as HTMLDivElement;
+        new clipboard('.share');
+
+        jQuery(window).on('resize', this.calcPos);
+    }
+
+    componentWillUnmount() {
+        jQuery(window).off('resize', this.calcPos);
+        clearTimeout(this.shrinkTimer);
+    }
+
+    calcPos = () => {
         let fx = - this.root.getBoundingClientRect().width + 68;
         let fy = Math.max(0, window.innerHeight - 50 - 52);
         jQuery('#room-messenger').css('left', fx).css('top', fy);
-        new clipboard('.share');
     }
 
     expandSelf() {
@@ -46,6 +56,7 @@ export default class IM extends React.Component<Props, States> {
         let rect = this.root.getBoundingClientRect();
         jQuery('#room-messenger').animate({ left: 12, });
         this.expanded = true;
+        jQuery(window).off('resize', this.calcPos);
     }
 
     shrinkSelf(immediately = false) {
@@ -56,6 +67,7 @@ export default class IM extends React.Component<Props, States> {
             let fx = - this.root.getBoundingClientRect().width + 68;
             jQuery('#room-messenger').animate({ left: fx });
             this.expanded = false;
+            jQuery(window).off('resize', this.calcPos);
         }, immediately ? 0 : 5000);
     }
 
@@ -157,11 +169,11 @@ export default class IM extends React.Component<Props, States> {
 
                 <div className='blur shadow-controller' style={{ display: 'flex', justifyContent: 'space-around', padding: 1, paddingTop: 2, paddingBottom: 0, marginBottom: -1, background: 'rgba(255, 255, 255, 0.25)' }}>
 
-                    <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, color: this.isAudioAvailable ? (this.state.showChat ? 'deepskyblue' : undefined) : 'lightgrey', pointerEvents: this.isAudioAvailable ? undefined : 'none' }} onClick={e => this.toggleChatBox()}>
+                    <div className='touch' style={{ marginLeft: 8, paddingTop: 1, marginBottom: -1, }} onClick={e => this.toggleChatBox()}>
                         <span uk-icon='icon: comment'></span>
                     </div>
 
-                    <div className='touch' onClick={e => this.toggleAudio()} style={{ color: this.state.enableAudio ? 'deepskyblue' : undefined }}>
+                    <div className='touch' onClick={e => this.toggleAudio()} style={{ color: this.isAudioAvailable ? (this.state.enableAudio ? 'deepskyblue' : undefined) : 'lightgrey', pointerEvents: this.isAudioAvailable ? undefined : 'none' }}>
                         <span uk-icon='icon: receiver'></span>
                     </div>
 
