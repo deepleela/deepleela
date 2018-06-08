@@ -140,6 +140,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     returnToMainBranch() {
         this.game.returnToMainBranch();
         this.board.clearBranchStates();
+        this.board.clearVariations();
         this.forceUpdate();
     }
 
@@ -278,6 +279,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
 
+        if (this.game.isBranch) await this.reloadCurrentBoard();
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
 
         this.board.setVariations(variations);

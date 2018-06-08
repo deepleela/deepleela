@@ -47,6 +47,8 @@ export default class Go extends EventEmitter {
 
     get isLatestCursor() { return (this.cursor === -1 && this.snapshots.length === 0) || this.cursor === this.snapshots.length - 1 };
 
+    get isBranch() { return this.history.length > 0; }
+
     constructor(size: number) {
         super();
         this._board = this.create(size);
