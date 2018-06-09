@@ -3,6 +3,7 @@ import SmartGoBoard from '../widgets/SmartGoBoard';
 import BoardController from '../widgets/BoardController';
 import UserPreferences from '../common/UserPreferences';
 import SGF from '../common/SGF';
+import BrowserHelper from '../components/BrowserHelper';
 
 interface LocalProps {
 }
@@ -85,6 +86,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                     onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
                     onAIAutoPlayClick={autoplay => { this.setState({ aiAutoplay: autoplay }); if (autoplay) this.smartBoard.autoGenmove(true); }}
                     onExitBranch={() => this.smartBoard.returnToMainBranch()}
+                    showAnalytics={!BrowserHelper.isMobile}
                     style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
             </div>
         );

@@ -6,7 +6,6 @@ import Stone from '../components/Stone';
 import i18n from '../i18n';
 import * as jQuery from 'jquery';
 import GameClient from '../common/GameClient';
-import { Protocol } from 'deepleela-common';
 import Go from '../common/Go';
 import { NewGameDialogStates } from '../dialogs/NewGameDialog';
 import { State } from '../components/Intersection';
@@ -15,6 +14,26 @@ import * as moment from 'moment';
 import * as Utils from '../lib/Utils';
 import SGF from '../common/SGF';
 import UserPreferences from '../common/UserPreferences';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import 'rc-tooltip/assets/bootstrap.css';
+import Tooltip from 'rc-tooltip';
+const Handle = Slider.Handle;
+
+const handle = (props) => {
+    const { value, dragging, index, ...restProps } = props;
+    return (
+        <Tooltip
+            prefixCls="rc-slider-tooltip"
+            overlay={value}
+            visible={dragging}
+            placement="top"
+            key={index}
+        >
+            <Handle value={value} {...restProps} />
+        </Tooltip>
+    );
+};
 
 interface SmartGoBoardProps {
     id?: any;
@@ -439,7 +458,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     currentColor={this.game.currentColor}
                 />
 
-                <div style={{ marginTop: -12, }}>
+                <div style={{ marginTop: -12, position: 'relative' }}>
+
+
                     <div style={{ display: 'flex', width: '100%', margin: 'auto', fontSize: 10, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
                         <div style={{ marginLeft: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
                             <div style={{ position: 'relative', width: 12, height: 12, marginRight: 4, marginTop: -1 }}>
@@ -457,8 +478,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                             <span style={{ opacity: 0.75, maxWidth: 150, textOverflow: 'ellipsis' }}>{whitePlayer || '---'}</span>
                         </div>
                     </div>
+
                 </div>
-            </div>
+            </div >
         );
     }
 }

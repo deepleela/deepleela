@@ -13,6 +13,7 @@ import InputBox from '../widgets/InputBox';
 import MessageBar from '../widgets/MessageBar';
 import ReviewClient from '../common/ReviewClient';
 import IM, { Message } from '../widgets/IM';
+import BrowserHelper from '../components/BrowserHelper';
 
 interface RouteParam {
     roomId?: string;
@@ -200,7 +201,8 @@ export default class OnlineReivew extends React.Component<Props, States> {
                             onCursorChange={d => this.smartBoard.changeCursor(d)}
                             onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
                             onExitBranch={() => this.smartBoard.returnToMainBranch()}
-                            style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
+                            showAnalytics={!BrowserHelper.isMobile}
+                            style={{ position: 'fixed', zIndex: 2, transition: 'all 1s', }} />
                         : undefined
                 }
 

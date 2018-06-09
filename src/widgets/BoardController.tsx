@@ -10,6 +10,7 @@ import { StoneColor } from '../common/Constants';
 import GameClient from '../common/GameClient';
 import Board from '../components/Board';
 import { GameMode } from './SmartGoBoard';
+import BrowserHelper from '../components/BrowserHelper';
 
 interface BoardControllerProps {
     mode?: GameMode;
@@ -124,7 +125,7 @@ export default class BoardController extends React.Component<BoardControllerProp
 
         return (
             <div id='board-controller' style={this.props.style} className='shadow-controller blur' onMouseLeave={e => this.shrinkSelf()} onMouseEnter={e => clearTimeout(this.expandTimerId)}>
-                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', }}>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: `rgba(255, 255, 255, ${BrowserHelper.isSafari ? 0.15 : 0.45})`, userSelect: 'none', }}>
                     <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.toggleSelf()} style={{ background: 'transparent', height: 52, }}>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
@@ -152,7 +153,7 @@ export default class BoardController extends React.Component<BoardControllerProp
                         </div> : undefined
                     }
 
-                    {isReview ?
+                    {isReview && this.props.showAnalytics ?
                         <div className='touch' uk-tooltip={i18n.tips.anayltics} onClick={e => this.props.onAnalyticsClick && this.props.onAnalyticsClick()}>
                             <span uk-icon='icon: nut; ' style={{ display: 'inline-block', marginLeft: -32, marginTop: 2, }}></span>
                         </div> : undefined
