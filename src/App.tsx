@@ -189,6 +189,7 @@ class App extends React.Component<AppProps, AppStates> {
                           <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
                           <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
                           <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
+                          
                         </div>
                     }
 

@@ -107,5 +107,6 @@ export const lang = {
         last: '最後',
         aithingking: 'AI をコール',
         branch: 'ブランチを閉じる',
+        anayltics: 'アナリティクス',
     },
 }

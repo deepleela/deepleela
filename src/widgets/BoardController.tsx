@@ -14,10 +14,12 @@ import { GameMode } from './SmartGoBoard';
 interface BoardControllerProps {
     mode?: GameMode;
     style?: CSSProperties;
+    showAnalytics?: boolean;
     onAIThinkingClick?: () => void;
     onAIAutoPlayClick?: (autoplay: boolean) => void;
     onCursorChange?: (delta: number) => void;
     onExitBranch?: () => void;
+    onAnalyticsClick?: () => void;
 }
 
 interface BoardControllerStates {
@@ -82,13 +84,17 @@ export default class BoardController extends React.Component<BoardControllerProp
         jQuery(window).off('resize', this.calcPos);
     }
 
-    private shrinkSelf() {
+    private shrinkSelf(immediately = false) {
         clearTimeout(this.expandTimerId);
         this.expandTimerId = setTimeout(() => {
             this.setState({ expanded: false });
             jQuery('#board-controller').animate({ left: window.innerWidth - 36 });
             jQuery(window).on('resize', this.calcPos);
-        }, (this.props.mode === 'review' ? 60 : 5) * 1000);
+        }, immediately ? 0 : (this.props.mode === 'review' ? 180 : 60) * 1000);
+    }
+
+    private toggleSelf() {
+        this.state.expanded ? this.shrinkSelf(true) : this.expandSelf();
     }
 
     componentDidUpdate() {
@@ -114,10 +120,12 @@ export default class BoardController extends React.Component<BoardControllerProp
     }
 
     render() {
+        let isReview = this.props.mode && this.props.mode === 'review';
+
         return (
             <div id='board-controller' style={this.props.style} className='shadow-controller blur' onMouseLeave={e => this.shrinkSelf()} onMouseEnter={e => clearTimeout(this.expandTimerId)}>
                 <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', alignContent: 'center', background: 'rgba(255, 255, 255, 0.25)', userSelect: 'none', }}>
-                    <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.expandSelf()} style={{ background: 'transparent', height: 52, }}>
+                    <div id='draggable-handler' className='center-div' onMouseEnter={e => this.expandSelf()} onClick={e => this.toggleSelf()} style={{ background: 'transparent', height: 52, }}>
                         <span uk-icon='icon: more-vertical; ratio: 1' style={{ display: 'inline-block', paddingLeft: 10 }}></span>
                     </div>
                     <div className='touch' uk-tooltip={i18n.tips.backward} onClick={e => this.triggerCursorChange(-10)}>
@@ -138,9 +146,15 @@ export default class BoardController extends React.Component<BoardControllerProp
                         <span uk-icon='icon:  chevron-right; ratio: 1'></span>
                     </div>
 
-                    {this.props.mode && this.props.mode === 'review' ?
+                    {isReview ?
                         <div className='touch' uk-tooltip={i18n.tips.branch} onClick={e => this.triggerExitBranchMode()}>
                             <span uk-icon='icon: minus-circle; ratio: 0.95' style={{ display: 'inline-block', marginLeft: -16, marginTop: 2, color: this.state.branchMode ? 'deepskyblue' : 'lightgrey' }}></span>
+                        </div> : undefined
+                    }
+
+                    {isReview ?
+                        <div className='touch' uk-tooltip={i18n.tips.anayltics} onClick={e => this.props.onAnalyticsClick && this.props.onAnalyticsClick()}>
+                            <span uk-icon='icon: nut; ' style={{ display: 'inline-block', marginLeft: -32, marginTop: 2, }}></span>
                         </div> : undefined
                     }
                 </div>

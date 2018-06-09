@@ -107,5 +107,6 @@ export const lang = {
         last: '最后',
         aithingking: '召唤 AI',
         branch: '关闭分支',
+        anayltics: '全盘分析',
     },
 }

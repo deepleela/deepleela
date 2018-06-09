@@ -107,5 +107,6 @@ export const lang = {
         last: 'Last',
         aithingking: 'Call AI',
         branch: 'Close Branch',
+        anayltics: 'Global Analytics',
     },
 }
