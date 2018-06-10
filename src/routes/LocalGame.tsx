@@ -83,6 +83,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
 
                 <AnalysisPanel
                     ref={e => this.analysisPanel = e!}
+                    onMovesRequest={() => this.analysisPanel.startAnalysing({ moves: this.smartBoard.game.genMoves(true), komi: this.smartBoard.game.komi, size: this.smartBoard.game.size })}
                     style={{ position: 'fixed', zIndex: 2 }} />
 
                 <BoardController
