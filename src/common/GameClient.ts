@@ -9,7 +9,7 @@ import SGF from "./SGF";
 
 export default class GameClient extends EventEmitter {
 
-    static readonly url = process.env.NODE_ENV === 'production' ? `ws${location.protocol === 'https:' ? 's' : ''}://w.deepleela.com` : 'ws://192.168.31.54:3301';
+    static readonly url = process.env.NODE_ENV === 'production' ? `wss://w.deepleela.com` : 'ws://192.168.31.54:3301';
     static readonly default = new GameClient();
 
     private ws: WebSocket;

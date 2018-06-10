@@ -4,6 +4,7 @@ import BoardController from '../widgets/BoardController';
 import UserPreferences from '../common/UserPreferences';
 import SGF from '../common/SGF';
 import BrowserHelper from '../components/BrowserHelper';
+import AnalysisPanel from '../widgets/AnalysisPanel';
 
 interface LocalProps {
 }
@@ -21,6 +22,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
     get smartBoard() { return this._smartboard; }
     set smartBoard(value: SmartGoBoard) { this._smartboard = LocalGame.smartBoard = value; }
     private boardController: BoardController;
+    private analysisPanel: AnalysisPanel;
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
@@ -79,6 +81,10 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                         aiAutoPlay={this.state.aiAutoplay} />
                 </div>
 
+                <AnalysisPanel
+                    ref={e => this.analysisPanel = e!}
+                    style={{ position: 'fixed', zIndex: 2 }} />
+
                 <BoardController
                     ref={e => this.boardController = e!}
                     mode={this.smartBoard ? this.smartBoard.gameMode : 'self'}
@@ -86,6 +92,7 @@ export default class LocalGame extends React.Component<LocalProps, LocalStates> 
                     onAIThinkingClick={() => this.smartBoard.peekSgfWinrate()}
                     onAIAutoPlayClick={autoplay => { this.setState({ aiAutoplay: autoplay }); if (autoplay) this.smartBoard.autoGenmove(true); }}
                     onExitBranch={() => this.smartBoard.returnToMainBranch()}
+                    onAnalyticsClick={() => this.analysisPanel.toggle()}
                     showAnalytics={!BrowserHelper.isMobile}
                     style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
             </div>

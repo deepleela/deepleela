@@ -297,6 +297,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.board.setAnimation(true);
 
         this.setState({ disabled: true, isThinking: this.props.showWinrate });
+        await this.checkAIOnline();
 
         if (this.game.isBranch) await this.reloadCurrentBoard();
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
@@ -407,6 +408,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         setTimeout(() => this.wheeling = false, 85);
         this.wheeling = true;
+        this.board.clearBranchStates();
+        this.board.clearVariations();
         this.changeCursor(e.deltaY > 0.5 ? 1 : (e.deltaY < -0.5 ? -1 : 0));
     }
 
