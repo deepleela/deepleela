@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as constants from '../common/Constants';
 import ThemeManager from '../common/ThemeManager';
-import Board from '../components/Board';
+import Board, { Variation } from '../components/Board';
 import Stone from '../components/Stone';
 import i18n from '../i18n';
 import * as jQuery from 'jquery';
@@ -54,6 +54,8 @@ interface SmartGoBoardStates {
 
     whitePlayer?: string;
     blackPlayer?: string;
+
+    forceColor?: StoneColor;
 }
 
 export type GameMode = 'ai' | 'self' | 'guest' | 'review';
@@ -152,7 +154,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.changeCursor(delta);
 
         if (this.gameMode === 'review') UserPreferences.cursor = this.game.cursor;
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, forceColor: undefined });
         this.board.clearTouchedCoord();
     }
 
@@ -169,6 +171,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
         this.board.setMovesNumber(branch);
         this.board.setAnimation(false);
+    }
+
+    setVariations(vars: Variation[], color?: StoneColor) {
+        this.board.setVariations(vars);
+        this.board.setAnimation(true);
+        this.setState({ forceColor: color });
     }
 
     private async checkAIOnline() {
@@ -227,7 +235,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.board.clearVariations();
         this.board.clearBranchStates();
-        this.setState({ heatmap: undefined });
+        this.setState({ heatmap: undefined, forceColor: undefined });
 
         if (this.gameMode === 'review') {
             if (!this.game.isLatestCursor && this.props.onEnterBranch) this.props.onEnterBranch();
@@ -458,7 +466,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                     highlightCoord={this.game.currentCartesianCoord}
                     heatmap={this.state.heatmap}
                     fontSize={window.innerWidth < 576 ? 7 : 10}
-                    currentColor={this.game.currentColor}
+                    currentColor={this.state.forceColor || this.game.currentColor}
                 />
 
                 <div style={{ marginTop: -12, position: 'relative' }}>

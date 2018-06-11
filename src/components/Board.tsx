@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Intersection, { State, WinRate } from './Intersection';
 import { CSSProperties } from 'react';
-import ThemeManager from '../common/ThemeManager';
 
 export interface Variation {
     visits: number;
