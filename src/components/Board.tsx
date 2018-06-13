@@ -6,6 +6,7 @@ export interface Variation {
     visits: number;
     stats: { W: number, U: number, };
     variation: string[];
+    weight: number;
 }
 
 interface BranchState {
@@ -27,7 +28,7 @@ interface BoardProps {
     onIntersectionHover?: (x: number, y: number) => void;
     onIntersectionLeave?: (x: number, y: number) => void;
 
-    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string, starPointColor?: string };
+    style?: CSSProperties & { boardColor?: string, gridColor?: string, whiteStoneColor?: string, blackStoneColor?: string, coordTextColor?: string, starPointColor?: string, winrateColor?: string };
     states: State[][];
     heatmap?: number[][];
     fontSize?: number;
@@ -206,7 +207,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
 
                                     <Intersection
                                         onClick={(r, c) => this.onClick(r, c)}
-                                        style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black', startPointColor: this.props.style ? this.props.style.starPointColor : undefined }}
+                                        style={{ color: gridLineColor, whiteStoneColor: this.props.style ? this.props.style.whiteStoneColor : 'white', blackStoneColor: this.props.style ? this.props.style.blackStoneColor : 'black', startPointColor: this.props.style ? this.props.style.starPointColor : undefined, winrateFontColor: this.props.style && this.props.style.winrateColor }}
                                         key={j}
                                         row={this.props.size - i}
                                         col={j + 1}
@@ -229,6 +230,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                             value: this.state.variationStates[i][j]!.stats.W,
                                             uvalue: this.state.variationStates[i][j]!.stats.U,
                                             visits: this.state.variationStates[i][j]!.visits,
+                                            weight: this.state.variationStates[i][j]!.weight,
                                             highest: this.state.highlightWinrateVariationOffset ? this.state.highlightWinrateVariationOffset.x === i && this.state.highlightWinrateVariationOffset.y === j : false,
                                         } : undefined}
                                         fontSize={this.props.fontSize}

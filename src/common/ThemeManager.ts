@@ -18,6 +18,7 @@ export default class ThemeManager {
     whiteStoneColor: string;
     coordTextColor: string;
     starPointColor?: string;
+    winrateColor?: string;
 
     applyDefault() {
         this.gridLineColor = '#efefef';
@@ -27,6 +28,7 @@ export default class ThemeManager {
         this.blackStoneColor = '#3c3c44';
         this.coordTextColor = '#ccc';
         this.starPointColor = undefined;
+        this.winrateColor = undefined;
 
         jQuery('html').removeClass();
         UserPreferences.theme = 'default';
@@ -40,6 +42,7 @@ export default class ThemeManager {
         this.blackStoneColor = '#3c3c44';
         this.coordTextColor = '#ffffff80';
         this.starPointColor = undefined;
+        this.winrateColor = '#ffffff';
 
         jQuery('html').removeClass().addClass(theme);
         UserPreferences.theme = theme;
@@ -53,6 +56,7 @@ export default class ThemeManager {
         this.blackStoneColor = '#000';
         this.coordTextColor = this.gridLineColor;
         this.starPointColor = '#444';
+        this.winrateColor = '#ffffff';
 
         jQuery('html').removeClass().addClass('metal');
         UserPreferences.theme = 'metal';

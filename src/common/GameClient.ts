@@ -165,7 +165,7 @@ export default class GameClient extends EventEmitter {
             this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
                 let result = JSON.parse(resultstr);
                 let gtpresp = Response.fromString(result.respstr);
-                let variations = result.variations;
+                let variations = result.variations as Variation[];
                 resolve({ move: gtpresp.content!, variations });
             });
 
@@ -182,8 +182,10 @@ export default class GameClient extends EventEmitter {
             this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
                 let result = JSON.parse(resultstr);
                 let variations = result.variations as Variation[];
+                let maxVariation = variations.reduce((prev, curr) => prev.visits > curr.visits ? prev : curr);
 
                 variations.forEach(v => {
+                    v.weight = v.visits / maxVariation.visits;
                     v.stats.W = Number.parseFloat(((Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
                     v.stats.U = Number.parseFloat(((Number.parseFloat(v.stats.U as any) / 100.0) * 100.0).toFixed(1));
                 });

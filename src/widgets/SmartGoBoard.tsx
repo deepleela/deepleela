@@ -416,7 +416,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         setTimeout(() => this.wheeling = false, 85);
         this.wheeling = true;
-        this.board.clearBranchStates();
+        if (!this.game.isBranch) this.board.clearBranchStates();
         this.board.clearVariations();
         this.changeCursor(e.deltaY > 0.5 ? 1 : (e.deltaY < -0.5 ? -1 : 0));
     }
@@ -457,7 +457,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor }}
                     size={this.game.size}
                     states={this.game.board}
                     disabled={this.props.disabled || this.state.disabled || shouldBeDisabled}
