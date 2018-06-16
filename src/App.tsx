@@ -22,6 +22,7 @@ import LiveGame from './routes/LiveGame';
 import { History } from 'history';
 import ReviewClient from './common/ReviewClient';
 import BrowserHelper from './components/BrowserHelper';
+import Joseki from './routes/Joseki';
 
 interface AppStates {
   newGameDialogOpen?: boolean,
@@ -68,7 +69,7 @@ class App extends React.Component<AppProps, AppStates> {
         this.forceUpdate();
         return;
       }
-      
+
       let top = Math.max(0.01, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
       let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
       this.setState({ paddingTop: top, boardBottomMargin });
@@ -189,7 +190,7 @@ class App extends React.Component<AppProps, AppStates> {
                           <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
                           <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
                           <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
-                          
+
                         </div>
                     }
 
@@ -235,11 +236,12 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div id='boardaera' style={{ paddingTop: this.isCGOS ? 0 : (this.state.paddingTop || 90) }}>
+          <div id='boardaera' style={{ paddingTop: 0 }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/cgos' exact component={CGOS} />
               <Route path='/cgos/:gameId' component={LiveGame} />
+              <Route path='/joseki' component={Joseki} />
               <Route path='/' component={LocalGame} />
             </Switch>
           </div>

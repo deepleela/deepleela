@@ -11,8 +11,8 @@ export default class SGF {
     static readonly alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
     static stringToArrayPosition(offset: string) {
-        let first = offset[0];
-        let second = offset[1];
+        let first = offset[0].toLowerCase();
+        let second = offset[1].toLowerCase();
         let y = SGF.alphabets.indexOf(first);
         let x = SGF.alphabets.indexOf(second);
         return { x, y };
@@ -75,7 +75,7 @@ export default class SGF {
             while (game.currentColor !== color && pos) game.pass();
             if (!pos || pos.toLowerCase() === 'tt') game.pass();
 
-            if (pos && pos.length == 2) {
+            if (pos && pos.length === 2) {
                 let row = SGF.alphabets.indexOf(pos[1]);
                 let col = SGF.alphabets.indexOf(pos[0]);
                 let coord = Board.arrayPositionToCartesianCoord(row, col, game.size);
@@ -87,6 +87,10 @@ export default class SGF {
 
         game.changeCursor(-9999);
         return { whitePlayer, blackPlayer, game };
+    }
+
+    static parse(sgf: string) {
+        return sgfjs.parse(sgf).childs;
     }
 
     static createBoardFrom(states: State[][]) {

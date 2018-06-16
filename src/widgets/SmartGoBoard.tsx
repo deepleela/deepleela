@@ -129,6 +129,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.whitePlayer = UserPreferences.blackPlayer = 'Human';
 
         let results = await this.client.requestAI(this.engine);
+        
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.gameEngine = this.engine;
 
@@ -143,7 +144,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.setState({ heatmap: undefined, disabled: false, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         this.board.clearVariations();
 
-        await this.peekWinrate();
         return results[0];
     }
 
@@ -470,7 +470,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 />
 
                 <div style={{ marginTop: -12, position: 'relative' }}>
-
 
                     <div style={{ display: 'flex', width: '100%', margin: 'auto', fontSize: 10, justifyContent: 'space-between', alignItems: 'center', alignContent: 'center', pointerEvents: 'none', }}>
                         <div style={{ marginLeft: playerMargin, paddingTop: 4, display: 'flex', alignItems: 'center', alignContent: 'center' }}>
