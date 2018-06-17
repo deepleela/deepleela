@@ -70,9 +70,9 @@ class App extends React.Component<AppProps, AppStates> {
         return;
       }
 
-      let top = Math.max(0.01, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
-      let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 92 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
-      this.setState({ paddingTop: top, boardBottomMargin });
+      let paddingTop = Math.max(0, (window.innerHeight - 84 - smartboard.getBoundingClientRect().height) / 2);
+      let boardBottomMargin = Math.max(12, Math.min(100, window.innerHeight - 108 - document.getElementById('boardaera')!.getBoundingClientRect().height - 24));
+      this.setState({ paddingTop, boardBottomMargin });
     };
 
     window.onresize = (e) => calcPadding();
@@ -236,7 +236,7 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div id='boardaera' style={{ paddingTop: 0 }}>
+          <div id='boardaera' style={{ paddingTop: BrowserHelper.isMobile ? this.state.paddingTop : 0 }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/cgos' exact component={CGOS} />

@@ -124,7 +124,7 @@ export default class Joseki extends React.Component<{}, States> {
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
                     <div style={{ position: 'relative' }}>
                         <Board
-                            id='board'
+                            id='smartboard'
                             style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor }}
                             size={this.game.size}
                             states={this.game.board}
