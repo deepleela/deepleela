@@ -16,10 +16,12 @@ import MessageBar from '../widgets/MessageBar';
 import * as jQuery from 'jquery';
 import Axios from 'axios';
 import { Tree } from 'sgfjs';
+import BrowserHelper from '../components/BrowserHelper';
 
 interface States {
     heatmap: number[][];
     message?: string;
+    loading?: boolean;
 }
 
 export default class Joseki extends React.Component<{}, States> {
@@ -28,6 +30,8 @@ export default class Joseki extends React.Component<{}, States> {
     game = new Go(19);
     joseki: Tree[];
     path: number[] = [];
+    popPath: number[] = [];
+    isWheeling = false;
 
     constructor(props: any, ctx: any) {
         super(props, ctx);
@@ -45,7 +49,9 @@ export default class Joseki extends React.Component<{}, States> {
     }
 
     async componentDidMount() {
+        this.setState({ loading: true });
         let sgf = await this.loadResource();
+        this.setState({ loading: false });
         if (!sgf) return;
 
         this.joseki = sgf;
@@ -70,7 +76,8 @@ export default class Joseki extends React.Component<{}, States> {
             let child: Tree = tree[this.path[i]];
             if (!child) break;
             tree = child.childs;
-            this.setState({ message: `${child.props.N || ''} ${child.props.C || ''}` });
+            let msg = `${child.props.N || ''} ${child.props.C || ''}`;
+            this.setState({ message: msg.length > 1 ? msg : undefined });
         }
 
         if (!tree) return;
@@ -78,6 +85,8 @@ export default class Joseki extends React.Component<{}, States> {
         for (let i = 0; i < tree.length; i++) {
             let node = tree[i];
             let coord = (node.props.W || node.props.B)!;
+            if (!coord) continue;
+
             let pos = SGF.stringToArrayPosition(coord);
 
             if (pos.x < 0 || pos.x > 18 || pos.y < 0 || pos.y > 18) continue;
@@ -110,10 +119,57 @@ export default class Joseki extends React.Component<{}, States> {
         let index = tree.findIndex(t => (t.props.B || t.props.W)!.toLowerCase() === pos);
 
         this.path.push(index);
+        this.popPath = [];
 
-        tree.forEach(t => console.log(t.props.B || t.props.W));
         this.fetchHeatmap();
         this.forceUpdate();
+    }
+
+    onWheel(e: React.WheelEvent<HTMLDivElement>) {
+        e.preventDefault();
+
+        if (this.isWheeling) return;
+        this.isWheeling = true;
+        setTimeout(() => this.isWheeling = false, 75);
+
+        let delta = e.deltaY > 1.2 ? 1 : (e.deltaY < -1.2 ? -1 : 0);
+
+        if (delta > 0) {
+            let item = this.popPath.pop();
+            if (item !== undefined) {
+                this.path.push(item);
+                this.game.changeCursor(1);
+            }
+        }
+
+        if (delta < 0) {
+            let item = this.path.pop();
+            if (item !== undefined) {
+                this.popPath.push(item);
+                this.game.changeCursor(-1);
+            }
+
+            if (this.path.length === 0) {
+                this.popPath = [];
+                this.game.clear();
+            }
+        }
+
+        if (delta) {
+            let tree = this.joseki;
+            let node: Tree | undefined;
+            this.path.forEach(p => {
+                node = tree[p] || node;
+            });
+
+            if (node) {
+                let msg = `${node.props.N || ''} ${node.props.C || ''}`;
+                this.setState({ message: msg.length > 1 ? msg : undefined });
+            }
+
+            this.fetchHeatmap();
+            this.forceUpdate();
+        }
     }
 
     render() {
@@ -124,7 +180,7 @@ export default class Joseki extends React.Component<{}, States> {
         return (
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                 <div style={{ width: `${width}%`, height: '100%', margin: 'auto', marginTop: -8, }}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative' }} onWheel={e => this.onWheel(e)}>
                         <Board
                             id='smartboard'
                             style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor }}
@@ -140,12 +196,14 @@ export default class Joseki extends React.Component<{}, States> {
                     </div>
                 </div>
 
-                {this.state.message ?
+                {this.state.message && BrowserHelper.lang.includes('zh') ?
                     <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
                         <MessageBar style={{ margin: 'auto' }} text={this.state.message} />
                     </div>
                     : undefined
                 }
+
+                <LoadingDialog isOpen={this.state.loading} />
             </div>
         );
     }

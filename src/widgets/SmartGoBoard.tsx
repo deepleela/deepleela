@@ -415,11 +415,11 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         if (this.wheeling) return;
 
-        setTimeout(() => this.wheeling = false, 85);
+        setTimeout(() => this.wheeling = false, 45);
         this.wheeling = true;
         if (!this.game.isBranch) this.board.clearBranchStates();
         this.board.clearVariations();
-        this.changeCursor(e.deltaY > 0.5 ? 1 : (e.deltaY < -0.5 ? -1 : 0));
+        this.changeCursor(e.deltaY > 1.2 ? 1 : (e.deltaY < -1.2 ? -1 : 0));
     }
 
     private onContextMenu(e: React.MouseEvent<HTMLDivElement>) {

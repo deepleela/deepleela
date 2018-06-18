@@ -6,4 +6,6 @@ export default class BrowserHelper {
     static readonly isFirefox = navigator.userAgent.lastIndexOf('Firefox/') > 0;
     static readonly iPhone = navigator.userAgent.includes('iPhone');
     static readonly isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    static readonly lang = navigator.language;
 }
