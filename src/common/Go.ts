@@ -49,6 +49,8 @@ export default class Go extends EventEmitter {
 
     get isBranch() { return this.history.length > 0; }
 
+    get length() { return this.snapshots.length; }
+
     constructor(size: number) {
         super();
         this._board = this.create(size);

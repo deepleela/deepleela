@@ -129,7 +129,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         UserPreferences.whitePlayer = UserPreferences.blackPlayer = 'Human';
 
         let results = await this.client.requestAI(this.engine);
-        
+
         UserPreferences.gameMode = this.gameMode;
         UserPreferences.gameEngine = this.engine;
 
@@ -308,8 +308,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.checkAIOnline();
 
         if (this.game.isBranch) await this.reloadCurrentBoard();
+        
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
-
+        
         this.board.setVariations(variations);
         this.setState({ disabled: false, isThinking: false });
     }
@@ -449,7 +450,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 {
                     this.gameMode === 'review' ?
                         <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, fontSize: 10, color: tm.logoColor, marginRight: aiTipsMarginLeft, marginTop: 12, }}>
-                            <span>{this.currentCursor + 1} / {this.game.snapshots.length}</span>
+                            <span>{this.currentCursor + 1} / {this.game.length}</span>
                         </div>
                         : undefined
                 }

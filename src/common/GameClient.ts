@@ -48,39 +48,40 @@ export default class GameClient extends EventEmitter {
     }
 
     private onmessage = (ev: MessageEvent) => {
+        let msg: ProtocolDef = JSON.parse(ev.data as string);
+        let callback: Function | undefined = undefined;
+
+        switch (msg.type) {
+            case 'gtp':
+                let resp = Response.fromString(msg.data as string);
+                callback = this.pendingCallbacks.get(resp.id || -1);
+                if (!callback) return;
+                callback(resp);
+                this.pendingCallbacks.delete(resp.id!);
+                break;
+            case 'sys':
+                let data: any = msg.data;
+                if (data.name === 'airelease') {
+                    this.aiConnected = false;
+                    this.emit('airelease');
+                    break;
+                }
+
+                callback = this.pendingCallbacks.get(data.id);
+                if (!callback) return;
+                callback(data.args);
+                this.pendingCallbacks.delete(data.id);
+                break;
+            case 'sync':
+                try {
+                    let payload = msg.data as Command;
+                    let msgArgs = payload.name === Protocol.sys.reviewRoomStateUpdate ? JSON.parse(payload.args as string) : payload.args as string;
+                    super.emit(payload.name, msgArgs);
+                } catch{ }
+                break;
+        }
         try {
-            let msg: ProtocolDef = JSON.parse(ev.data as string);
-            let callback: Function | undefined = undefined;
 
-            switch (msg.type) {
-                case 'gtp':
-                    let resp = Response.fromString(msg.data as string);
-                    callback = this.pendingCallbacks.get(resp.id || -1);
-                    if (!callback) return;
-                    callback(resp);
-                    this.pendingCallbacks.delete(resp.id!);
-                    break;
-                case 'sys':
-                    let data: any = msg.data;
-                    if (data.name === 'airelease') {
-                        this.aiConnected = false;
-                        this.emit('airelease');
-                        break;
-                    }
-
-                    callback = this.pendingCallbacks.get(data.id);
-                    if (!callback) return;
-                    callback(data.args);
-                    this.pendingCallbacks.delete(data.id);
-                    break;
-                case 'sync':
-                    try {
-                        let payload = msg.data as Command;
-                        let msgArgs = payload.name === Protocol.sys.reviewRoomStateUpdate ? JSON.parse(payload.args as string) : payload.args as string;
-                        super.emit(payload.name, msgArgs);
-                    } catch{ }
-                    break;
-            }
 
         } catch (error) {
             console.info(error.message);
@@ -182,10 +183,10 @@ export default class GameClient extends EventEmitter {
             this.pendingCallbacks.set(cmd.id!, (resultstr: string) => {
                 let result = JSON.parse(resultstr);
                 let variations = result.variations as Variation[];
-                let maxVariation = variations.reduce((prev, curr) => prev.visits > curr.visits ? prev : curr);
+                let maxVariation = variations.length > 0 ? variations.reduce((prev, curr) => prev.visits > curr.visits ? prev : curr) : undefined;
 
                 variations.forEach(v => {
-                    v.weight = v.visits / maxVariation.visits;
+                    v.weight = v.visits / (maxVariation ? maxVariation.visits : 1);
                     v.stats.W = Number.parseFloat(((Number.parseFloat(v.stats.W as any) / 100.0) * 100.0).toFixed(1));
                     v.stats.U = Number.parseFloat(((Number.parseFloat(v.stats.U as any) / 100.0) * 100.0).toFixed(1));
                 });

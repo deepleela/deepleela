@@ -19,6 +19,7 @@ import { Tree } from 'sgfjs';
 
 interface States {
     heatmap: number[][];
+    message?: string;
 }
 
 export default class Joseki extends React.Component<{}, States> {
@@ -69,6 +70,7 @@ export default class Joseki extends React.Component<{}, States> {
             let child: Tree = tree[this.path[i]];
             if (!child) break;
             tree = child.childs;
+            this.setState({ message: `${child.props.N || ''} ${child.props.C || ''}` });
         }
 
         if (!tree) return;
@@ -137,6 +139,13 @@ export default class Joseki extends React.Component<{}, States> {
                             currentColor={this.game.currentColor} />
                     </div>
                 </div>
+
+                {this.state.message ?
+                    <div className={this.state.message ? 'uk-animation-slide-bottom-small' : 'uk-animation-slide-top-small uk-animation-reverse'} style={{ width: '100%', position: 'absolute', bottom: 2, display: 'flex', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                        <MessageBar style={{ margin: 'auto' }} text={this.state.message} />
+                    </div>
+                    : undefined
+                }
             </div>
         );
     }
