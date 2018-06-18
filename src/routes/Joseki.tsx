@@ -1,19 +1,11 @@
 import * as React from 'react';
 import BoardController from '../widgets/BoardController';
-import SmartGoBoard from '../widgets/SmartGoBoard';
-import { RouteComponentProps } from 'react-router-dom';
-import GameClient from '../common/GameClient';
-import UserPreferences from '../common/UserPreferences';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
-import { State } from '../components/Intersection';
-import { ReviewRoomState, ReviewRoomInfo, Protocol } from 'deepleela-common';
 import ThemeManager from '../common/ThemeManager';
-import CGOSClient, { Setup, Update } from '../common/CGOSClient';
 import Board from '../components/Board';
 import LoadingDialog from '../dialogs/LoadingDialog';
 import MessageBar from '../widgets/MessageBar';
-import * as jQuery from 'jquery';
 import Axios from 'axios';
 import { Tree } from 'sgfjs';
 import BrowserHelper from '../components/BrowserHelper';
@@ -25,6 +17,12 @@ interface States {
 }
 
 export default class Joseki extends React.Component<{}, States> {
+
+    private static game?: Go;
+    static exportSgf() {
+        if (!Joseki.game) return;
+        return Joseki.game.genSgf({ blackPlayer: 'Human', whitePlayer: 'Human', size: 19, });
+    }
 
     board: Board;
     game = new Go(19);
@@ -49,15 +47,22 @@ export default class Joseki extends React.Component<{}, States> {
     }
 
     async componentDidMount() {
+        this.board.setAnimation(false);
+
         this.setState({ loading: true });
         let sgf = await this.loadResource();
         this.setState({ loading: false });
         if (!sgf) return;
 
         this.joseki = sgf;
-        this.fetchHeatmap();
+        Joseki.game = this.game;
 
+        this.fetchHeatmap();
         this.forceUpdate();
+    }
+
+    componentWillUnmount() {
+        Joseki.game = undefined;
     }
 
     async loadResource() {
@@ -121,6 +126,9 @@ export default class Joseki extends React.Component<{}, States> {
         this.path.push(index);
         this.popPath = [];
 
+        let movesNumber = this.game.mainBranch.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
+        this.board.setMovesNumber(movesNumber);
+
         this.fetchHeatmap();
         this.forceUpdate();
     }
@@ -130,9 +138,13 @@ export default class Joseki extends React.Component<{}, States> {
 
         if (this.isWheeling) return;
         this.isWheeling = true;
-        setTimeout(() => this.isWheeling = false, 75);
+        setTimeout(() => this.isWheeling = false, 85);
 
         let delta = e.deltaY > 1.2 ? 1 : (e.deltaY < -1.2 ? -1 : 0);
+        this.changeCursor(delta);
+    }
+
+    changeCursor(delta: number) {
 
         if (delta > 0) {
             let item = this.popPath.pop();
@@ -183,6 +195,7 @@ export default class Joseki extends React.Component<{}, States> {
                     <div style={{ position: 'relative' }} onWheel={e => this.onWheel(e)}>
                         <Board
                             id='smartboard'
+                            ref={e => this.board = e!}
                             style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor }}
                             size={this.game.size}
                             states={this.game.board}
@@ -202,6 +215,12 @@ export default class Joseki extends React.Component<{}, States> {
                     </div>
                     : undefined
                 }
+
+                <BoardController
+                    mode={'self'}
+                    onCursorChange={d => this.changeCursor(d)}
+                    showAnalytics={false}
+                    style={{ position: 'fixed', zIndex: 2, transition: 'all 1s' }} />
 
                 <LoadingDialog isOpen={this.state.loading} />
             </div>

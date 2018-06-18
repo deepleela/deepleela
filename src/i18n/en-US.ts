@@ -2,6 +2,7 @@
 export const lang = {
     menu: {
         cgos: 'CGOS',
+        joseki: 'Joseki',
 
         newgame_vs_leela: 'Challenge AI',
         newgame_vs_self: 'Free Practice',

@@ -2,6 +2,7 @@
 export const lang = {
     menu: {
         cgos: 'CGOS',
+        joseki: '定石',
         
         newgame_vs_leela: 'AIに挑戦する',
         newgame_vs_self: '自由に探索',

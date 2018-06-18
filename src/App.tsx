@@ -47,7 +47,7 @@ interface AppProps {
 
 class App extends React.Component<AppProps, AppStates> {
 
-  get isOnlineMode() { return ['review', 'cgos'].some(p => location.pathname.includes(p)) }
+  get isOnlineMode() { return ['review', 'cgos', 'joseki'].some(p => location.pathname.includes(p)) }
   get isCGOS() { return location.pathname === '/cgos'; }
 
   constructor(props: any, ctx) {
@@ -146,6 +146,13 @@ class App extends React.Component<AppProps, AppStates> {
     jQuery('body').removeClass('uk-animation-fade');
   }
 
+  outputSgf() {
+    let boards = [OnlineReivew.smartBoard, LocalGame.smartBoard, LiveGame.smartBoard].filter(b => b);
+    let sgf = boards.length > 0 ? boards[0]!.exportGame() : Joseki.exportSgf();
+    if (!sgf) return;
+    this.setState({ exportSgfDialogOpen: true, sgf });
+  }
+
   public render() {
     let isLandscape = window.innerWidth > window.innerHeight;
     let width = isLandscape ? (window.innerHeight / window.innerWidth * 100 - 7.5) : 100;
@@ -180,6 +187,7 @@ class App extends React.Component<AppProps, AppStates> {
 
                     <div className='uk-nav uk-dropdown-nav'>
                       <li><a href='#' onClick={e => App.history.push('/cgos')}>CGOS</a></li>
+                      <li><a href="#" onClick={e => App.history.push('/joseki')}>{i18n.menu.joseki}</a> </li>
                       <li className="uk-nav-divider"></li>
                     </div>
 
@@ -194,7 +202,7 @@ class App extends React.Component<AppProps, AppStates> {
                         </div>
                     }
 
-                    <li><a href="#" onClick={e => this.setState({ exportSgfDialogOpen: true, sgf: [OnlineReivew.smartBoard, LocalGame.smartBoard, LiveGame.smartBoard].filter(b => b)[0]!.exportGame() })}>{i18n.menu.exportsgf}</a></li>
+                    <li><a href="#" onClick={e => this.outputSgf()}>{i18n.menu.exportsgf}</a></li>
 
                     {
                       this.isOnlineMode ?

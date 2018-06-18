@@ -2,6 +2,7 @@
 export const lang = {
     menu: {
         cgos: '遛狗场',
+        joseki: '定式大全',
 
         newgame_vs_leela: '对战 AI',
         newgame_vs_self: '自由探索',
