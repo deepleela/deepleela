@@ -89,7 +89,7 @@ export default class NewGameDialog extends React.Component<NewGameDialogProps, N
                         <div className="full-width" uk-form-custom="target: > * > span.selected-text">
                             <select style={{ width: '100%' }} onChange={e => this.setState({ engine: e.target.value })} defaultValue={this.state.engine}>
                                 <option value="Leela">{'Leela'}</option>
-                                <option value="Leela">{'Leela-Zero'}</option>
+                                {/* <option value="Leela">{'Leela-Zero'}</option> */}
                             </select>
                             <button className="uk-button uk-button-default" type="button" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }} >
                                 <span className="selected-text"></span>

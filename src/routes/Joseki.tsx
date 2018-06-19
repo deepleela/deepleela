@@ -112,7 +112,7 @@ export default class Joseki extends React.Component<{}, States> {
         let value = this.state.heatmap[ax][ay];
         if (!value) return;
 
-        this.game.play(x, y);
+        this.game.play(x, y, 'cut_current');
 
         let tree = this.joseki;
 
