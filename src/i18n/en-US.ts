@@ -110,4 +110,13 @@ export const lang = {
         branch: 'Close Branch',
         anayltics: 'Global Analytics',
     },
+
+    analysis: {
+        black: 'Black Winrate',
+        white: 'White Winrate',
+        winrate: 'Winrate',
+        delta: 'Delta',
+        yourMove: 'Your Move',
+        bestMove: 'Best Move',
+    },
 }

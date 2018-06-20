@@ -110,4 +110,13 @@ export const lang = {
         branch: 'ブランチを閉じる',
         anayltics: 'アナリティクス',
     },
+    
+    analysis: {
+        black: '黒番',
+        white: '白番',
+        winrate: '勝率',
+        delta: '勝率變化',
+        yourMove: 'あなたのポイント',
+        bestMove: 'ベストポイント',
+    },
 }

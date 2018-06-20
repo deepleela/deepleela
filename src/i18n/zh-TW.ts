@@ -110,4 +110,13 @@ export const lang = {
         branch: '關閉分支',
         anayltics: '全盤分析',
     },
+
+    analysis: {
+        black: '黑方勝率',
+        white: '白方勝率',
+        winrate: '勝率',
+        delta: '勝率變化',
+        yourMove: '落子位置',
+        bestMove: '最佳位置',
+    },
 }

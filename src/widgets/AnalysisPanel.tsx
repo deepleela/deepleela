@@ -9,6 +9,7 @@ import { Command, Response } from "@sabaki/gtp";
 import { StoneColor } from '../common/Constants';
 import Stone from '../components/Stone';
 import * as constants from '../common/Constants';
+import i18n from '../i18n';
 
 type AnalysisItem = {
     value: number;
@@ -80,7 +81,7 @@ export default class AnalysisPanel extends React.Component<Props, PanelState> {
         steps[0].delta = 0;
         steps[0].bestMove = '';
 
-        for (let i = 1; i <= steps.length; i++) {
+        for (let i = 1; i <= (process.env.NODE_ENV === 'production' ? steps.length : 8); i++) {
             let moves = data.moves.slice(0, i);
             let genmove = moves[moves.length - 1][0] === 'B' ? 'W' : 'B';
 
@@ -121,28 +122,30 @@ export default class AnalysisPanel extends React.Component<Props, PanelState> {
     render() {
         return (
             <div id='analysis-panel' className={`blur shadow-controller`} style={Object.assign({ background: `rgba(255,255,255,${BrowserHelper.isChrome ? 0.95 : 0.15})`, paddingTop: 8 }, this.props.style)}>
-                <div>
-                    <BarChart width={this.root ? this.root.width() : 0} height={250} data={this.state.data}>
-                        <CartesianGrid vertical={false} verticalPoints={[0, 50, 100]} />
-                        <YAxis type="number" domain={[0, 100]} hide />
-                        <Bar type="monotone" dataKey="value" fill="#222" onMouseMove={e => this.handleCursorMove(e)} />
-                        <Tooltip content={<EmptyDiv />} cursor={{ fill: 'rgba(255, 255, 255, 0.8)' }} />
-                    </BarChart>
-                </div>
+                {
+                    this.state.data.length > 0 ?
+                        <BarChart width={this.root ? this.root.width() : 0} height={250} data={this.state.data}>
+                            <CartesianGrid vertical={false} verticalPoints={[0, 50, 100]} />
+                            <YAxis type="number" domain={[0, 100]} hide />
+                            <Bar type="monotone" dataKey="value" fill="#222" onMouseMove={e => this.handleCursorMove(e)} />
+                            <Tooltip content={<EmptyDiv />} cursor={{ fill: 'rgba(255, 255, 255, 0.8)' }} />
+                        </BarChart>
+                        : undefined
+                }
 
                 <div style={{ fontSize: 12, display: 'flex', }}>
                     <div style={{ display: 'flex', alignItems: 'center', alignContent: 'center', opacity: this.state.selectedColor === 'B' ? 1 : 0.25, cursor: 'pointer', }} onClick={e => this.switchColor('B')}>
                         <div className='inline-block' style={{ width: 12, height: 12, position: 'relative', marginRight: 2, marginLeft: 4, }}>
                             <Stone style={{ color: constants.BlackStoneColor }} />
                         </div>
-                        <span style={{}}>Black Winrate</span>
+                        <span style={{}}>{i18n.analysis.black}</span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', alignContent: 'center', opacity: this.state.selectedColor === 'W' ? 1 : 0.25, cursor: 'pointer', }} onClick={e => this.switchColor('W')}>
                         <div className='inline-block' style={{ width: 12, height: 12, position: 'relative', marginRight: 2, marginLeft: 8, }}>
                             <Stone style={{ color: constants.WhiteStoneColor }} />
                         </div>
-                        <span style={{}}>White Winrate</span>
+                        <span style={{}}>{i18n.analysis.white}</span>
                     </div>
                 </div>
 
@@ -150,16 +153,16 @@ export default class AnalysisPanel extends React.Component<Props, PanelState> {
                     this.state.currentItem ?
                         <div style={{ fontSize: 13, marginLeft: 4, marginTop: 8 }}>
                             <div>
-                                Winrate: {`${this.state.currentItem.value.toFixed(2)}%`}
+                                {i18n.analysis.winrate}: {`${this.state.currentItem.value.toFixed(2)}%`}
                             </div>
                             <div>
-                                Delta: {this.state.currentItem.delta ? `${this.state.currentItem.delta.toFixed(2)}%` : 'NaN'}
+                                {i18n.analysis.delta}: {this.state.currentItem.delta ? `${this.state.currentItem.delta.toFixed(2)}%` : 'NaN'}
                             </div>
                             <div>
-                                Your Move: {`${this.state.currentItem.coord}`}
+                                {i18n.analysis.yourMove}: {`${this.state.currentItem.coord}`}
                             </div>
                             <div>
-                                Best Move: {`${this.state.currentItem.bestMove}`}
+                                {i18n.analysis.bestMove}: {`${this.state.currentItem.bestMove}`}
                             </div>
                         </div>
                         : undefined

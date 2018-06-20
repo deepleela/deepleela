@@ -20,6 +20,7 @@ interface BoardProps {
     disabled?: boolean;
     showCoordinate?: boolean;
     highlightCoord?: { x: number, y: number };
+    needTouchConfirmation?: boolean;
 
     /**
      * Calls when users click a position on board, cartesian coordinate
@@ -222,7 +223,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         star={startPoints.indexOf(i) >= 0 && startPoints.indexOf(j) >= 0}
                                         highlight={this.props.highlightCoord && i === (this.props.size - this.props.highlightCoord.x) && j === this.props.highlightCoord.y - 1}
                                         highlightPointSize={gridWidth > 25 ? 'large' : 'small'}
-                                        needTouchConfirmation={gridWidth < 25}
+                                        needTouchConfirmation={this.props.needTouchConfirmation !== undefined ? this.props.needTouchConfirmation : gridWidth < 25}
                                         onTouch={(x, y) => this.setState({ touchedCoord: { x, y } })}
                                         showTouchConfirmation={this.state.touchedCoord && i === (this.props.size - this.state.touchedCoord.x) && j === (this.state.touchedCoord.y - 1)}
                                         heatmap={this.props.heatmap ? this.props.heatmap[i][j] : 0}

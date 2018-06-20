@@ -202,6 +202,7 @@ export default class Joseki extends React.Component<{}, States> {
                             disabled={false}
                             onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                             showCoordinate={window.innerWidth >= 640}
+                            needTouchConfirmation={false}
                             highlightCoord={this.game.currentCartesianCoord}
                             heatmap={this.state.heatmap}
                             fontSize={window.innerWidth < 576 ? 7 : 10}
