@@ -180,7 +180,7 @@ class App extends React.Component<AppProps, AppStates> {
             <div className='uk-inline' style={{ position: 'absolute', top: 0, left: 0, marginTop: 6, marginLeft: -6 }}>
               <button className="uk-button uk-button-default no-border">
                 <span id='menu-button' uk-icon="icon: menu" style={{ color: ThemeManager.default.logoColor, display: 'block' }}></span>
-                
+
               </button>
               <div id="menu" uk-dropdown="mode: click; boundary-align: true; boundary: #menu-button; animation: uk-animation-slide-top-small; duration: 200;">
                 <div className="uk-nav uk-dropdown-nav" >
@@ -199,7 +199,6 @@ class App extends React.Component<AppProps, AppStates> {
                           <li><a href="#" onClick={e => this.setState({ newGameDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'ai' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_leela}</a></li>
                           <li><a href="#" onClick={e => this.setState({ newSelfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'self' ? 'deepskyblue' : undefined }}>{i18n.menu.newgame_vs_self}</a></li>
                           <li><a href="#" onClick={e => this.setState({ loadSgfDialogOpen: true })} style={{ color: UserPreferences.gameMode === 'review' ? 'deepskyblue' : undefined }}>{i18n.menu.loadsgf}</a></li>
-
                         </div>
                     }
 
@@ -245,7 +244,7 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div id='boardaera' style={{ paddingTop: BrowserHelper.isMobile ? this.state.paddingTop : 0 }}>
+          <div id='boardaera' style={{ paddingTop: this.isCGOS ? 0 : (BrowserHelper.isMobile ? this.state.paddingTop : 0) }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/cgos' exact component={CGOS} />

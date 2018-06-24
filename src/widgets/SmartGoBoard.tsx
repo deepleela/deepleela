@@ -154,6 +154,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         this.game.changeCursor(delta);
 
         if (this.gameMode === 'review') UserPreferences.cursor = this.game.cursor;
+        if (this.game.isBranch) this.showBranch();
         this.setState({ heatmap: undefined, forceColor: undefined });
         this.board.clearTouchedCoord();
     }
@@ -169,7 +170,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         if (this.game.history.length === 0) return;
 
         let branch = this.game.history.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
-        this.board.setMovesNumber(branch);
+        this.board.setMovesNumber(branch, this.game.historyCursor);
         this.board.setAnimation(false);
     }
 
@@ -308,9 +309,9 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         await this.checkAIOnline();
 
         if (this.game.isBranch) await this.reloadCurrentBoard();
-        
+
         let variations = await this.client.peekWinrate(this.game.currentColor, UserPreferences.winrateBlackOnly, UserPreferences.winrate500Base);
-        
+
         this.board.setVariations(variations);
         this.setState({ disabled: false, isThinking: false });
     }

@@ -127,7 +127,7 @@ export default class Joseki extends React.Component<{}, States> {
         this.popPath = [];
 
         let movesNumber = this.game.mainBranch.map((m, i) => { return { coord: m.cartesianCoord, number: i + 1 } });
-        this.board.setMovesNumber(movesNumber);
+        this.board.setMovesNumber(movesNumber, Number.MAX_SAFE_INTEGER);
 
         this.fetchHeatmap();
         this.forceUpdate();

@@ -138,8 +138,9 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
         this.setState({ highlightWinrateVariationOffset: offset });
     }
 
-    setMovesNumber(moves: { coord: { x: number, y: number }, number: number }[]) {
-        moves.forEach(m => {
+    setMovesNumber(moves: { coord: { x: number, y: number }, number: number }[], length: number) {
+        moves.forEach((m, i) => {
+            if (i > length) return;
             let offset = Board.cartesianCoordToArrayPosition(m.coord.x, m.coord.y, this.props.size);
             let state = this.props.states[offset.x][offset.y];
             this.state.branchStates[offset.x][offset.y] = { state: State.Empty, moveNumber: m.number };
