@@ -48,7 +48,7 @@ export default class SettingsDialog extends React.Component<SettingsDialogProps,
 
     render() {
         return (
-            <Modal isOpen={this.props.isOpen} style={littleBox}>
+            <Modal isOpen={this.props.isOpen} style={Object.assign({ background: 'none' }, littleBox)}>
                 <form className="uk-form-stacked">
                     <legend className="uk-legend">{i18n.dialogs.settings.title}</legend>
 

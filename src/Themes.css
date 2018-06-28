@@ -4,6 +4,10 @@
   background-color: linear-gradient(to right, #47b2ff, #00dbde); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.default-theme {
+  background: rgb(240, 171, 93);
+}
+
 .purpink {
   background-color: #7f00ff; /* fallback for old browsers */
   background-color: -webkit-linear-gradient(to right, #7f00ff, #e100ff); /* Chrome 10-25, Safari 5.1-6 */

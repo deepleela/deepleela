@@ -244,7 +244,7 @@ class App extends React.Component<AppProps, AppStates> {
             </div>
           </div>
 
-          <div id='boardaera' style={{ paddingTop: this.isCGOS ? 0 : (BrowserHelper.isMobile ? this.state.paddingTop : 0) }}>
+          <div id='boardaera' style={{ paddingTop: this.isCGOS ? 0 : (BrowserHelper.isMobile ? this.state.paddingTop : (window.innerHeight > window.innerWidth ? this.state.paddingTop : 0)) }}>
             <Switch>
               <Route path='/review/:roomId' component={OnlineReivew} />
               <Route path='/cgos' exact component={CGOS} />

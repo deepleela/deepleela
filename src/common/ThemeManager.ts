@@ -21,16 +21,16 @@ export default class ThemeManager {
     winrateColor?: string;
 
     applyDefault() {
-        this.gridLineColor = '#efefef';
-        this.logoColor = '#aaa';
+        this.gridLineColor = 'rgb(135, 85, 54)';// '#aaa';// '#efefef';
+        this.logoColor = '#3c3c44';
         this.subtextColor = this.logoColor;
-        this.whiteStoneColor = '#dedede';
+        this.whiteStoneColor = '#fff';// '#dedede';
         this.blackStoneColor = '#3c3c44';
-        this.coordTextColor = '#ccc';
-        this.starPointColor = undefined;
+        this.coordTextColor = this.gridLineColor;
+        this.starPointColor = this.gridLineColor;// undefined;
         this.winrateColor = undefined;
 
-        jQuery('html').removeClass();
+        jQuery('html').removeClass().addClass('default-theme');
         UserPreferences.theme = 'default';
     }
 

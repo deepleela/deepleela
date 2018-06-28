@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Intersection, { State, WinRate } from './Intersection';
 import { CSSProperties } from 'react';
+import BrowserHelper from './BrowserHelper';
 
 export interface Variation {
     visits: number;
@@ -213,7 +214,7 @@ export default class Board extends React.Component<BoardProps, BoardStates> {
                                         key={j}
                                         row={this.props.size - i}
                                         col={j + 1}
-                                        lineThickness={2}
+                                        lineThickness={window.innerWidth < 1280 ? 1 : 1.5}
                                         disabled={this.props.disabled}
                                         width={size}
                                         state={state === State.Empty ? (this.state.branchStates[i][j] ? this.state.branchStates[i][j]!.state : state) : state}

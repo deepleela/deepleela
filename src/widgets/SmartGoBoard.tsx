@@ -211,7 +211,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             await this.client.initBoard({ komi: this.game.komi, handicap: 0, time: 0, size: this.game.size });
             await this.client.loadMoves(this.game.genMoves(true));
         }
-        
+
         this.setState({ disabled: false });
 
         if (cleanVariations) {
@@ -439,7 +439,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
-        console.log('disable', this.props.disabled, this.state.disabled, shouldBeDisabled);
+        
         let whitePlayer = this.state.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
         let blackPlayer = this.state.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
