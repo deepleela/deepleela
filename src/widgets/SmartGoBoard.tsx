@@ -120,6 +120,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         }
 
         this.game.start();
+        this.returnToMainBranch();
+
         return results;
     }
 
@@ -143,6 +145,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
         this.setState({ heatmap: undefined, disabled: false, whitePlayer: UserPreferences.whitePlayer, blackPlayer: UserPreferences.blackPlayer });
         this.board.clearVariations();
+        this.returnToMainBranch();
 
         return results[0];
     }
@@ -160,6 +163,8 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     returnToMainBranch() {
+        this.props.onExitBranch && this.props.onExitBranch();
+
         this.game.returnToMainBranch();
         this.board.clearBranchStates();
         this.board.clearVariations();
@@ -201,8 +206,12 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
 
     private async reloadCurrentBoard(cleanVariations: boolean = true) {
         this.setState({ disabled: true });
-        await this.client.initBoard({ komi: this.game.komi, handicap: 0, time: 0, size: this.game.size });
-        await this.client.loadMoves(this.game.genMoves(true));
+
+        if (this.client.aiConnected) {
+            await this.client.initBoard({ komi: this.game.komi, handicap: 0, time: 0, size: this.game.size });
+            await this.client.loadMoves(this.game.genMoves(true));
+        }
+        
         this.setState({ disabled: false });
 
         if (cleanVariations) {
@@ -243,7 +252,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
             this.showBranch();
             return;
         }
-
 
         if (!reloaded) {
             this.setState({ disabled: true });
@@ -424,7 +432,6 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
     }
 
     private onContextMenu(e: React.MouseEvent<HTMLDivElement>) {
-        this.props.onExitBranch && this.props.onExitBranch();
         this.returnToMainBranch();
     }
 
@@ -432,7 +439,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
-
+        console.log('disable', this.props.disabled, this.state.disabled, shouldBeDisabled);
         let whitePlayer = this.state.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
         let blackPlayer = this.state.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
