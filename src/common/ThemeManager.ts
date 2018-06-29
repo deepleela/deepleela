@@ -25,7 +25,7 @@ export default class ThemeManager {
         this.logoColor = '#3c3c44';
         this.subtextColor = this.logoColor;
         this.whiteStoneColor = '#fff';// '#dedede';
-        this.blackStoneColor = '#3c3c44';
+        this.blackStoneColor = '#000'; //'#3c3c44';
         this.coordTextColor = this.gridLineColor;
         this.starPointColor = this.gridLineColor;// undefined;
         this.winrateColor = undefined;
@@ -39,7 +39,7 @@ export default class ThemeManager {
         this.logoColor = '#ffffffA0';
         this.subtextColor = this.logoColor;
         this.whiteStoneColor = '#fff';
-        this.blackStoneColor = '#3c3c44';
+        this.blackStoneColor = '#000'; //'#3c3c44';
         this.coordTextColor = '#ffffff80';
         this.starPointColor = undefined;
         this.winrateColor = '#ffffff';
