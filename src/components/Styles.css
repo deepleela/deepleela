@@ -3,7 +3,9 @@
 }
 
 .heatmap-safari {
-    background: radial-gradient(ellipse at center, rgba(255,0,72,0.85) 0%, rgba(255, 255, 255, 0.00) 67%,rgba(255,255,255,0) 100%);
+    /* background: radial-gradient(ellipse at center, rgba(255,0,72,0.85) 0%, rgba(255, 255, 255, 0.00) 67%,rgba(255,255,255,0) 100%); */
+    background: radial-gradient(ellipse at center, rgba(35,219,255,1) 0%, rgba(35,219,255, 0) 67%,rgba(35,219,255,0) 100%);
+
 }
 
 .winrate {
