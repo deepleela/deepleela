@@ -3,7 +3,7 @@ import BoardController from '../widgets/BoardController';
 import Go from '../common/Go';
 import SGF from '../common/SGF';
 import ThemeManager from '../common/ThemeManager';
-import Board from '../components/Board';
+import Board, { Variation } from '../components/Board';
 import LoadingDialog from '../dialogs/LoadingDialog';
 import MessageBar from '../widgets/MessageBar';
 import Axios from 'axios';
@@ -14,6 +14,7 @@ interface States {
     heatmap: number[][];
     message?: string;
     loading?: boolean;
+    variations?: Variation[];
 }
 
 export default class Joseki extends React.Component<{}, States> {
@@ -75,20 +76,20 @@ export default class Joseki extends React.Component<{}, States> {
     fetchHeatmap() {
         this.clearHeatmap();
 
-        let tree: undefined | Tree[] = this.joseki;
+        let nodes: undefined | Tree[] = this.joseki;
         for (let i = 0; i < this.path.length; i++) {
-            if (!tree) break;
-            let child: Tree = tree[this.path[i]];
-            if (!child) break;
-            tree = child.childs;
-            let msg = `${child.props.N || ''} ${child.props.C || ''}`;
+            if (!nodes) break;
+            let node: Tree = nodes[this.path[i]];
+            if (!node) break;
+            nodes = node.childs;
+            let msg = `${node.props.N || ''} ${node.props.C || ''}`;
             this.setState({ message: msg.length > 1 ? msg : undefined });
         }
 
-        if (!tree) return;
+        if (!nodes) return;
 
-        for (let i = 0; i < tree.length; i++) {
-            let node = tree[i];
+        for (let i = 0; i < nodes.length; i++) {
+            let node = nodes[i];
             let coord = (node.props.W || node.props.B)!;
             if (!coord) continue;
 
@@ -97,6 +98,48 @@ export default class Joseki extends React.Component<{}, States> {
             if (pos.x < 0 || pos.x > 18 || pos.y < 0 || pos.y > 18) continue;
             this.state.heatmap[pos.x][pos.y] = 0.45;
         }
+    }
+
+    fetchWinrates() {
+        let nodes: undefined | Tree[] = this.joseki;
+        for (let i = 0; i < this.path.length; i++) {
+            if (!nodes) break;
+            let node: Tree = nodes[this.path[i]];
+            if (!node) break;
+            nodes = node.childs;
+        }
+
+        if (!nodes) return;
+        let vars = nodes.map(n => {
+            let coord = (n.props.W || n.props.B)!;
+            let pos = SGF.stringToArrayPosition(coord);
+            let cartesian = Board.arrayPositionToCartesianCoord(pos.x, pos.y, 19);
+            coord = Board.cartesianCoordToString(cartesian.x, cartesian.y).toLowerCase();
+
+            let [win, nextMove] = n.props.C!.split('\n');
+            let winrate = Number.parseFloat(win);
+            console.log(win, nextMove);
+
+            if (Number.isNaN(winrate)) return undefined;
+            let v: Variation = { stats: { W: winrate, U: 0 }, variation: [coord], visits: 0, weight: 1 };
+            return v;
+        }).filter(v => v) as Variation[];
+
+        let bestMove = '';
+        if (this.game.cartesianCoord && this.state.variations) {
+            let v = vars.find(v => v.variation[0].toLowerCase() === this.game.cartesianCoord.toLowerCase())
+            bestMove = v && v.variation[0] || '';
+        } else {
+            bestMove = 'r16';
+        }
+
+        let i = vars.findIndex(v => v.variation[0] === bestMove);
+        console.log(i, vars);
+        let [best] = vars.splice(i, 1);
+        if (best) vars.unshift(best);
+
+        this.setState({ variations: vars });
+        this.board.setVariations(vars);
     }
 
     clearHeatmap() {
@@ -203,7 +246,7 @@ export default class Joseki extends React.Component<{}, States> {
                             onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                             showCoordinate={window.innerWidth >= 640}
                             needTouchConfirmation={false}
-                            highlightCoord={this.game.currentCartesianCoord}
+                            highlightCoord={this.game.cartesianCoordXY}
                             heatmap={this.state.heatmap}
                             fontSize={window.innerWidth < 576 ? 7 : 10}
                             currentColor={this.game.currentColor} />

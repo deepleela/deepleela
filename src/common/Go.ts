@@ -5,7 +5,6 @@ import { StoneColor } from './Constants';
 import { EventEmitter } from "events";
 import SGF from "./SGF";
 import Board from "../components/Board";
-import { S_IXGRP } from "constants";
 
 export type Coordinate = { x: number, y: number };
 export type Move = { stone: State, arrayCoord: Coordinate, cartesianCoord: Coordinate, comment?: string };
@@ -29,7 +28,7 @@ export default class Go extends EventEmitter {
     get size() { return this.board.length };
     komi = 7.5;
     current = State.Black;
-    currentCartesianCoord = { x: -1, y: -1 };
+    cartesianCoordXY = { x: -1, y: -1 };
 
     result?: string;
     handicap?: string[];
@@ -50,6 +49,8 @@ export default class Go extends EventEmitter {
     get isBranch() { return this.history.length > 0; }
 
     get length() { return this.snapshots.length; }
+
+    get cartesianCoord() { return this.cartesianCoordXY.x < 0 ? '' : Board.cartesianCoordToString(this.cartesianCoordXY.x, this.cartesianCoordXY.y); }
 
     constructor(size: number) {
         super();
@@ -199,7 +200,7 @@ export default class Go extends EventEmitter {
         this.historySnapshots.push(SGF.createBoardFrom(currBoard));
         this.historyCursor = this.history.length - 1;
 
-        this.currentCartesianCoord = !this.isLatestCursor && mode === 'force_main' ? this.currentCartesianCoord : currentCoord;
+        this.cartesianCoordXY = !this.isLatestCursor && mode === 'force_main' ? this.cartesianCoordXY : currentCoord;
 
         // Just save the latest board on main branch
         if (mode === 'force_main' || this.cursor === -1 || this.cursor === this.snapshots.length - 1) {
@@ -240,7 +241,7 @@ export default class Go extends EventEmitter {
         this.mainBranch.pop();
         this.board = this.snapshots.length > 0 ? SGF.createBoardFrom(this.snapshots[this.snapshots.length - 1]) : this.board = this.create(this.size);
         this.cursor = this.snapshots.length - 1;
-        this.currentCartesianCoord = this.mainBranch.length > 0 ? this.mainBranch[this.mainBranch.length - 1].cartesianCoord : { x: -1, y: -1 };
+        this.cartesianCoordXY = this.mainBranch.length > 0 ? this.mainBranch[this.mainBranch.length - 1].cartesianCoord : { x: -1, y: -1 };
 
         let step = this.mainBranch[this.mainBranch.length - 1];
         if (step && this.currentColor === step.stone) {
@@ -282,7 +283,7 @@ export default class Go extends EventEmitter {
         this.historyCursor = -1;
         this._board = this.create(resize || (this._board.length || 19));
         this.current = State.Black;
-        this.currentCartesianCoord = { x: -1, y: -1 };
+        this.cartesianCoordXY = { x: -1, y: -1 };
     }
 
     setHandicap(stones: number) {
@@ -333,7 +334,7 @@ export default class Go extends EventEmitter {
             this.cursor = this.branchCursor + 1;
             this.board = SGF.createBoardFrom(this.historySnapshots[this.historyCursor]);
             let state = this.history[this.historyCursor];
-            this.currentCartesianCoord = state.cartesianCoord;
+            this.cartesianCoordXY = state.cartesianCoord;
             this.current = this.opponentOf(state.stone);
             return;
         }
@@ -342,7 +343,7 @@ export default class Go extends EventEmitter {
         this.board = SGF.createBoardFrom(this.snapshots[this.cursor]);
 
         let state = this.mainBranch[this.cursor];
-        this.currentCartesianCoord = state.cartesianCoord;
+        this.cartesianCoordXY = state.cartesianCoord;
         this.current = this.opponentOf(state.stone);
     }
 

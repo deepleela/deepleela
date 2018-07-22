@@ -439,7 +439,7 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
         let shouldBeDisabled = ['self', 'review'].includes(this.gameMode) ? false :
             (this.gameMode === 'ai' && this.game.isLatestCursor ? false : true) ||
             this.game.currentColor !== this.userStone;
-        
+
         let whitePlayer = this.state.whitePlayer || (this.gameMode === 'ai' ? (this.userStone === 'W' ? 'Human' : this.engine) : 'Human');
         let blackPlayer = this.state.blackPlayer || (this.gameMode === 'ai' ? (this.userStone === 'B' ? 'Human' : this.engine) : 'Human');
 
@@ -466,13 +466,13 @@ export default class SmartGoBoard extends React.Component<SmartGoBoardProps, Sma
                 <Board
                     id='board'
                     ref={e => this.board = e!}
-                    style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor }}
+                    style={{ background: 'transparent', padding: 15, gridColor: tm.gridLineColor, blackStoneColor: tm.blackStoneColor, whiteStoneColor: tm.whiteStoneColor, coordTextColor: tm.coordTextColor, starPointColor: tm.starPointColor, winrateColor: tm.winrateColor, winrateBackgroundColor: tm.themeColor }}
                     size={this.game.size}
                     states={this.game.board}
                     disabled={this.props.disabled || this.state.disabled || shouldBeDisabled}
                     onIntersectionClicked={(row, col) => this.onStonePlaced(row, col)}
                     showCoordinate={window.innerWidth >= 800}
-                    highlightCoord={this.game.currentCartesianCoord}
+                    highlightCoord={this.game.cartesianCoordXY}
                     heatmap={this.state.heatmap}
                     fontSize={window.innerWidth < 576 ? 7 : 10}
                     currentColor={this.state.forceColor || this.game.currentColor}

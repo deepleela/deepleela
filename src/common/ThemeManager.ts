@@ -4,6 +4,16 @@ import UserPreferences from './UserPreferences';
 export default class ThemeManager {
 
     static readonly default = new ThemeManager();
+    static readonly themeColors = new Map<string, string>([
+        ['default-theme', 'rgb(240, 171, 93)'],
+        ['skyblue', '#47b2ff'],
+        ['purpink', '#7f00ff'],
+        ['sublime-vivid', '#fc466b'],
+        ['timber', '#fc00ff'],
+        ['simple-yellow', '#ffb649'],
+        ['dark', '#151c1c'],
+        ['metal', 'rgb(187, 187, 187)']
+    ]);
 
     constructor() {
         this.theme = UserPreferences.theme;
@@ -20,6 +30,8 @@ export default class ThemeManager {
     starPointColor?: string;
     winrateColor?: string;
 
+    get themeColor() { return ThemeManager.themeColors.get(this.theme) || 'rgb(240, 171, 93)'; }
+
     applyDefault() {
         this.gridLineColor = 'rgb(135, 85, 54)';// '#aaa';// '#efefef';
         this.logoColor = '#3c3c44';
@@ -28,7 +40,7 @@ export default class ThemeManager {
         this.blackStoneColor = '#000'; //'#3c3c44';
         this.coordTextColor = this.gridLineColor;
         this.starPointColor = this.gridLineColor;// undefined;
-        this.winrateColor = undefined;
+        this.winrateColor = '#51494d';
 
         jQuery('html').removeClass().addClass('default-theme');
         UserPreferences.theme = 'default';

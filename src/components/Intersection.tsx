@@ -31,7 +31,7 @@ interface IntersectionProps {
     bottomEdge?: boolean;
     row: number;
     col: number;
-    style?: CSSProperties & { whiteStoneColor?: string, blackStoneColor?: string, startPointColor?: string, winrateFontColor?: string };
+    style?: CSSProperties & { whiteStoneColor?: string, blackStoneColor?: string, startPointColor?: string, winrateFontColor?: string, winrateBackground?: string };
     highlightPointSize?: 'large' | 'small';
     heatmap?: number;
     winrate?: WinRate;
@@ -147,7 +147,7 @@ export default class Intersection extends React.Component<IntersectionProps, Int
                     onMouseLeave={e => { this.onMouseLeave(e); this.props.winrate && this.props.onVariationHoverLeave ? this.props.onVariationHoverLeave(this.props.row, this.props.col) : undefined }}
                     onMouseOver={e => this.props.winrate && this.props.onVariationHover ? this.props.onVariationHover(this.props.row, this.props.col) : undefined}>
 
-                    <div className={this.props.winrate && this.props.winrate.value ? (this.props.winrate.highest ? 'winrate-high' : 'winrate') : 'winrate-grey'} style={{ marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none', color: this.props.style ? this.props.style.winrateFontColor : undefined }}>
+                    <div className={this.props.winrate && this.props.winrate.value ? (this.props.winrate.highest ? 'winrate-high' : 'winrate') : 'winrate-grey'} style={{ backgroundColor: this.props.style && this.props.style.winrateBackground, marginLeft: winrateMargin, marginTop: winrateMargin, borderRadius: '51%', width: '85%', height: '85%', display: 'flex', justifyContent: 'center', alignContent: 'center', alignItems: 'center', userSelect: 'none', color: this.props.style ? this.props.style.winrateFontColor : undefined }}>
                         {winrate.value || winrate.uvalue}
                     </div>
                 </div>
